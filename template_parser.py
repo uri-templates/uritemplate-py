@@ -1,3 +1,5 @@
+# Copyright Google 2007
+
 import tpg
 import re
 import copy
@@ -54,10 +56,6 @@ def sub_if_zero(variables, arg, values):
     return arg
 
 
-ESC_COLONS = re.compile(r"\\:")
-def unescape_colons(s):
-  return ESC_COLONS.sub(":", s[:-1])
-
 def unreserved(c):
   return (c >= "a" and c <= "z") or (c >= "A" and c <= "Z") or (c >= "0" and c <= "9") or (c in "-_~.")
 
@@ -101,7 +99,7 @@ class Parser(tpg.Parser):
   r"""
   set lexer = ContextSensitiveLexer
 
-  token arg        '.*(?<!\\):'                           $ unescape_colons
+  token arg        '[^\|]*';
   token varname    '[\w\-\.~]+' ;
   token vardefault '[\w\-\.\~\%]+' ;
 
@@ -112,12 +110,12 @@ class Parser(tpg.Parser):
      ;
   IdentityOperatorTemplate/i -> Var/var                   $ i = (var, sub_identity, "")$ ;
   OperatorTemplate/o         ->
-       '>'  arg/arg  Var/var                              $ o = (var, sub_postfix,     arg)
-     | '<'  arg/arg  Var/var                              $ o = (var, sub_prefix,      arg)
-     | ','  arg/arg  Vars/var                             $ o = (var, sub_join,       arg)
-     | '\|' arg/arg  VarNoDefault/var                     $ o = (var, sub_listjoin,    arg)
-     | '\?' arg/arg  VarNoDefault/var                     $ o = (var, sub_if_non_zero, arg)
-     | '!'  arg/arg  VarNoDefault/var                     $ o = (var, sub_if_zero,     arg)
+       '>'  arg/arg '\|' Var/var                              $ o = (var, sub_postfix,     arg)
+     | '<'  arg/arg '\|' Var/var                              $ o = (var, sub_prefix,      arg)
+     | ','  arg/arg '\|' Vars/var                             $ o = (var, sub_join,       arg)
+     | '\&' arg/arg '\|' VarNoDefault/var                     $ o = (var, sub_listjoin,    arg)
+     | '\?' arg/arg '\|' VarNoDefault/var                     $ o = (var, sub_if_non_zero, arg)
+     | '!'  arg/arg '\|'  VarNoDefault/var                     $ o = (var, sub_if_zero,     arg)
 
      ;
   Vars/var                     -> Var/var
@@ -197,37 +195,37 @@ if __name__ == "__main__":
       ( "foo=wilma", {},                 "wilma" ),
       ( "foo=wilma", {"foo": "barney"},  "barney" ),
 
-      ( "<&:foo",       {},                 "" ),
-      ( "<&:foo=wilma", {},                 "&wilma" ),
-      ( "<&:foo=wilma", {"foo": "barney"},  "&barney" ),
+      ( "<&|foo",       {},                 "" ),
+      ( "<&|foo=wilma", {},                 "&wilma" ),
+      ( "<&|foo=wilma", {"foo": "barney"},  "&barney" ),
 
-      ( ">/:foo",        {},                 "" ),
-      ( ">#:foo=wilma",  {},                 "wilma#" ),
-      ( ">&?:foo=wilma", {"foo": "barney"},  "barney&?" ),
+      ( ">/|foo",        {},                 "" ),
+      ( ">#|foo=wilma",  {},                 "wilma#" ),
+      ( ">&?|foo=wilma", {"foo": "barney"},  "barney&?" ),
 
-      ( ",/:foo",                  {},                 "" ),
-      ( ",#:foo=wilma",            {},                 "foo=wilma"),
-      ( ",#:foo=wilma,bar",        {},                 "foo=wilma"),
-      ( ",#:foo=wilma,bar=barney", {},                 "bar=barney#foo=wilma"),
-      ( ",&?:foo=wilma",           {"foo": "barney"},  "foo=barney" ),
+      ( ",/|foo",                  {},                 "" ),
+      ( ",#|foo=wilma",            {},                 "foo=wilma"),
+      ( ",#|foo=wilma,bar",        {},                 "foo=wilma"),
+      ( ",#|foo=wilma,bar=barney", {},                 "bar=barney#foo=wilma"),
+      ( ",&?|foo=wilma",           {"foo": "barney"},  "foo=barney" ),
 
-      ( "|/:foo",       {},                    "" ),
-      ( "|/:foo",       {"foo": ["a", "b"]},   "a/b"),
-      ( "|/:foo",       {"foo": ["a"]},        "a"),
-      ( "|/:foo",       {"foo": []},           ""),
+      ( "&/|foo",       {},                    "" ),
+      ( "&/|foo",       {"foo": ["a", "b"]},   "a/b"),
+      ( "&/|foo",       {"foo": ["a"]},        "a"),
+      ( "&/|foo",       {"foo": []},           ""),
 
-      ( "?&:foo",       {},        ""),
-      ( "?&:foo",       {"foo": "fred"},        "&"),
-      ( "?&:foo",       {"foo": []},            ""),
-      ( "?&:foo",       {"foo": ["a"]},         "&"),
+      ( "?&|foo",       {},        ""),
+      ( "?&|foo",       {"foo": "fred"},        "&"),
+      ( "?&|foo",       {"foo": []},            ""),
+      ( "?&|foo",       {"foo": ["a"]},         "&"),
 
-      ( "!&:foo",       {},                     "&"),
-      ( "!&:foo",       {"foo": "fred"},        ""),
-      ( "!&:foo",       {"foo": []},            "&"),
-      ( "!&:foo",       {"foo": ["a"]},         ""),
+      ( "!&|foo",       {},                     "&"),
+      ( "!&|foo",       {"foo": "fred"},        ""),
+      ( "!&|foo",       {"foo": []},            "&"),
+      ( "!&|foo",       {"foo": ["a"]},         ""),
 
       ( "foo",          {"foo": " "},           "%20" ),
-      ( "|&:foo",       {"foo": ["&", "&", "|", "_"]},   "%26&%26&%7C&_" )
+      ( "&&|foo",       {"foo": ["&", "&", "|", "_"]},   "%26&%26&%7C&_" )
 
       ]
 
@@ -241,7 +239,7 @@ if __name__ == "__main__":
       self.assertEqual(set(["id"]), t.variables())
       self.assertEqual("http://example.org/news/joe/", t.sub({"id": "joe"}))
 
-      t = URITemplate("http://www.google.com/notebook/feeds/{userID}{</notebooks/:notebookID}{?/-/:categories}{|/:categories}?{,&:updated-min,updated-max,alt,start-index,max-results,entryID,orderby}")
+      t = URITemplate("http://www.google.com/notebook/feeds/{userID}{</notebooks/|notebookID}{?/-/|categories}{&/|categories}?{,&|updated-min,updated-max,alt,start-index,max-results,entryID,orderby}")
       self.assertEqual(set(['max-results', 'orderby', 'notebookID',
         'start-index', 'userID', 'updated-max', 'entryID', 'alt',
         'updated-min', 'categories']), t.variables())
