@@ -71,7 +71,7 @@ def brackets(template, parsed, expansions):
     line = [] 
     for p in parts:
       if len(p) and p[0] == '{':
-        expansions.append((p, length, length+len(p), length+len(p)/2))
+        expansions.append((p, length+len(p)/2))
         line.append("\\")
         line.append("_" * (len(p)-2))
         line.append("/")
@@ -92,7 +92,7 @@ def lines(template, expansions):
     27
     """
     line = [" "] * len(template)
-    for (s, begin, end, middle) in expansions:
+    for (s, middle) in expansions:
       line[middle] = "|"
     print "".join(line)
     print "".join(line)
@@ -113,13 +113,12 @@ def explanations(template, expansions, line):
   """
     parser = Parser()
     expansions.reverse()
-    for (s, begin, end, middle) in expansions:
+    for (s, middle) in expansions:
         parsed_exp = parser(s[1:-1])
         line[middle] = "+"
         line[middle+1] = "-"
         line[middle+2] = ">"
         line = line[:middle+3]
-        "".join(line)
         explain(s, line, parsed_exp)
 
         line = line[:middle-1]
