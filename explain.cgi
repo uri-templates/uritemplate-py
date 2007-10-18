@@ -1,5 +1,7 @@
 #!/home/jcgregorio/bin/python
 # Copyright Google 2007
+__contributors__ = ["Dan Connolly <connolly@w3.org>"]
+
 from template_parser import Parser, URITemplate
 import cgi
 import re
