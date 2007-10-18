@@ -1,4 +1,5 @@
 #!/home/jcgregorio/bin/python
+# Copyright Google 2007
 from template_parser import Parser, URITemplate
 import cgi
 import re
