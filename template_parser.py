@@ -1,4 +1,4 @@
-# Copyright Google 2007
+# Copyright 2007 Google Inc.
 
 import tpg
 import re
@@ -55,7 +55,6 @@ def sub_if_zero(variables, arg, values):
   else:
     return arg
 
-
 def unreserved(c):
   return (c >= "a" and c <= "z") or (c >= "A" and c <= "Z") or (c >= "0" and c <= "9") or (c in "-_~.")
 
@@ -80,7 +79,6 @@ def percent_encode(values):
     else:
       retval[key] = percent_encode_str(value)
   return retval
-
 
 class ParsedTemplate(object):
   def __init__(self, vars, substitute, arg):
@@ -140,6 +138,7 @@ class DummyParsed(object):
   def variables(self):
     return {}
 
+
 class URITemplate(object):
   def __init__(self, uri_template):
     self.uri_template = uri_template
@@ -163,6 +162,7 @@ class URITemplate(object):
     for p in self.parsed_templates:
       retval.append(p.sub(values))
     return "".join(retval)
+
 
 if __name__ == "__main__":
   import unittest
