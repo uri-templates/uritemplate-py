@@ -15,28 +15,33 @@ def error(msg):
 
 
 descriptions = {
- "<" : "If %(var)s is defined then prefix the value of %(var)s with '%(arg)s'.",
- ">" : "If %(var)s is defined then append the value of %(var)s with '%(arg)s'.",
- "?" : "If %(var)s is defined and a string, or a list with one or more members, then insert '%(arg)s' into the URI.",
- "!" : "If %(var)s is undefined, or a zero length list, then insert '%(arg)s' into the URI.",
- "," : "Join 'var=value' for each variable in %(var)s with '%(arg)s'.",
- "&" : "Join the members of the list %(var)s together with '%(arg)s'.",
+ "prefix" : "If %(var)s is defined then prefix the value of %(var)s with '%(arg)s'.",
+ "append" : "If %(var)s is defined then append the value of %(var)s with '%(arg)s'.",
+ "opt" : "If %(var)s is defined and a string, or a list with one or more members, then insert '%(arg)s' into the URI.",
+ "neg" : "If %(var)s is undefined, or a zero length list, then insert '%(arg)s' into the URI.",
+ "join" : "Join 'var=value' for each variable in %(var)s with '%(arg)s'.",
+ "listjoin" : "Join the members of the list %(var)s together with '%(arg)s'.",
+ "sub" : "Insert a substring of %(var)s using the range '%(arg)s'.",
  "*" : "Replaced with the value of %(var)s."
 }
 
 def explain(expansion, line, parsed_exp):
     """
-    >>> e = ",&|q,num"
-    >>> explain(e, ' ' * 5, Parser()(e))
-          Join the members of the list ['q', 'num'] together with ''.
+    >>> e = "{-listjoin||q}"
+    >>> explain(e, ' ' * 5, Parser()(e[1:-1]))
+          Join the members of the list ['q'] together with ''.
     """
-    op = expansion[1]
+    if "|" in expansion:
+        (op, arg, allvars) = expansion.split("|")
+        op = op[2:]
+    else:
+        op = "*"
     var = parsed_exp.variables()
-    arg = expansion[2:].split("|")[0]
     if op in descriptions:
         print "".join(line), descriptions[op] % vars()
     else:
-        print "".join(line), descriptions["*"] % vars()
+        pass
+        #raise "Not a valid URI Template Expansion: %s" % expansion 
 
      
 
@@ -63,9 +68,9 @@ def handle_request():
 
 def brackets(template, parsed, expansions):
     """
-    >>> t = 'http://example/s?{,&|q,num}'
+    >>> t = 'http://example/s?{-join|&|q,num}'
     >>> brackets(t, URITemplate(t), [])
-                     \________/
+                     \_____________/
     """
     
     parts = re.split("(\{[^\}]*\})", template)
@@ -84,14 +89,14 @@ def brackets(template, parsed, expansions):
 
 def lines(template, expansions):
     """
-    >>> t = 'http://example/s?{,&|q,num}'
+    >>> t = 'http://example/s?{-join|&|q,num}'
     >>> e = []
     >>> brackets(t, URITemplate(t), e)
-                     \________/
+                     \_____________/
     >>> len(lines(t, e))
-                          |    
-                          |    
-    27
+                            |       
+                            |       
+    32
     """
     line = [" "] * len(template)
     for (s, middle) in expansions:
@@ -102,15 +107,15 @@ def lines(template, expansions):
 
 def explanations(template, expansions, line):
     """
-    >>> t = 'http://example/s?{,&|q,num}'
+    >>> t = 'http://example/s?{-join|&|q,num}'
     >>> e = []
     >>> brackets(t, URITemplate(t), e)
-                     \________/
+                     \_____________/
     >>> l = lines(t, e)
-                          |    
-                          |    
+                            |       
+                            |       
     >>> explanations(t, e, l)
-                          +-> Join 'var=value' for each variable in ['q', 'num'] with '&'.
+                            +-> Join 'var=value' for each variable in ['q', 'num'] with '&'.
     <BLANKLINE>             
   """
     parser = Parser()

@@ -4,6 +4,11 @@ import tpg
 import re
 import copy
 
+# Each sub_XXX function takes the following arguments:
+# variables - A dict of variable names to default values.
+# arg - the template <arg> string
+# values - Values for variables supplied by the caller.
+
 def sub_identity(variables, arg, values):
     key = variables.keys()[0]
     return values.get(key, variables[key] or "")
@@ -39,21 +44,30 @@ def sub_listjoin(variables, arg, values):
   return arg.join(value)
 
 def sub_if_non_zero(variables, arg, values):
-  key = variables.keys()[0]
-  value = values.get(key, None)
-  if None != value:
-    if (getattr(value, '__iter__', False) and len(value) == 0):
-      return ""
-    else:
-      return arg
-  else:
-    return ""
+  for key in variables.keys():
+    value = values.get(key, None)
+    if None != value:
+      if (getattr(value, '__iter__', False) and len(value) == 0):
+        continue 
+      else:
+        return arg
+  return ""
 
 def sub_if_zero(variables, arg, values):
   if sub_if_non_zero(variables, arg, values):
     return ""
   else:
     return arg
+
+def sub_substring(variables, arg, values):
+    key = variables.keys()[0]
+    str = values.get(key, variables[key] or "")
+    if '-' in arg:
+        (begin, end) = map(int, arg.split("-"))
+        return str[begin:end]
+    else:
+        begin = int(arg) 
+        return str[begin:]
 
 def unreserved(c):
   return (c >= "a" and c <= "z") or (c >= "A" and c <= "Z") or (c >= "0" and c <= "9") or (c in "-_~.")
@@ -98,8 +112,9 @@ class Parser(tpg.Parser):
   set lexer = ContextSensitiveLexer
 
   token arg        '[^\|]*';
-  token varname    '[\w\-\.~]+' ;
+  token varname    '[a-zA-Z0-9][a-zA-Z0-9\_\.\-]*' ;
   token vardefault '[\w\-\.\~\%]+' ;
+  token num        '[0-9]+';
 
   START/e    -> Template/e;
   Template/t ->
@@ -108,12 +123,16 @@ class Parser(tpg.Parser):
      ;
   IdentityOperatorTemplate/i -> Var/var                   $ i = (var, sub_identity, "")$ ;
   OperatorTemplate/o         ->
-       '>'  arg/arg '\|' Var/var                              $ o = (var, sub_postfix,     arg)
-     | '<'  arg/arg '\|' Var/var                              $ o = (var, sub_prefix,      arg)
-     | ','  arg/arg '\|' Vars/var                             $ o = (var, sub_join,       arg)
-     | '\&' arg/arg '\|' VarNoDefault/var                     $ o = (var, sub_listjoin,    arg)
-     | '\?' arg/arg '\|' VarNoDefault/var                     $ o = (var, sub_if_non_zero, arg)
-     | '!'  arg/arg '\|'  VarNoDefault/var                     $ o = (var, sub_if_zero,     arg)
+       '-append\|'   arg/arg '\|' Var/var                 $ o = (var, sub_postfix,     arg)
+     | '-prefix\|'   arg/arg '\|' Var/var                 $ o = (var, sub_prefix,      arg)
+     | '-join\|'     arg/arg '\|' Vars/var                $ o = (var, sub_join,       arg)
+     | '-listjoin\|' arg/arg '\|' VarNoDefault/var        $ o = (var, sub_listjoin,    arg)
+     | '-opt\|'      arg/arg '\|' Vars/var                $ o = (var, sub_if_non_zero, arg)
+     | '-neg\|'      arg/arg '\|' Vars/var                $ o = (var, sub_if_zero,     arg)
+     | '-sub\|'                                     
+          num/begin                                       $ arg = begin
+          ( '-' num/end   $ arg = begin + "-" + end$ )?                              
+          '\|' Var/var                                    $ o = (var, sub_substring,     arg)
 
      ;
   Vars/var                     -> Var/var
@@ -195,43 +214,59 @@ if __name__ == "__main__":
       ( "foo=wilma", {},                 "wilma" ),
       ( "foo=wilma", {"foo": "barney"},  "barney" ),
 
-      ( "<&|foo",       {},                 "" ),
-      ( "<&|foo=wilma", {},                 "&wilma" ),
-      ( "<&|foo=wilma", {"foo": "barney"},  "&barney" ),
+      ( "-prefix|&|foo",       {},                 "" ),
+      ( "-prefix|&|foo=wilma", {},                 "&wilma" ),
+      ( "-prefix||foo=wilma", {},                 "wilma" ),
+      ( "-prefix|&|foo=wilma", {"foo": "barney"},  "&barney" ),
 
-      ( ">/|foo",        {},                 "" ),
-      ( ">#|foo=wilma",  {},                 "wilma#" ),
-      ( ">&?|foo=wilma", {"foo": "barney"},  "barney&?" ),
+      ( "-append|/|foo",        {},                 "" ),
+      ( "-append|#|foo=wilma",  {},                 "wilma#" ),
+      ( "-append|&?|foo=wilma", {"foo": "barney"},  "barney&?" ),
 
-      ( ",/|foo",                  {},                 "" ),
-      ( ",#|foo=wilma",            {},                 "foo=wilma"),
-      ( ",#|foo=wilma,bar",        {},                 "foo=wilma"),
-      ( ",#|foo=wilma,bar=barney", {},                 "bar=barney#foo=wilma"),
-      ( ",&?|foo=wilma",           {"foo": "barney"},  "foo=barney" ),
+      ( "-join|/|foo",                  {},                 "" ),
+      ( "-join|/|foo,bar",                  {},                 "" ),
+      ( "-join|&|q,num",                  {},                 "" ),
+      ( "-join|#|foo=wilma",            {},                 "foo=wilma"),
+      ( "-join|#|foo=wilma,bar",        {},                 "foo=wilma"),
+      ( "-join|#|foo=wilma,bar=barney", {},                 "bar=barney#foo=wilma"),
+      ( "-join|&?|foo=wilma",           {"foo": "barney"},  "foo=barney" ),
 
-      ( "&/|foo",       {},                    "" ),
-      ( "&/|foo",       {"foo": ["a", "b"]},   "a/b"),
-      ( "&/|foo",       {"foo": ["a"]},        "a"),
-      ( "&/|foo",       {"foo": []},           ""),
+      ( "-listjoin|/|foo",       {},                    "" ),
+      ( "-listjoin|/|foo",       {"foo": ["a", "b"]},   "a/b"),
+      ( "-listjoin||foo",       {"foo": ["a", "b"]},   "ab"),
+      ( "-listjoin|/|foo",       {"foo": ["a"]},        "a"),
+      ( "-listjoin|/|foo",       {"foo": []},           ""),
 
-      ( "?&|foo",       {},        ""),
-      ( "?&|foo",       {"foo": "fred"},        "&"),
-      ( "?&|foo",       {"foo": []},            ""),
-      ( "?&|foo",       {"foo": ["a"]},         "&"),
+      ( "-opt|&|foo",       {},                      ""),
+      ( "-opt|&|foo",       {"foo": "fred"},         "&"),
+      ( "-opt|&|foo",       {"foo": []},             ""),
+      ( "-opt|&|foo",       {"foo": ["a"]},          "&"),
+      ( "-opt|&|foo,bar",   {"foo": ["a"]},          "&"),
+      ( "-opt|&|foo,bar",   {"bar": "a"},         "&"),
+      ( "-opt|&|foo,bar",   {},                      ""),
 
-      ( "!&|foo",       {},                     "&"),
-      ( "!&|foo",       {"foo": "fred"},        ""),
-      ( "!&|foo",       {"foo": []},            "&"),
-      ( "!&|foo",       {"foo": ["a"]},         ""),
+      ( "-neg|&|foo",       {},                     "&"),
+      ( "-neg|&|foo",       {"foo": "fred"},        ""),
+      ( "-neg|&|foo",       {"foo": []},            "&"),
+      ( "-neg|&|foo",       {"foo": ["a"]},         ""),
+      ( "-neg|&|foo,bar",   {"bar": "a"},           ""),
+      ( "-neg|&|foo,bar",   {"bar": []},            "&"),
+
+      ( "-sub|1-2|foo",   {"foo": "jcgregorio"},            "c"),
+      ( "-sub|1|foo",   {"foo": "jcgregorio"},            "cgregorio"),
+      ( "-sub|0|foo",   {"foo": "jcgregorio"},            "jcgregorio"),
+      ( "-sub|0-1|foo",   {"foo": "jcgregorio"},            "j"),
 
       ( "foo",          {"foo": " "},           "%20" ),
-      ( "&&|foo",       {"foo": ["&", "&", "|", "_"]},   "%26&%26&%7C&_" )
+      ( "-listjoin|&|foo",       {"foo": ["&", "&", "|", "_"]},   "%26&%26&%7C&_" )
 
       ]
 
+      i = 0
       for (template, values, expected) in test_cases:
+        i += 1
         parsed = p(template)
-        self.assertEqual(expected, parsed.sub(values))
+        self.assertEqual(expected, parsed.sub(values), "Test case #%d [%s != %s]" % (i, expected, parsed.sub(values)))
 
   class TestURITemplate(unittest.TestCase):
     def test_simple(self):
@@ -239,7 +274,7 @@ if __name__ == "__main__":
       self.assertEqual(set(["id"]), t.variables())
       self.assertEqual("http://example.org/news/joe/", t.sub({"id": "joe"}))
 
-      t = URITemplate("http://www.google.com/notebook/feeds/{userID}{</notebooks/|notebookID}{?/-/|categories}{&/|categories}?{,&|updated-min,updated-max,alt,start-index,max-results,entryID,orderby}")
+      t = URITemplate("http://www.google.com/notebook/feeds/{userID}{-prefix|/notebooks/|notebookID}{-opt|/-/|categories}{-listjoin|/|categories}?{-join|&|updated-min,updated-max,alt,start-index,max-results,entryID,orderby}")
       self.assertEqual(set(['max-results', 'orderby', 'notebookID',
         'start-index', 'userID', 'updated-max', 'entryID', 'alt',
         'updated-min', 'categories']), t.variables())
