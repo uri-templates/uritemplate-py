@@ -6,12 +6,14 @@ from template_parser import Parser, URITemplate
 import cgi
 import re
 import cgitb; cgitb.enable()
+import sys
 
 def error(msg):
   print "Status: 400"
   print "Content-Type: text/plain"
   print ""
   print msg
+  sys.exit(0)
 
 
 descriptions = {
@@ -21,7 +23,6 @@ descriptions = {
  "neg" : "If %(var)s is undefined, or a zero length list, then insert '%(arg)s' into the URI.",
  "join" : "Join 'var=value' for each variable in %(var)s with '%(arg)s'.",
  "listjoin" : "Join the members of the list %(var)s together with '%(arg)s'.",
- "sub" : "Insert a substring of %(var)s using the range '%(arg)s'.",
  "*" : "Replaced with the value of %(var)s."
 }
 

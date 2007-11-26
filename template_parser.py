@@ -16,7 +16,7 @@ def sub_identity(variables, arg, values):
 def sub_prefix(variables, arg, values):
     key = variables.keys()[0]
     value = values.get(key, variables[key])
-    if None != value:
+    if None != value and len(value):
         return arg + value
     else:
         return ""
@@ -58,16 +58,6 @@ def sub_if_zero(variables, arg, values):
     return ""
   else:
     return arg
-
-def sub_substring(variables, arg, values):
-    key = variables.keys()[0]
-    str = values.get(key, variables[key] or "")
-    if '-' in arg:
-        (begin, end) = map(int, arg.split("-"))
-        return str[begin:end]
-    else:
-        begin = int(arg) 
-        return str[begin:]
 
 def unreserved(c):
   return (c >= "a" and c <= "z") or (c >= "A" and c <= "Z") or (c >= "0" and c <= "9") or (c in "-_~.")
@@ -129,11 +119,6 @@ class Parser(tpg.Parser):
      | '-listjoin\|' arg/arg '\|' VarNoDefault/var        $ o = (var, sub_listjoin,    arg)
      | '-opt\|'      arg/arg '\|' Vars/var                $ o = (var, sub_if_non_zero, arg)
      | '-neg\|'      arg/arg '\|' Vars/var                $ o = (var, sub_if_zero,     arg)
-     | '-sub\|'                                     
-          num/begin                                       $ arg = begin
-          ( '-' num/end   $ arg = begin + "-" + end$ )?                              
-          '\|' Var/var                                    $ o = (var, sub_substring,     arg)
-
      ;
   Vars/var                     -> Var/var
                                  (
@@ -251,11 +236,6 @@ if __name__ == "__main__":
       ( "-neg|&|foo",       {"foo": ["a"]},         ""),
       ( "-neg|&|foo,bar",   {"bar": "a"},           ""),
       ( "-neg|&|foo,bar",   {"bar": []},            "&"),
-
-      ( "-sub|1-2|foo",   {"foo": "jcgregorio"},            "c"),
-      ( "-sub|1|foo",   {"foo": "jcgregorio"},            "cgregorio"),
-      ( "-sub|0|foo",   {"foo": "jcgregorio"},            "jcgregorio"),
-      ( "-sub|0-1|foo",   {"foo": "jcgregorio"},            "j"),
 
       ( "foo",          {"foo": " "},           "%20" ),
       ( "-listjoin|&|foo",       {"foo": ["&", "&", "|", "_"]},   "%26&%26&%7C&_" )
