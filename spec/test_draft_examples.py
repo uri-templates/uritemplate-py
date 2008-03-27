@@ -32,7 +32,9 @@ for index in range(begin+1, len(lines)):
 
 if __name__ == "__main__":
     import unittest
-    from work.template_parser import URITemplate  
+    import sys
+    sys.path.append("..")
+    from template_parser import URITemplate  
     
     class Test(unittest.TestCase):
         def test(self):
