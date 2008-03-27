@@ -11,8 +11,7 @@
    <!ENTITY UNIV4 SYSTEM    'bibxml/univ4.xml'>
    <!ENTITY UTR15 SYSTEM    'bibxml/utr15.xml'>
    ]>
-
-
+ 
    <!--<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>-->
 
    <?rfc toc="yes" ?>
@@ -354,6 +353,13 @@
                        works only on the variables that are defined within
                        their expansion.
                    </t>
+ 
+                   <t>
+                       The result of substitution 
+                       MUST match the URI-reference rule and SHOULD also match
+                       any known rules for the scheme of the resulting URI.
+                   </t>
+
 
                    <section title="The 'opt' operator" anchor="opt">
                        <t>
@@ -411,12 +417,6 @@
                            values of arg.
                        </t>
                    </section>
-
-                   <t>
-                       The result of substitution 
-                       MUST match the URI-reference rule and SHOULD also match
-                       any known rules for the scheme of the resulting URI.
-                   </t>
 
                </section>
                <section title="Examples" anchor="examples">

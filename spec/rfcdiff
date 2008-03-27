@@ -94,6 +94,10 @@
 #		http://tools.ietf.org/tools/rfcdiff/
 #
 # Log:
+#	17 Jul 2007     v1.34 - Added quotes around file names to be able to
+#			handle filenames containing whitespace, and some
+#			other changes associated with files containing
+#			whitespace and running on *BSD.
 #			
 #	01 Jun 2006	v1.32 - changed 'para.' to 'paragraph' in abdiff.
 #			Added new regexps for page headers in strip.		
@@ -279,8 +283,8 @@
 # End:
 #
 
-export version="1.33"
-export progdate="(20 Sep 2006)"
+export version="1.34"
+export progdate="17 Jul 2007 15:42:59"
 export prelines="10"
 export basename=$(basename $0)
 export workdir="/tmp/$basename-$$"
@@ -343,7 +347,7 @@ newpage && $0 ~ /^ *draft-[-a-z0-9_.]+ *$/ { newpage=1; next; }
 /[.:][ \t]*$/			{ sentence=1; }
 /^[ \t]*$/			{ haveblank=1; next; }
 				{ outline++; print; }
-' $1
+' "$1"
 }
 
 
@@ -362,7 +366,7 @@ bodystrip() {
     /^1.[ \t]*Introduction$/	{ inbody = 1; }
 
     inbody			{ print; }
-    ' $1
+    ' "$1"
 }
 
 
@@ -403,7 +407,7 @@ BEGIN	{
 
 		printf format, prefix, w1, w2, suffix;
 	}
-' $1 $2 $3
+' "$1" "$2" "$3"
 }
 
 # ----------------------------------------------------------------------
@@ -743,7 +747,7 @@ END	{
 "   </body>\n" \
 "   </html>\n", diffnum?"End of changes":"No changes", difftag, diffcount1, diffcount2, ENVIRON["version"]);
 	}
-' $1
+' "$1"
 }
 
 # ----------------------------------------------------------------------
@@ -833,7 +837,7 @@ END	{
 # Utility to extract keyword info
 # ----------------------------------------------------------------------
 extract() {
-    $AWK -v keyword=$1 '
+    $AWK -v keyword="$1" '
 	BEGIN {
 	    # print "Keyword", keyword;
 	}
@@ -853,40 +857,43 @@ extract() {
 	    next;
 	}
 
-    ' $2
+    ' "$2"
 }
 # ----------------------------------------------------------------------
 # Utility to start a browser
 # ----------------------------------------------------------------------
 
 browse() {
-    browser=$(lookfor firefox phoenix MozillaFirebird mozilla opera Netscape netscape dillo)
-
-    if [ -z "$browser" ]; then
-	echo "Couldn't find any browser, can't display $*."
-	exit 1
-    fi
-
-    # make sure file name is absolute
-    if [ ${1#/} == $1 ]; then
-        # not absolute path, add pwd
-	arg="file://$PWD/$1"
+    if   [ "$(uname)" = "Darwin" ]; then
+	open "$@"
     else
-	arg="file://$1"
-    fi
+	browser=$(lookfor firefox phoenix MozillaFirebird mozilla opera Netscape netscape dillo)
+
+	if [ -z "$browser" ]; then
+	    echo "Couldn't find any browser, can't display $*."
+	    exit 1
+	fi
+
+	# make sure file name is absolute
+	if [ "${1#/}" = "$1" ]; then
+	    # not absolute path, add pwd
+	    arg="file://$PWD/$1"
+	else
+	    arg="file://$1"
+	fi
 
 
-    # see if a browser is running, act accordingly
-    $browser -remote "ping()" >/dev/null 2>&1
-    if [ $? -eq 0 ]; then
-	# use running instance
-	#echo "$browser -raise -remote \"openurl($arg, new-tab)\""
-	$browser -raise -remote "openurl($arg, new-tab)"
-    else
-	# error exit: no running instance
-	echo "Starting web browser."
-	#echo "$browser $arg >/dev/null 2>&1 &"
-	$browser $arg >/dev/null 2>&1 &
+	# see if a browser is running, act accordingly
+	$browser -remote "ping()" >/dev/null 2>&1
+	if [ $? -eq 0 ]; then
+	    # use running instance
+	    $browser -raise -remote "openurl($arg, new-tab)"
+	else
+	    # error exit: no running instance
+	    echo "Starting web browser."
+
+	    $browser "$arg" >/dev/null 2>&1 &
+	fi
     fi
 }
 
@@ -902,12 +909,13 @@ die() {
 # ----------------------------------------------------------------------
 # Process options
 # ----------------------------------------------------------------------
+
+# Default values
 opthtml=1; optdiff=0; optchbars=0; optwdiff=0; optshow=0; optnowdiff=0;
 optkeep=0; optinfo=0; optwidth=0;  optnums=0;  optbody=0; optabdiff=0;
 optstrip=1; opthwdiff=0;
 optstdout=0;
 
-export cmdline="$*"
 while [ $# -gt 0 ]; do
    case "$1" in
       --html)   opthtml=1; optdiff=0; optchbars=0; optwdiff=0; opthwdiff=0; optabdiff=0;;
@@ -932,15 +940,13 @@ while [ $# -gt 0 ]; do
       --stdout) optstdout=1;;
       --)	shift; break;;
 
-      -r) options="$options $1 $2"; rev=$2; shift;;
       -v) echo "$basename $version"; exit 0;;
       -*) echo "Unrecognized option: $1";
 	  exit 1;;
-      *)  files="$files $1";;
+      *)  break;;
    esac
    shift
 done
-#echo $1 $2 $3
 
 export optwidth
 export optnums
@@ -954,17 +960,14 @@ if [ $optinfo -gt 0 ]; then
    extract $keyword $0
    exit
 fi
-if [ "$files" ]; then
-  set $files
-fi
 if [ $# -ge 2 ]; then
-   if [ $1 = $2 ]; then
+   if [ "$1" = "$2" ]; then
       echo "The files are the same file"
       exit
    fi
-   export base1=$(basename $1)
-   export base2=$(basename $2)
-   outbase=$(worddiff $base2 $base1 "%s%s-from-%s")
+   export base1=$(basename "$1")
+   export base2=$(basename "$2")
+   outbase=$(worddiff "$base2" "$base1" "%s%s-from-%s")
 else
    extract Usage $0
    exit 1
@@ -987,24 +990,24 @@ dowgetarg1=0
 dowgetarg2=0
 
 if [ -n "$wgetbin" ]; then
-   if [ ${1#http://} != $1 ]; then dowgetarg1=1; fi
-   if [ ${1#ftp://} != $1 ]; then dowgetarg1=1; fi
+   if [ "${1#http://}" != "$1" ]; then dowgetarg1=1; fi
+   if [ "${1#ftp://}" != "$1" ]; then dowgetarg1=1; fi
 
-   if [ ${2#http://} != $2 ]; then dowgetarg2=1; fi
-   if [ ${2#ftp://} != $2 ]; then dowgetarg2=1; fi
+   if [ "${2#http://}" != "$2" ]; then dowgetarg2=1; fi
+   if [ "${2#ftp://}" != "$2" ]; then dowgetarg2=1; fi
 fi
 
 
 if [ $dowgetarg1 -gt 0 ]; then
-   $wgetbin -nv $1 -O $workdir/1/$base1
+   $wgetbin -nv "$1" -O $workdir/1/"$base1"
 else
-   cp $1 $workdir/1/$base1
+   cp "$1" $workdir/1/"$base1"
 fi
 
 if [ $dowgetarg2 -gt 0 ]; then
-   $wgetbin -nv $2 -O $workdir/2/$base2
+   $wgetbin -nv "$2" -O $workdir/2/"$base2"
 else
-   cp $2 $workdir/2/$base2
+   cp "$2" $workdir/2/"$base2"
 fi
 
 # ----------------------------------------------------------------------
@@ -1013,11 +1016,11 @@ fi
 
 if [ $optstrip -gt 0 ]; then
    export which=1
-   strip $workdir/1/$base1 > $workdir/1/$base1.stripped
-   mv -f $workdir/1/$base1.stripped $workdir/1/$base1
+   strip $workdir/1/"$base1" > $workdir/1/"$base1".stripped
+   mv -f $workdir/1/"$base1".stripped $workdir/1/"$base1"
    export which=2
-   strip $workdir/2/$base2 > $workdir/2/$base2.stripped
-   mv -f $workdir/2/$base2.stripped $workdir/2/$base2
+   strip $workdir/2/"$base2" > $workdir/2/"$base2".stripped
+   mv -f $workdir/2/"$base2".stripped $workdir/2/"$base2"
 fi
 
 # ----------------------------------------------------------------------
@@ -1025,10 +1028,10 @@ fi
 # ----------------------------------------------------------------------
 
 if [ $opthwdiff -gt 0 ]; then
-   sed -e 's/&/&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' $workdir/1/$base1 > $workdir/1/$base1.quoted
-   mv -f $workdir/1/$base1.quoted $workdir/1/$base1
-   sed -e 's/&/&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' $workdir/2/$base2 > $workdir/2/$base2.quoted
-   mv -f $workdir/2/$base2.quoted $workdir/2/$base2
+   sed -e 's/&/&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' $workdir/1/"$base1" > $workdir/1/"$base1".quoted
+   mv -f $workdir/1/"$base1".quoted $workdir/1/"$base1"
+   sed -e 's/&/&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' $workdir/2/"$base2" > $workdir/2/"$base2".quoted
+   mv -f $workdir/2/"$base2".quoted $workdir/2/"$base2"
 fi
 
 # ----------------------------------------------------------------------
@@ -1036,36 +1039,36 @@ fi
 # postamble (Intellectual Property Statement, Disclaimer etc)
 # ----------------------------------------------------------------------
 if [ $optbody -gt 0 ]; then
-   bodystrip $workdir/1/$base1 > $workdir/1/$base1.stripped
-   mv $workdir/1/$base1.stripped $workdir/1/$base1
-   bodystrip $workdir/2/$base2 > $workdir/2/$base2.stripped
-   mv $workdir/2/$base2.stripped $workdir/2/$base2
+   bodystrip $workdir/1/"$base1" > $workdir/1/"$base1".stripped
+   mv $workdir/1/"$base1".stripped $workdir/1/"$base1"
+   bodystrip $workdir/2/"$base2" > $workdir/2/"$base2".stripped
+   mv $workdir/2/"$base2".stripped $workdir/2/"$base2"
 fi
 
 # ----------------------------------------------------------------------
 # Get output file name
 # ----------------------------------------------------------------------
 if [ "$3" ]; then
-  outfile=$3
+  outfile="$3"
 else
     if [ $opthtml -gt 0 ]; then
-      outfile=./$outbase.diff.html
+      outfile=./"$outbase".diff.html
     fi
     if [ $optchbars -gt 0 ]; then
-      outfile=./$outbase.chbar
+      outfile=./"$outbase".chbar
     fi
     if [ $optdiff -gt 0 ]; then
-      outfile=./$outbase.diff
+      outfile=./"$outbase".diff
     fi
     if [ $optabdiff -gt 0 ]; then
-      outfile=./$outbase.changes
+      outfile=./"$outbase".changes
     fi
     if [ $opthwdiff -gt 0 ]; then
-      outfile=./$outbase.wdiff.html
+      outfile=./"$outbase".wdiff.html
     fi
 fi
 if [ "$outfile" ]; then
-   tempout=./$(basename $outfile)
+   tempout=./$(basename "$outfile")
 fi
 
 # ----------------------------------------------------------------------
@@ -1095,7 +1098,7 @@ uname=$(uname -a)
 export uname
 awkbin=$AWK
 export awkbin
-awkver=$($AWK --version | head -n 1)
+awkver=$( { $AWK --version 2>/dev/null || $AWK -V 2>/dev/null; } | head -n 1)
 export awkver
 diffbin=$(lookfor diff)
 export diffbin
@@ -1108,43 +1111,43 @@ export diffver
 
 origdir=$PWD
 cd $workdir
-if cmp 1/$base1 2/$base2 >/dev/null; then
+if cmp 1/"$base1" 2/"$base2" >/dev/null; then
    echo ""
    echo "The files are identical."
 fi
 
 if [ $opthtml -gt 0 ]; then
-   diff -Bwd -U $prelines 1/$base1 2/$base2 | tee $workdir/diff | htmldiff > $tempout
+   diff -Bwd -U $prelines 1/"$base1" 2/"$base2" | tee $workdir/diff | htmldiff > "$tempout"
 fi
 if [ $optchbars -gt 0 ]; then
-   diff -Bwd -U 10000 1/$base1 2/$base2 | tee $workdir/diff | grep -v "^-" | tail +3 | sed 's/^+/|/' > $tempout
+   diff -Bwd -U 10000 1/"$base1" 2/"$base2" | tee $workdir/diff | grep -v "^-" | tail +3 | sed 's/^+/|/' > "$tempout"
 fi
 if [ $optdiff -gt 0 ]; then
-   diff -Bwd -U $prelines 1/$base1 2/$base2 | tee $workdir/diff > $tempout
+   diff -Bwd -U $prelines 1/"$base1" 2/"$base2" | tee $workdir/diff > "$tempout"
 fi
 if [ $optabdiff -gt 0 ]; then
-   diff -wd -U 1000 1/$base1 2/$base2 | tee $workdir/diff | abdiff
+   diff -wd -U 1000 1/"$base1" 2/"$base2" | tee $workdir/diff | abdiff
 fi
 if [ $optwdiff -gt 0 ]; then
-   wdiff -a 1/$base1 2/$base2
+   wdiff -a 1/"$base1" 2/"$base2"
 fi
 if [ $opthwdiff -gt 0 ]; then
-    echo "<html><head><title>wdiff $base1 $base2</title></head><body>"		>  $tempout
-    echo "<pre>"								>> $tempout
-    wdiff -w "<strike><font color='red'>" -x "</font></strike>" -y "<strong><font color='green'>" -z "</font></strong>" 1/$base1 2/$base2 >> $tempout
-    echo "</pre>"								>> $tempout
-    echo "</body></html>"							>> $tempout
+    echo "<html><head><title>wdiff "$base1" "$base2"</title></head><body>"		>  "$tempout"
+    echo "<pre>"								>> "$tempout"
+    wdiff -w "<strike><font color='red'>" -x "</font></strike>" -y "<strong><font color='green'>" -z "</font></strong>" 1/"$base1" 2/"$base2" >> "$tempout"
+    echo "</pre>"								>> "$tempout"
+    echo "</body></html>"							>> "$tempout"
 fi
 
 if [ $optstdout -gt 0 ]; then
-  cat $tempout
-  rm  $tempout
+  cat "$tempout"
+  rm  "$tempout"
 else
-  cd "$origdir"; if [ -f $workdir/$tempout ]; then mv $workdir/$tempout $outfile; fi
+  cd "$origdir"; if [ -f $workdir/"$tempout" ]; then mv $workdir/"$tempout" "$outfile"; fi
 fi
 
 if [ $optshow -gt 0 ]; then
-   browse $outfile
+   browse "$outfile"
 fi
 
 if [ $optkeep -eq 0 ]; then

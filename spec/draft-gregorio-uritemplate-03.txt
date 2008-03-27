@@ -40,15 +40,15 @@ Status of this Memo
 
    This Internet-Draft will expire on September 27, 2008.
 
-Copyright Notice
-
-   Copyright (C) The IETF Trust (2008).
-
 Abstract
 
    A URI Template is a compact sequence of characters used for the
    construction of URIs.  This specification defines the URI Template
    syntax and the process for expanding a URI Template into a URI, along
+   with guidelines and security considerations for the use of URI
+   Templates on the Internet.  The URI Template syntax allows for the
+   construction of strings that are a superset of URIs, allowing an
+   implementation to process any URI Template without knowing the
 
 
 
@@ -57,10 +57,6 @@ Gregorio, et al.       Expires September 27, 2008               [Page 1]
 Internet-Draft                URI Template                      Mar 2008
 
 
-   with guidelines and security considerations for the use of URI
-   Templates on the Internet.  The URI Template syntax allows for the
-   construction of strings that are a superset of URIs, allowing an
-   implementation to process any URI Template without knowing the
    scheme-specific requirements of every possible resulting URI.
 
 Editorial Note
@@ -95,6 +91,10 @@ Table of Contents
    Appendix B.  Revision History  . . . . . . . . . . . . . . . . . . 12
    Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 12
    Intellectual Property and Copyright Statements . . . . . . . . . . 13
+
+
+
+
 
 
 
@@ -328,7 +328,7 @@ Internet-Draft                URI Template                      Mar 2008
    determined by the given operator.  Each operator works only on the
    variables that are defined within their expansion.
 
-
+   The result of substitution MUST match the URI-reference rule and
 
 
 
@@ -336,6 +336,9 @@ Gregorio, et al.       Expires September 27, 2008               [Page 6]
 
 Internet-Draft                URI Template                      Mar 2008
 
+
+   SHOULD also match any known rules for the scheme of the resulting
+   URI.
 
 3.3.1.  The 'opt' operator
 
@@ -375,9 +378,6 @@ Internet-Draft                URI Template                      Mar 2008
    substitute the concatenation of all the list members with intevening
    values of arg.
 
-   The result of substitution MUST match the URI-reference rule and
-   SHOULD also match any known rules for the scheme of the resulting
-   URI.
 
 
 
@@ -715,10 +715,10 @@ Intellectual Property
    ietf-ipr@ietf.org.
 
 
-Acknowledgment
 
-   Funding for the RFC Editor function is provided by the IETF
-   Administrative Support Activity (IASA).
+
+
+
 
 
 

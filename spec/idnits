@@ -24,7 +24,7 @@
 #
 #  -----------------------------------------------------------------
 
-version="2.04.07";
+version="2.08.04";
 progdate="";
 export LC_ALL=C
 program=${0##*/}
@@ -78,14 +78,28 @@ lookfor() {
 FDATE='date +%Y-%m-%d -r'
 [ "$system" = "Darwin" ] && FDATE='stat -f %Sm -t %Y-%m-%d'
 
+SED="sed -r"
+[ "$system" = "Darwin" ] && SED="sed -E"
+
 AWK=$(lookfor gawk $AWK gawk nawk mawk awk)
 
 WGET=$(lookfor wget $WGET wget curl lynx)
-[ ${WGET##*/} = wget ] && WARG="--timeout=5 -q -O - -N --no-check-certificate"
+[ ${WGET##*/} = wget ] && [ "$system" = "Darwin" ] && WARG="--timeout=5 -q -O - -N"
+[ ${WGET##*/} = wget ] && [ "$system" = "Darwin" ] || WARG="--timeout=5 -q -O - -N --no-check-certificate"
 [ ${WGET##*/} = curl ] && WARG="--connect-timeout 5 -s -k"
 [ ${WGET##*/} = lynx ] && WARG="-connect_timeout=5 -dump"
 
 SPELL=$(lookfor "" aspell)
+
+# ----------------------------------------------------------------------
+# Convert DOS (^M^J) and MAC (^M) line ending to Unix (^J)
+# ----------------------------------------------------------------------
+fixnl() {
+  $AWK '
+BEGIN	{ RS = "\r"; }
+	{ sub(/^\n/, ""); print; }
+  ' "$1"
+}
 
 # ----------------------------------------------------------------------
 # Strip headers and footers, end-of-line whitespace and \r (CR)
@@ -101,8 +115,10 @@ BEGIN				{
 				{ gsub(/[ \t]+$/, ""); }
 				{ pagelength++; }
 
-tolower($0) ~ / *expires.*20[0-9][0-9]/		{ if (FNR < 58 ) expiration = 1; }
-tolower($0) ~ / *expiration.*20[0-9][0-9]/	{ if (FNR < 58 ) expiration = 1; }
+tolower($0) ~ / *expire on.*20[0-9][0-9]/	{ if (FNR <= 58 ) expiration = 1; }
+tolower($0) ~ / *expires.*20[0-9][0-9]/		{ if (FNR <= 58 ) expiration = 1; }
+tolower($0) ~ / *expiration.*20[0-9][0-9]/	{ if (FNR <= 58 ) expiration = 1; }
+/FORMFEED[ \t]*\[Page/				{ missing_nroff_postprocessing ++; }
 /\[?[Pp]age [0-9ivx]+\]?[ \t\f]*$/	{
 				    match($0, /[Pp]age [0-9ivx]+/);
 				    num = substr($0, RSTART+5, RLENGTH-5);
@@ -140,8 +156,8 @@ tolower($0) ~ / *expiration.*20[0-9][0-9]/	{ if (FNR < 58 ) expiration = 1; }
 
 /^ *Internet.Draft.+[12][0-9][0-9][0-9] *$/ && (FNR > 15)	{ newpage=1; next; }
 /^ *INTERNET.DRAFT.+[12][0-9][0-9][0-9] *$/ && (FNR > 15)	{ newpage=1; next; }
-/^ *Draft.+[12][0-9][0-9][0-9] *$/	    && (FNR > 15)	{ newpage=1; next; }
-/^RFC.+[0-9]+$/				    && (FNR > 15)	{ newpage=1; next; }
+/^ *Draft.+(  +)[12][0-9][0-9][0-9] *$/	    && (FNR > 15)	{ newpage=1; next; }
+/^RFC[ -]?[0-9]+.*(  +)[12][0-9][0-9][0-9]$/ && (FNR > 15)	{ newpage=1; next; }
 /^draft-[-a-z0-9_.]+.*[0-9][0-9][0-9][0-9]$/ && (FNR > 15)	{ newpage=1; next; }
 /(Jan|Feb|Mar|March|Apr|April|May|Jun|June|Jul|July|Aug|Sep|Oct|Nov|Dec) (19[89][0-9]|20[0-9][0-9]) *$/ && pagelength < 3  { newpage=1; next; }
 newpage && $0 ~ /^ *draft-[-a-z0-9_.]+ *$/ { newpage=1; next; }
@@ -187,6 +203,7 @@ END				{
 				  printf "-+- Longestpage: %d -+-\n", longestpage;
 				  printf "-+- Formfeedcount: %d -+-\n", ffcount;
 				  printf "-+- Expiration: %s -+-\n", expiration;
+				  printf "-+- NoNroffPostproc: %s -+-\n", missing_nroff_postprocessing;
 				}
 ' $1
 }
@@ -398,6 +415,8 @@ BEGIN {
     warncodes["S"] = "E I P U H P D";
 
     has[""];		# make sure this exists as a global variable here
+    seen_ref[""];
+    miss_ref[""];
 
     # ------------------------------------------------------------------
     #   3978 and 3979 section texts
@@ -573,6 +592,7 @@ BEGIN {
     bp["rfc2119_p2a"]	= "The key words \"MUST\", \"MUST NOT\", \"REQUIRED\", \"SHALL\", " \
 			"\"SHALL NOT\", \"SHOULD\", \"SHOULD NOT\", \"RECOMMENDED\", \"MAY\", " \
 			"and \"OPTIONAL\" in this document are to be interpreted as described in " \
+			"(['\"]?Key words for use in RFCs to Indicate Requirement Levels['\"]? )?" \
 			"\\[[0-9A-Z-][0-9A-Za-z-]* ?[0-9A-Z-]*\\].*\\.$";
 
     bp["1id_guidelines_p1"] = "Internet-Drafts are working documents of the Internet Engineering " \
@@ -601,6 +621,13 @@ BEGIN {
     bp["1id_guidelines_p4a"] = "The list of Internet-Draft Shadow Directories can be accessed at:? " \
 			"http:// *www.ietf.org/ *shadow.html ?\\.?$";
 
+    bad[" MUST not "]	= "Using lowercase 'not' together with uppercase 'MUST' is not an " \
+			  "accepted usage according to RFC 2119.  Please use 'MUST NOT' " \
+			  "(if that is what you mean)."
+
+    bad[" MAY NOT "]	= "The expression 'MAY NOT', while looking like RFC 2119 requirements " \
+			  "text, is not defined in RFC 2119, and should not be used.  Consider " \
+			  "using 'MUST NOT' instead (if that is what you mean)."
 
 }
 
@@ -692,6 +719,18 @@ function match_para(para, name1, name2, name3, name4) {
 	    return 1;
 	}
 	sub(/ *\$?$/," +", pattern);
+	if (para ~ pattern) {
+	    for (j=1; j<= i; j++) has[name[j]] = FNR-1;
+	    if (!pat[i+1]) return 1;	
+	} else {
+	    for (k=1; k < i; k++) {
+		pref = pat[k];
+		sub(/ *\$?$/," +", pref);
+		sub(pref, "", orig);
+	    }
+	    almost_boilerplate[name[i]] = orig;
+	    return 0;
+	}
     }
 
     almost_boilerplate[name[1]] = orig;
@@ -875,7 +914,7 @@ function sectionerr(name, str, wflag) {
         str = str ". "
     }
     if (wflag) warn(str); else err(str);
-    if (option_verbose && option_pass2) {
+    if ((option_verbose || option_submitcheck) && option_pass2) {
 	showsection(name)
     }
 }
@@ -906,7 +945,7 @@ function oldandnewerr(old, new) {
 
 function update_references(this, pos) {
     if (!match(this, /\[Page/)) {
-	if ( match(this, "(^|[\\]A-Za-z0-9 \t.()])" reference_format "\\)?([) \t,;:.[]|$)") ) {
+	if ( match(this, "(^|[\\]A-Za-z0-9 \t.()])" reference_format "\\)?([) \t,;:.?[]|$)") ) {
 
 	    line[pos] = this
 	    if (in_refs && this ~ "^ *([0-9.]+ *)?" reference_format) {
@@ -1074,6 +1113,19 @@ function errc(str, indented) {
 
 
 # ----------------------------------------------------------------------
+#   errw()
+#
+
+function errw(str, indented) {
+    if (option_submitcheck) {
+	warn(str, indented);
+    } else {
+	err(str, indented);
+    }
+}
+
+
+# ----------------------------------------------------------------------
 #   warnc()
 #
 
@@ -1098,12 +1150,19 @@ function errg(str, indented) {
 
 
 # ----------------------------------------------------------------------
-#   get_status(draft)
+#   get_state(draft)
 #
 
 function get_state(draft, state,	count) {
     for (key in state) delete state[key];
     statefile = statusdir "/" draft ".state"
+## Not sure that this fallback handling is necessary.  Keeping it commented out for now.
+#    if ( ( getline < statefile ) < 0 ) {
+#	close(statefile)
+#	note("... Trying to download missing state file for " draft " ...")
+#	command = "idnits --download '" draft " state' http://tools.ietf.org/draft/" draft "/state " statusdir "/" draft ".state 'Doc-tag: " draft "'"
+#	while (	(command | getline) > 0) print $0;
+#    }
     while ( getline < statefile > 0 ) {
 	if ($1 ~ /^Doc-/) {
 	   count++;
@@ -1154,16 +1213,21 @@ function refcomment(msg, num, tag,	info, numstr) {
 }
 
 function get_rfcnum(ref,	num) {
-    if (match(ref, /(RFC|rfc)[0-9][0-9]+/)){
-	num = substr(ref, RSTART+3, RLENGTH-3) + 0;
-    } else if (match(ref, /(RFC|rfc)[ -][0-9][0-9]+/)) {
-	num = substr(ref, RSTART+4, RLENGTH-4) + 0;	
-    } else if (match(ref, /(Request [Ff]or Comments) [0-9][0-9]+/)) {
-	num = substr(ref, RSTART+21, RLENGTH-21) + 0;	
-    } else if (match(ref, /(Request [Ff]or Comments)( \([^\)]*\))? [0-9][0-9]+/)) {
-	num = substr(ref, RSTART+RLENGTH-4, 4) + 0;	
-    } else {
-	note( "Unexpected reference format, failed extracting the RFC number: " ref )
+    for (;;) {
+	if (match(ref, /(RFC|rfc)[0-9][0-9]+/)){
+	    num = substr(ref, RSTART+3, RLENGTH-3) + 0;
+	} else if (match(ref, /(RFC|rfc)[ -][0-9][0-9]+/)) {
+	    num = substr(ref, RSTART+4, RLENGTH-4) + 0;	
+	} else if (match(ref, /(Request [Ff]or Comments) [0-9][0-9]+/)) {
+	    num = substr(ref, RSTART+21, RLENGTH-21) + 0;	
+	} else if (match(ref, /(Request [Ff]or Comments)( \([^\)]*\))? [0-9][0-9]+/)) {
+	    num = substr(ref, RSTART+RLENGTH-4, 4) + 0;	
+	} else {
+	    if (! num) note( "Unexpected reference format, failed extracting the RFC number: " ref )
+	    break;
+	}
+	if (RSTART+RLENGTH <= 1) break
+	ref = substr(ref, RSTART+RLENGTH)
     }
     return num
 }
@@ -1198,7 +1262,7 @@ function get_draftcode(draftname, state,	code) {
     return code;
 }
 
-function check_downref(tag, warnlist,		rfcnum, draftname, code, status) {
+function check_downref(tag, warnlist,		rfcnum, draftname, code, status, doc) {
 
     if (tag in ref_text) ref = ref_text[tag]; else ref = tag;
     gsub(/  +/, " ", ref);
@@ -1207,11 +1271,10 @@ function check_downref(tag, warnlist,		rfcnum, draftname, code, status) {
 	note("Reference text: " ref)
     }
 
-    if (ref ~ /(RFC|rfc|Request [Ff]or Comments)( \([^\)]*\)|-)? ?[0-9][0-9]+/) {	
-	rfcnum = get_rfcnum(ref);
-    } else if (ref ~ /[, ([](draft-|I-D\.)/) {
+    if (ref ~ /[, ([](draft-|I-D\.)/) {
 	draftname = get_draftname(ref);
 	draftrev  = get_draftrev(ref);
+	doc = draftname;
 	get_state(draftname, state);
 	## Refactoring needed.  We probably need a check_reference() rather than check_downref(),
 	## with the published and current-version checks below being done as part of the general
@@ -1219,9 +1282,21 @@ function check_downref(tag, warnlist,		rfcnum, draftname, code, status) {
 	if ("rfcnum" in state) {
 	    warnc(sprintf("Outdated reference: %s has been published as RFC %s", draftname, state["rfcnum"]));
 	} else if (draftrev && ("rev" in state) && (draftrev != state["rev"])) {
-	    warnc(sprintf("Outdated reference: A later version (-%s) exists of %s-%s", state["rev"], draftname, draftrev))
+	    if (draftrev+0 < state["rev"]+0) {
+		warnc(sprintf("Outdated reference: A later version (-%s) exists of %s-%s", state["rev"], draftname, draftrev))
+	    } else {
+		comment(sprintf("Unexpected draft version: The latest known version of  %s is -%s, but you're referring to -%s", draftname, state["rev"], draftrev))
+	    }
 	}
+    } else if (ref ~ /(RFC|rfc|Request [Ff]or Comments)( \([^\)]*\)|-)? ?[0-9][0-9]+/) {	
+	rfcnum = get_rfcnum(ref);
+	doc = "RFC" rfcnum;
+    } 
+    if (doc && doc in seen_ref && !(seen_ref[doc] in miss_ref) ) {
+	comment(sprintf("Duplicate reference: %s, mentioned in '%s', was also mentioned in '%s'.", doc, tag, seen_ref[doc]));
     }
+    seen_ref[doc] = tag;
+
     if (rfcnum) code = substr(rfcstatus, rfcnum, 1);
     if (draftname) code = get_draftcode(draftname, state);
     if (rfcnum && code == "O") {
@@ -1351,8 +1426,18 @@ function report(filename) {
 				    {
 					sectionerr("rfc3978_5_1", "RFC 3978 Section 5.1 IPR Disclosure Acknowledgement");
 				    }
-	    if ( has["rfc3978_5_2b"]) { err("The document has an RFC 3978 Section 5.2(b) Derivative Works Limitation clause."); }
-	    if ( has["rfc3978_5_3"])  { err("The document has an RFC 3978 Section 5.3 Publication Limitation clause ."); }
+	    if (full_docname ~ /^draft-ietf/ ) {
+		if ( has["rfc3978_5_2b"] ) { err("The document has an RFC 3978 Section 5.2(b) Derivative Works Limitation clause."); }
+		if ( has["rfc3978_5_3"])  { err("The document has an RFC 3978 Section 5.3 Publication Limitation clause ."); }
+	    } else {
+		
+		if ( has["rfc3978_5_2b"] ) { comment("The document has an RFC 3978 Section 5.2(b) Derivative Works Limitation clause.  " \
+						    "If this document is intended for submission to the IESG for publication, this " \
+						    "constitutes an error."); }
+		if ( has["rfc3978_5_3"])  { comment("The document has an RFC 3978 Section 5.3 Publication Limitation clause .  " \
+						    "If this document is intended for submission to the IESG for publication, this " \
+						    "constitutes an error."); }
+	    }
 	    if (! has["rfc3978_5_4_p1_u4748"])  {
 					  if (has["rfc3978_5_4_p1"]) {
 					      err("This document has an original RFC 3978 Section 5.4 Copyright Line, " \
@@ -1471,13 +1556,21 @@ function report(filename) {
 		    errg(sprintf("Missing revision: the document name given in the document, '%s', does not give the document revision number", full_docname))
 		}
 
+		if ( match(full_docname, /^draft--/) ) {
+		    errg(sprintf("Empty name element: the document name given in the document, '%s', lacks the source element (it starts with 'draft--'). See http://www.ietf.org/ietf/1id-guidelines.txt, section 7, on how to construct a good document name.", full_docname))
+		}
+
+		if ( match(full_docname, /--[0-9][0-9]$/) ) {
+		    errg(sprintf("Negative revision number: the document name given in the document, '%s', seems to have a negative revision number (it ends with '--%s'). See http://www.ietf.org/ietf/1id-guidelines.txt, section 7, on how to construct a good document name.", full_docname, substr(full_docname, length(full_docname)-1)))
+		}
+
 		if (length(file_docname) > length(full_docname)) long_docname = file_docname; else long_docname = full_docname;
 		sub(/-[0-9][0-9]$/, "", long_docname);
 		if (length(long_docname) > 50) {
 		    errg(sprintf("Too long document name: The document name (without revision number), '%s', is %d characters long, but may be at most 50 characters", long_docname, length(long_docname)))
 		}
 
-		if (file_docname != full_docname) {
+		if (file_docname && file_docname != full_docname) {
 		    warn(sprintf("Mismatching filename: the document gives the document name as '%s', but the file name used is '%s'", full_docname, file_docname))
 		}
 
@@ -1493,7 +1586,7 @@ function report(filename) {
 	    # that may be without the boilerplate - and practice seems to permit
 	    # also 16 pages including boilerplate, so...
 	    if (!has_toc && ((pagecount > 16) || (FNR > 50*16))) {
-		err("The document is more than 15 pages and seems to lack a Table of Contents.");
+		errw("The document is more than 15 pages and seems to lack a Table of Contents.");
 	    }
 
 	    if (nonascii) {
@@ -1513,6 +1606,9 @@ function report(filename) {
 	    if ( pagecount > formfeedcount+1 ) {
 		warnc(sprintf("It seems as if not all pages are separated by form feeds - " \
 			     "found %d form feeds but %d page%s", formfeedcount, pagecount, (pagecount==1?"":"s")));
+	    }
+	    if ( missing_nroff_postprocessing ) {
+		comment(sprintf("Found %d instances of the string 'FORMFEED[Page...' -- is this a case of missing nroff postprocessing?", missing_nroff_postprocessing))
 	    }
 
 	    if (warncount == warnings && errcount == errors && commentcount == comments) note("No issues found here.");
@@ -1641,7 +1737,11 @@ function report(filename) {
 
 		    }
 	    }
-	    if ( has["rfc3978_5_2a"])	    {	warn("The document has an RFC 3978 Section 5.2(a) Derivative Works Limitation clause."); }
+	    if (full_docname ~ /^draft-ietf/ ) {
+		if ( has["rfc3978_5_2a"])	    {	warn("The document has an RFC 3978 Section 5.2(a) Derivative Works Limitation clause."); }
+	    } else {
+		if ( has["rfc3978_5_2a"])	    {	note("The document has an RFC 3978 Section 5.2(a) Derivative Works Limitation clause."); }	
+	    }
 	    if ( has["rfc3978_5_4_p1"] &&
 		!has["rfc3978_5_4_p1_now"])   {	warn("The copyright year in the RFC 3978 Section 5.4 Copyright Line does not match the current year"); }
 	    if ( has["rfc3978_5_4_p1_u4748"] &&
@@ -1702,6 +1802,19 @@ function report(filename) {
 		}
 	    }
 
+	    for (combo in rfc2119undefined) {
+		comment("The exact meaning of the all-uppercase expression '" combo \
+		"' is not defined in RFC 2119.  If it is intended as a requirements " \
+		"expression, it should be rewritten using one of the combinations " \
+		"defined in RFC 2119; otherwise it should not be all-uppercase.")
+	    }
+
+	    for (pattern in found_bad) {
+		para = found_bad[pattern]
+		warn(bad[pattern] "\n\n     Found '" strip(pattern) "' in this paragraph:\n\n    " para)
+	    }
+
+
 	    if (warncount == warnings && errcount == errors && commentcount == comments) note("No issues found here.");
 
 
@@ -1719,6 +1832,11 @@ function report(filename) {
 	    split(warncodes[intended_code], warnlist);
 	    for (i in warnlist) warnlist[warnlist[i]];
 
+	    std_codes["B"];std_codes["P"];std_codes["D"];std_codes["S"];
+	    if (intended_code in std_codes) {
+		note("(See RFCs 3967 and 4897 for information about using normative references to lower-maturity documents in RFCs)\n")
+	    }
+
 	    for ( i = 1; i <= ref_use_count; i++ ) {
 		tag = ref_use_list[i]
 		if (! (tag in ref_def)) {
@@ -1726,6 +1844,7 @@ function report(filename) {
 		    if ((is_numeric && has_numeric_refs) || (!is_numeric && has_symbolic_refs)) {
 			warnc(sprintf("Missing Reference: '%s' is mentioned on line %s, but not defined", tag, ref_use[tag])	\
 				(option_verbose ? sprintf("\n'%s...'", strip(substr(line[ref_use[tag]],1,68))) : ""));
+			miss_ref[tag];
 			check_downref(tag, warnlist);
 		    } else if (has_numeric_refs || has_symbolic_refs) {
 			comment(sprintf("Looks like a reference, but probably isn't: '%s' on line %s", tag, ref_use[tag])	\
@@ -1762,7 +1881,7 @@ function report(filename) {
 	} else {
 	    print "";
 	    note(sprintf("Summary: %d error%s (%s), %d warning%s (%s), %d comment%s (%s).", errors, (errors==1?"":"s"), errmark, warnings, (warnings==1?"":"s"), warnmark, comments, (comments==1?"":"s"), infomark));
-	    if (! option_verbose) {
+	    if ( !option_verbose && !option_submitcheck ) {
 	        print "";
 		note("Run idnits with the --verbose option for more detailed information about the items above.");
 	    }
@@ -1863,7 +1982,7 @@ function checkline() {
     }
 
     # RFC 2119 language    
-    if ( match($0, /[ \t](MUST|MUST NOT|REQUIRED|SHALL|SHALL NOT|SHOULD|SHOULD NOT|RECOMMENDED|MAY|OPTIONAL)[ \t\.,]/ ) )	{
+    if ( match($0, /[ \t](MUST|REQUIRED|SHALL|SHOULD|RECOMMENDED|MAY|OPTIONAL)[ \t\.,]/ ) ) {
 	keywords++;
 	rfc2119line[keywords] = FNR;
 	rstart = RSTART-16;
@@ -1873,6 +1992,29 @@ function checkline() {
 	if ( ! (FNR in line) ) line[FNR] = substr($0, rstart, rlength);
 	if (option_verbose > 1 && option_pass1) {
 	    printf("%s(%d): RFC 2119 keyword: %s.\n", FILENAME, FNR, $0);
+	}
+
+	# Keywords:
+	#
+	#	MUST		MUST NOT
+	#	SHALL		SHALL NOT
+	#	SHOULD		SHOULD NOT
+	#	RECOMMENDED	NOT RECOMMENDED
+	#	REQUIRED
+	#	MAY
+	#	OPTIONAL
+
+	# Find uppercase words before or after our keywords, and check if the combination is defined
+	l = $0
+	sub(/\t/, " ", l)
+	notkwds["MAY NOT"]; notkwds["NOT REQUIRED"]; notkwds["NOT OPTIONAL"]; 
+	for (combo in notkwds) {
+	    if (l ~ combo) {
+		rfc2119undefined[combo]
+		if (option_verbose > 1 && option_pass1) {
+		    printf("%s(%d): Undefined keyword combination: '%s'.\n", FILENAME, FNR, combo)
+		}
+	    }
 	}
     }
 
@@ -1933,19 +2075,23 @@ function checkline() {
     }
 
     # ID-Checklist section 3.6 B: Example numeric IPv6 addresses
-    if ( has_intro && !in_refs && match($0, /[ \t][0-9A-Fa-f]+:[0-9A-Fa-f]+(:[0-9A-Fa-f]*)+/)) {
-	IPv6addr = substr($0, RSTART+1, RLENGTH-1)
+    if ( has_intro && !in_refs && match($0, /[ \t][0-9A-Fa-f]+:[0-9A-Fa-f]+(:[0-9A-Fa-f]*)+(EUI64)?/)) {
+	if (IPv6addr ~ /.+EUI64/) {
+	    IPv6addr = substr($0, RSTART+1, RLENGTH-6) "0"
+	} else {
+	    IPv6addr = substr($0, RSTART+1, RLENGTH-1)
+	}
 	addrstart = RSTART+1
 
 	# We have to match either 8 parts separated by colons or fewer parts with one embedded '::' or fewer parts ending in '::':
-	if (IPv6addr !~ /^2001:[Dd][Bb]8(:[0-9A-Fa-f]*)+$/			\
+	if (IPv6addr !~ /^2001:0?[Dd][Bb]8(:[0-9A-Fa-f]*)+$/			\
 	    && IPv6addr !~ /^[Ff][CcDd][0-9A-Fa-f]?[0-9A-Fa-f]?(:[0-9A-Fa-f]*)+$/	\
 	    && (   IPv6addr ~ /^[0-9A-Fa-f]+:[0-9A-Fa-f]+:[0-9A-Fa-f]+:[0-9A-Fa-f]+:[0-9A-Fa-f]+:[0-9A-Fa-f]+:[0-9A-Fa-f]+:[0-9A-Fa-f]+$/ \
 		|| IPv6addr ~ /([0-9A-Fa-f]+:)([0-9A-Fa-f]+:)?([0-9A-Fa-f]+:)?([0-9A-Fa-f]+:)?([0-9A-Fa-f]+:)?([0-9A-Fa-f]+:)?([0-9A-Fa-f]+:)?:$/ \
 		|| IPv6addr ~ /([0-9A-Fa-f]+:)([0-9A-Fa-f]+:)?([0-9A-Fa-f]+:)?([0-9A-Fa-f]+:)?([0-9A-Fa-f]+:)?([0-9A-Fa-f]+:)?(:[0-9A-Fa-f]+)(:[0-9A-Fa-f]+)?(:[0-9A-Fa-f]+)?(:[0-9A-Fa-f]+)?(:[0-9A-Fa-f]+)?(:[0-9A-Fa-f]+)?$/ )) {
 	    if (option_verbose && option_pass1) {
 		printf("%s(%d): Found possible IPv6 address '%s' in position %d; this doesn't match " \
-			"RFC3848's suggested 2001:DB8::/32 address range or RFC4193's Unique Local Address range FC00::/7.\n", \
+			"RFC3849's suggested 2001:DB8::/32 address range or RFC4193's Unique Local Address range FC00::/7.\n", \
 			FILENAME, FNR, IPv6addr, addrstart)
 		if (option_verbose > 1 && option_pass1) {
 		    printf("  --> %s\n", $0);
@@ -1954,6 +2100,16 @@ function checkline() {
 	    }
 	    badipv6addr++;
 	}
+    }
+}
+
+
+function check_para(para) {
+    # Checking various things that need to be checked after assembling a full paragraph;
+    # in particular, word combinations can't be reliably checked line-by-line as they
+    # may be split across a line break.
+    for (pattern in bad) {
+	if (para ~ pattern) found_bad[pattern] = para;
     }
 }
 
@@ -1997,11 +2153,14 @@ function checkline() {
 /-\+- Longpagecount: [0-9]+ -\+-/ { longpagecount = $3+0; next  }
 /-\+- Formfeedcount: [0-9]+ -\+-/ { formfeedcount = $3+0; next  }
 /-\+- Expiration: [0-9]+ -\+-/    { has_expiration = $3+0; next  }
+/-\+- NoNroffPostproc: [0-9]+ -\+-/ { missing_nroff_postprocessing = $3+0; next  }
+
+
 
 # Check for required sections
 # Nawk doesn't understand IGNORECASE = 0, so we have to explicitly convert.
 # Also normalise the indentation
-/\. ?\. ?\. ?\. ?\. ?[0-9]+$/					{   if (!has_intro) { has_toc = 1; in_toc = 1; }; next; }
+/\. ?\. ?\. ?\. ?\. *[0-9]+$/					{   if (!has_intro) { has_toc = 1; in_toc = 1; }; next; }
 								{
 								    normalized = tolower($0);
 								    if (indentation) normalized = substr(normalized, indentation);
@@ -2014,21 +2173,21 @@ normalized ~ /^expires:?.*20[0-9][0-9]/				{   has_expiration = 1; }
 normalized ~ /^([0123.]+ )? *abstract$/				{   has_abstract = 1; }
 normalized ~ /^ +([0123.]+ )? *abstract$/			{   indented_abstract = $0; }
 
-normalized ~ /^([0123.]+ )? *table of contents:?$/		{   has_toc = 1; in_toc = 1; }
+normalized ~ /^([0123.]+ +)?table of contents:?( *\(.+\))?$/	{   has_toc = 1; in_toc = 1; }
 
 normalized ~ /^[ \t]*contents$/					{   if (!has_intro) { has_toc = 1; in_toc = 1; } }
 
-normalized ~ /^([0123.]+ )? ? ? ? ? ?introduction[ \t]*.*/		{   has_intro = 1; }
-normalized ~ /^ +([0123.]+ )? ? ? ? ? ?introduction[ \t]*.*/		{   indented_intro = $0; }
+normalized ~ /^([0123.]+ )? ? ? ? ? ?introduction[ \t]*.*/	{   has_intro = 1; }
+normalized ~ /^ +([0123.]+ )? ? ? ? ? ?introduction[ \t]*.*/	{   indented_intro = $0; }
 
 normalized ~ /^([0123.]+ )? ? ? ? ? ?overview[ \t]*.*/		{   has_intro = 1; }
-normalized ~ /^ +([0123.]+ )? ? ? ? ? ?overview[ \t]*.*/		{   indented_intro = $0; }
+normalized ~ /^ +([0123.]+ )? ? ? ? ? ?overview[ \t]*.*/	{   indented_intro = $0; }
 
 normalized ~ /^([0123.]+ )? ? ? ? ? ?rationale[ \t]*.*/		{   has_intro = 1; }
-normalized ~ /^ +([0123.]+ )? ? ? ? ? ?rationale[ \t]*.*/		{   indented_intro = $0; }
+normalized ~ /^ +([0123.]+ )? ? ? ? ? ?rationale[ \t]*.*/	{   indented_intro = $0; }
 
-normalized ~ /^([0123.]+ )? ? ? ? ? ?scope[ \t]*.*/			{   has_intro = 1; }
-normalized ~ /^ +([0123.]+ )? ? ? ? ? ?scope[ \t]*.*/			{   indented_intro = $0; }
+normalized ~ /^([0123.]+ )? ? ? ? ? ?scope[ \t]*.*/		{   has_intro = 1; }
+normalized ~ /^ +([0123.]+ )? ? ? ? ? ?scope[ \t]*.*/		{   indented_intro = $0; }
 
 normalized ~ /^([0123.]+ )? ? ? ? ? ?(historical )?background[ \t]*.*/{   has_intro = 1; }
 normalized ~ /^ +([0123.]+ )? ? ? ? ? ?(historical )?background[ \t]*.*/{   indented_intro = $0; }
@@ -2048,7 +2207,9 @@ normalized ~ /^[0-9.]+ +/					{   in_refs = 0; in_abnf = 0; sections[$1] = subst
 normalized ~ /^appendix/					{   if (has_refs) has_appendix = 1; in_refs = 0; nnnote("Appendix start: " $0); }
 normalized ~ /^ +appendix/					{   if (has_refs) indented_appendix = $0; }
 
-normalized ~ abnf_rule_format					{   in_abnf++; }
+normalized ~ /(^| )abnf([ .]|$)/				{   abnf_mentioned = 1; }
+normalized ~ abnf_rule_format					{   in_abnf++;   } 
+normalized ~ /^ *$/						{   in_abnf = 0; } 
 
 normalized ~ /^([0-9]+[.]?0? )? ? ? ? ? ?references$/			{   if (has_intro || has_security || has_iana) { has_refs = 1; in_refs = 1; in_normref = 1; }}
 normalized ~ /^ +([0-9]+[.]?0? )? ? ? ? ? ?references$/			{   if (has_intro || has_security || has_iana) { indented_refs = $0; }}
@@ -2078,21 +2239,23 @@ normalized ~ /by submitting this internet-draft/                {
 
 								    almost = almost_boilerplate["rfc3978_5_1"]
 
-                                                                    if ( match_para(para, "rfc3978_5_1")			\
+								    # Order is significant here -- try the longer text before subsets of it
+                                                                    if ( match_para(para, "rfc3978_5_1", "rfc3978_5_2ax")	\
 								      || match_para(para, "rfc3978_5_1", "rfc3978_5_2a")	\
-								      || match_para(para, "rfc3978_5_1", "rfc3978_5_2ax")	\
-								      || match_para(para, "rfc3978_5_1", "rfc3978_5_2b")	\
 								      || match_para(para, "rfc3978_5_1", "rfc3978_5_2bx")	\
-                                                                      || match_para(para, "rfc3978_5_1_a")			\
-	                                                              || match_para(para, "rfc3978_5_1_a", "rfc3978_5_2a")	\
+								      || match_para(para, "rfc3978_5_1", "rfc3978_5_2b")	\
+								      || match_para(para, "rfc3978_5_1")			\
                                                                       || match_para(para, "rfc3978_5_1_a", "rfc3978_5_2ax")	\
-                                                                      || match_para(para, "rfc3978_5_1_a", "rfc3978_5_2b")	\
+	                                                              || match_para(para, "rfc3978_5_1_a", "rfc3978_5_2a")	\
                                                                       || match_para(para, "rfc3978_5_1_a", "rfc3978_5_2bx")	\
-                                                                      || match_para(para, "rfc3667_5_1")			\
-								      || match_para(para, "rfc3667_5_1", "rfc3978_5_2a")	\
+                                                                      || match_para(para, "rfc3978_5_1_a", "rfc3978_5_2b")	\
+                                                                      || match_para(para, "rfc3978_5_1_a")			\
 								      || match_para(para, "rfc3667_5_1", "rfc3978_5_2ax")	\
+								      || match_para(para, "rfc3667_5_1", "rfc3978_5_2a")	\
+                                                                      || match_para(para, "rfc3667_5_1", "rfc3978_5_2bx")	\
                                                                       || match_para(para, "rfc3667_5_1", "rfc3978_5_2b")	\
-                                                                      || match_para(para, "rfc3667_5_1", "rfc3978_5_2bx") ) {
+                                                                      || match_para(para, "rfc3667_5_1")			\
+								      ) {
 
 								        almost_boilerplate["rfc3978_5_1"] = almost;
 								    }
@@ -2104,10 +2267,10 @@ normalized ~ /this document may not be modified/                {
                                                                     match_para(para, "rfc3978_5_2a") || match_para(para, "rfc3978_5_2ax");
                                                                     match_para(para, "rfc3978_5_2b") || match_para(para, "rfc3978_5_2bx");
                                                                 }
-normalized ~ /copyright ?\(c\) ?the /		{
+normalized ~ /copyright ?\(c\) ?the /				{
 								    para = get_para()
-								    has_some_year = match_para(para, "rfc3978_5_4_p1", "rfc3978_5_4_p2");
-								    has_some_year = match_para(para, "rfc3978_5_4_p1_u4748", "rfc3978_5_4_p2") || has_some_year;
+								    has_some_year = match_para(para, "rfc3978_5_4_p1", "rfc3978_5_4_p2", "rfc3978_5_5");
+								    has_some_year = match_para(para, "rfc3978_5_4_p1_u4748", "rfc3978_5_4_p2", "rfc3978_5_5_u4748") || has_some_year;
 
 								    has_this_year = match_para(para, "rfc3978_5_4_p1_now");
 								    has_this_year = match_para(para, "rfc3978_5_4_p1_u4748_now") || has_this_year;
@@ -2235,19 +2398,10 @@ normalized ~ /the list of internet-draft shadow directories/	{
 
 # References and downref checking
 
-normalized ~ /^(intended status|category):/				{
+normalized ~ /(intended status|category):/			{
 								    if ( !has_intro && !has_abstract && !has_refs && !has_appendix && !has_status_of_memo) {
 									sta = tolower($0);
-									sub(/^ *[a-z ]+: */, "", sta);
-									sub(/   .*$/, "", sta);
-									if ( length(intended_status) == 0) intended_status = sta;
-								    }
-								}
-
-normalized ~ /^intended status:/				{
-								    if ( !has_intro && !has_abstract && !has_refs && !has_appendix && !has_status_of_memo) {
-									sta = tolower($0);
-									sub(/^ *intended status: */, "", sta);
+									sub(/^.*(intended status|category): */, "", sta);
 									sub(/   .*$/, "", sta);
 									if ( length(intended_status) == 0) intended_status = sta;
 								    }
@@ -2274,7 +2428,7 @@ $0 ~ reference_format						{
 									}
 								        update_references(reftext, refpos);
 								    } else {
-									if ($0 !~ abnf_rule_format ) update_references($0, FNR);
+									if (!abnf_mentioned || !in_abnf ) update_references($0, FNR);
 								    } 
 								}
 /\[[0-9A-Z-]+- *$/						{
@@ -2286,7 +2440,22 @@ $0 ~ reference_format						{
 									update_references(incomplete_ref_line strip($0), incomplete_ref_pos)
 								    }
 								}
-								
+
+{
+    text = strip($0);
+    if ( text == "") {
+	if (para) check_para(para);
+	para = "";
+    } else {
+	if (para ~ /-$/) {
+	    para = para text;
+	} else {
+	    para = para " " text;
+	}
+    }
+}
+
+
 
 END {
 
@@ -2392,6 +2561,7 @@ yes * Disclaimer of IPR validity per RFC 3979 Section 5
 download() (
     name="$1"; url=$2; file=$3; test="$4"
 
+    cd $statusdir
     if [ "$file" ]; then
 	filedate=$($FDATE $file.date 2>/dev/null) 
 	tempfile=$(tmpfile)
@@ -2406,7 +2576,7 @@ download() (
 		note -e "(No $name file. Attempting to download it..."
 	    fi
 	    if $WGET $WARG $url > $tempfile; then
-		if grep -qs "$test" $tempfile; then
+		if grep -qsE "$test" $tempfile; then
 		    note " - Success fetching $name file.)"
 		    tr -d "\r" < $tempfile > $file.date
 		    if ! cmp -s $file.date $file; then mv $file.date $file; touch -r $tempfile $file; else rm $file.date; fi; touch $file.date; 
@@ -2429,6 +2599,11 @@ while [ $# -gt 0 ]; do
     case "$1" in
 	--checklistwarn)
 	    options="$options $1"
+	    ;;
+	--download)
+	    shift
+	    download "$@"
+	    exit
 	    ;;
 	--help)
 	    helpmsg
@@ -2505,11 +2680,15 @@ export CHECKNITS COLUMNS
 if [ -z "$files" ]; then
     CHECKNITS=$options
     echo "Reading input from pipe.  Skipping some checks." > /dev/stdout
-    strip | checknits
+    fixnl | strip | checknits
 else
     for file in $files; do
 	echo ""
 	echo "$file:"
+
+	if [ ! -f "$file" ]; then
+	    die "No such file: $file"
+	fi
 
 	if [ -n "$optverbose" ]; then
 	    # run a first pass without stripping, to get correct line
@@ -2517,8 +2696,16 @@ else
 	    (CHECKNITS="$optverbose --pass1" checknits $file)
 	fi
 
-	draftrefs=$(tr -c "a-z0-9-" "[\n*]" < $file | tr -s "\n" | sed -e :a -e '/-$/N; s/-\n/-/; ta' | grep "^draft-[a-z0-9-]*" | sort | uniq )
+
+	# The next 
+	draftrefs=$(tr -c "A-Za-z0-9+-" "[\n*]" < $file | tr -s "\n" |	\
+	awk '
+	   /draft-[a-z0-9+-]+-$/ { printf $0 ; next; }
+				 { print; }
+	' | grep "^draft-[a-z0-9+-]*" | sort | uniq )
+
 	for ref in $draftrefs; do
+	    ref=$(echo $ref | tr -d "\r")
 	    name=${ref%-[0-9][0-9]}
 	    if [ ! "$name" = "draft" ]; then
 	        download "$name state" http://tools.ietf.org/draft/$name/state $statusdir/$name.state "Doc-tag: $name"
@@ -2528,15 +2715,15 @@ else
 	CHECKNITS="$options --filename $file"
 	stripped=/tmp/idnits-$$-stripped-`basename $file`
 	if [ "$optkeep" = "1" ]; then
-	    strip $file | tee $stripped | checknits
+	    fixnl $file | strip | tee $stripped | checknits
 	elif [ "$optshowtext" = "1" ]; then
-	    strip $file | tee $stripped | checknits
+	    fixnl $file | strip | tee $stripped | checknits
 	    echo "--------------------------------------------------------------------------------"
 	    echo ""
 	    cat $stripped | sed -r -e 's/^-\+- .* -\+-$//' -e '/./=' | sed '/./N; s/\n/	/' # Note: literal tab in sed regex
 	    rm -f $stripped
 	else
-	    strip $file | checknits
+	    fixnl $file | strip | checknits
 	fi
 
  	if [ "$wordlist" -a "$SPELL" -a "$optspellcheck" ]; then

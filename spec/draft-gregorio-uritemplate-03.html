@@ -1,355 +1,497 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>URI Template</title><style type="text/css" title="Xml2Rfc (sans serif)">
-a {
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
-}
-a:active {
-  text-decoration: underline;
-}
-address {
-  margin-top: 1em;
-  margin-left: 2em;
-  font-style: normal;
-}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en"><head><title>URI Template</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="description" content="URI Template">
+<meta name="generator" content="xml2rfc v1.33 (http://xml.resource.org/)">
+<style type='text/css'><!--
+        body {
+                font-family: verdana, charcoal, helvetica, arial, sans-serif;
+                font-size: small; color: #000; background-color: #FFF;
+                margin: 2em;
+        }
+        h1, h2, h3, h4, h5, h6 {
+                font-family: helvetica, monaco, "MS Sans Serif", arial, sans-serif;
+                font-weight: bold; font-style: normal;
+        }
+        h1 { color: #900; background-color: transparent; text-align: right; }
+        h3 { color: #333; background-color: transparent; }
 
-body {
-  
-  color: #000000;
-  font-family: verdana, helvetica, arial, sans-serif;
-  font-size: 10pt;
-}
-cite {
-  font-style: normal;
-}
-dl {
-  margin-left: 2em;
-}
+        td.RFCbug {
+                font-size: x-small; text-decoration: none;
+                width: 30px; height: 30px; padding-top: 2px;
+                text-align: justify; vertical-align: middle;
+                background-color: #000;
+        }
+        td.RFCbug span.RFC {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: bold; color: #666;
+        }
+        td.RFCbug span.hotText {
+                font-family: charcoal, monaco, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: normal; text-align: center; color: #FFF;
+        }
 
-dl.empty dd {
-  margin-top: .5em;
-}
-dt {
-  margin-top: .5em;
-}
-h1 {
-  color: #333333;
-  font-size: 14pt;
-  line-height: 21pt;
-  page-break-after: avoid;
-}
-h1.np {
-  page-break-before: always;
-}
-h1 a {
-  color: #333333;
-}
-h2 {
-  color: #000000;
-  font-size: 12pt;
-  line-height: 15pt;
-  page-break-after: avoid;
-}
-h2 a {
-  color: #000000;
-}
-h3 {
-  color: #000000;
-  font-size: 10pt;
-  page-break-after: avoid;
-}
-h3 a {
-  color: #000000;
-}
-h4 {
-  color: #000000;
-  font-size: 10pt;
-  page-break-after: avoid;
-}
-h4 a {
-  color: #000000;
-}
-h5 {
-  color: #000000;
-  font-size: 10pt;
-  page-break-after: avoid;
-}
-h5 a {
-  color: #000000;
-}
-img {
-  margin-left: 3em;
-}
-li {
-  margin-left: 2em;
-  margin-right: 2em;
-}
-ol {
-  margin-left: 2em;
-  margin-right: 2em;
-}
-p {
-  margin-left: 2em;
-  margin-right: 2em;
-}
-pre {
-  margin-left: 3em;
-  background-color: lightyellow;
-  padding: .25em;
-}
-pre.text2 {
-  border-style: dotted;
-  border-width: 1px;
-  background-color: #f0f0f0;
-  width: 69em;
-}
-pre.inline {
-  background-color: white;
-  padding: 0em;
-}
-pre.text {
-  border-style: dotted;
-  border-width: 1px;
-  background-color: #f8f8f8;
-  width: 69em;
-}
-pre.drawing {
-  border-style: solid;
-  border-width: 1px;
-  background-color: #f8f8f8;
-  padding: 2em;
-}
+        table.TOCbug { width: 30px; height: 15px; }
+        td.TOCbug {
+                text-align: center; width: 30px; height: 15px;
+                color: #FFF; background-color: #900;
+        }
+        td.TOCbug a {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, sans-serif;
+                font-weight: bold; font-size: x-small; text-decoration: none;
+                color: #FFF; background-color: transparent;
+        }
 
-table {
-  margin-left: 2em;
-}
+        td.header {
+                font-family: arial, helvetica, sans-serif; font-size: x-small;
+                vertical-align: top; width: 33%;
+                color: #FFF; background-color: #666;
+        }
+        td.author { font-weight: bold; font-size: x-small; margin-left: 4em; }
+        td.author-text { font-size: x-small; }
 
-table.tt {
-  vertical-align: top;
-}
-table.full {
-  border-style: outset;
-  border-width: 1px;
-}
-table.headers {
-  border-style: outset;
-  border-width: 1px;
-}
-table.tt td {
-  vertical-align: top;
-}
-table.full td {
-  border-style: inset;
-  border-width: 1px;
-}
-table.tt th {
-  vertical-align: top;
-}
-table.full th {
-  border-style: inset;
-  border-width: 1px;
-}
-table.headers th {
-  border-style: none none inset none;
-  border-width: 1px;
-}
+        /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+        a.info {
+                /* This is the key. */
+                position: relative;
+                z-index: 24;
+                text-decoration: none;
+        }
+        a.info:hover {
+                z-index: 25;
+                color: #FFF; background-color: #900;
+        }
+        a.info span { display: none; }
+        a.info:hover span.info {
+                /* The span will display just on :hover state. */
+                display: block;
+                position: absolute;
+                font-size: smaller;
+                top: 2em; left: -5em; width: 15em;
+                padding: 2px; border: 1px solid #333;
+                color: #900; background-color: #EEE;
+                text-align: left;
+        }
 
-table.header {
-  width: 95%;
-  font-size: 10pt;
-  color: white;
-}
-td.top {
-  vertical-align: top;
-}
-td.topnowrap {
-  vertical-align: top;
-  white-space: nowrap; 
-}
-td.front {
-  background-color: gray;
-  width: 50%;
-}
-thead {
-  display:table-header-group;
-}
-ul.toc {
-  list-style: none;
-  margin-left: 1.5em;
-  margin-right: 0em;
-  padding-left: 0em;
-}
-li.tocline0 {
-  line-height: 150%;
-  font-weight: bold;
-  font-size: 10pt;
-  margin-left: 0em;
-  margin-right: 0em;
-}
-li.tocline1 {
-  line-height: normal;
-  font-weight: normal;
-  font-size: 9pt;
-  margin-left: 0em;
-  margin-right: 0em;
-}
-li.tocline2 {
-  font-size: 0pt;
-}
-ul.ind {
-  list-style: none;
-  margin-left: 1.5em;
-  margin-right: 0em;
-  padding-left: 0em;
-}
-li.indline0 {
-  font-weight: bold;
-  line-height: 200%;
-  margin-left: 0em;
-  margin-right: 0em;
-}
-li.indline1 {
-  font-weight: normal;
-  line-height: 150%;
-  margin-left: 0em;
-  margin-right: 0em;
-}
+        a { font-weight: bold; }
+        a:link    { color: #900; background-color: transparent; }
+        a:visited { color: #633; background-color: transparent; }
+        a:active  { color: #633; background-color: transparent; }
 
-.comment {
-  background-color: yellow;
-}
+        p { margin-left: 2em; margin-right: 2em; }
+        p.copyright { font-size: x-small; }
+        p.toc { font-size: small; font-weight: bold; margin-left: 3em; }
+        table.toc { margin: 0 0 0 3em; padding: 0; border: 0; vertical-align: text-top; }
+        td.toc { font-size: small; font-weight: bold; vertical-align: text-top; }
 
-.center {
-  text-align: center;
-}
-.error {
-  font-size: 14pt;
-  background-color: red;
-}
-.figure {
-  font-weight: bold;
-  text-align: center;
-  font-size: 9pt;
-}
-.filename {
-  color: #333333;
-  font-weight: bold;
-  font-size: 12pt;
-  line-height: 21pt;
-  text-align: center;
-}
-.fn {
-  font-weight: bold;
-}
-.hidden {
-  display: none;
-}
-.left {
-  text-align: left;
-}
-.right {
-  text-align: right;
-}
-.title {
-  color: #990000;
-  font-size: 18pt;
-  line-height: 18pt;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 36pt;
-}
-.vcardline {
-  display: block;
-}
-.warning {
-  font-size: 14pt;
-  background-color: yellow;
-}
+        ol.text { margin-left: 2em; margin-right: 2em; }
+        ul.text { margin-left: 2em; margin-right: 2em; }
+        li      { margin-left: 3em; }
 
+        /* RFC-2629 <spanx>s and <artwork>s. */
+        em     { font-style: italic; }
+        strong { font-weight: bold; }
+        dfn    { font-weight: bold; font-style: normal; }
+        cite   { font-weight: normal; font-style: normal; }
+        tt     { color: #036; }
+        tt, pre, pre dfn, pre em, pre cite, pre span {
+                font-family: "Courier New", Courier, monospace; font-size: small;
+        }
+        pre {
+                text-align: left; padding: 4px;
+                color: #000; background-color: #CCC;
+        }
+        pre dfn  { color: #900; }
+        pre em   { color: #66F; background-color: #FFC; font-weight: normal; }
+        pre .key { color: #33C; font-weight: bold; }
+        pre .id  { color: #900; }
+        pre .str { color: #000; background-color: #CFF; }
+        pre .val { color: #066; }
+        pre .rep { color: #909; }
+        pre .oth { color: #000; background-color: #FCF; }
+        pre .err { background-color: #FCC; }
 
-@media print {
-  .noprint {
-    display: none;
-  }
-  
-  table.header {
-    width: 90%;
-  }
+        /* RFC-2629 <texttable>s. */
+        table.all, table.full, table.headers, table.none {
+                font-size: small; text-align: center; border-width: 2px;
+                vertical-align: top; border-collapse: collapse;
+        }
+        table.all, table.full { border-style: solid; border-color: black; }
+        table.headers, table.none { border-style: none; }
+        th {
+                font-weight: bold; border-color: black;
+                border-width: 2px 2px 3px 2px;
+        }
+        table.all th, table.full th { border-style: solid; }
+        table.headers th { border-style: none none solid none; }
+        table.none th { border-style: none; }
+        table.all td {
+                border-style: solid; border-color: #333;
+                border-width: 1px 2px;
+        }
+        table.full td, table.headers td, table.none td { border-style: none; }
 
-  td.header-l {
-    width: 50%;
-    color: black;
-    background-color: white;
-    vertical-align: top;
-    font-size: 10pt;
-  }
+        hr { height: 1px; }
+        hr.insert {
+                width: 80%; border-style: none; border-width: 0;
+                color: #CCC; background-color: #CCC;
+        }
+--></style>
+</head>
+<body>
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<table summary="layout" width="66%" border="0" cellpadding="0" cellspacing="0"><tr><td><table summary="layout" width="100%" border="0" cellpadding="2" cellspacing="1">
+<tr><td class="header">Network Working Group</td><td class="header">J. Gregorio, Ed.</td></tr>
+<tr><td class="header">Internet-Draft</td><td class="header">Google</td></tr>
+<tr><td class="header">Intended status: Standards Track</td><td class="header">M. Hadley, Ed.</td></tr>
+<tr><td class="header">Expires: September 27, 2008</td><td class="header">Sun Microsystems</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">M. Nottingham, Ed.</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">&nbsp;</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">D. Orchard</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">BEA Systems, Inc.</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">Mar 26, 2008</td></tr>
+</table></td></tr></table>
+<h1><br />URI Template<br />draft-gregorio-uritemplate-03</h1>
 
-  td.header-r {
-    width: 33%;
-    color: black;
-    background-color: white;
-    vertical-align: top;
-    text-align: right;
-    font-size: 10pt;
-  }
+<h3>Status of this Memo</h3>
+<p>
+By submitting this Internet-Draft,
+each author represents that any applicable patent or other IPR claims of which
+he or she is aware have been or will be disclosed,
+and any of which he or she becomes aware will be disclosed,
+in accordance with Section&nbsp;6 of BCP&nbsp;79.</p>
+<p>
+Internet-Drafts are working documents of the Internet Engineering
+Task Force (IETF), its areas, and its working groups.
+Note that other groups may also distribute working documents as
+Internet-Drafts.</p>
+<p>
+Internet-Drafts are draft documents valid for a maximum of six months
+and may be updated, replaced, or obsoleted by other documents at any time.
+It is inappropriate to use Internet-Drafts as reference material or to cite
+them other than as &ldquo;work in progress.&rdquo;</p>
+<p>
+The list of current Internet-Drafts can be accessed at
+<a href='http://www.ietf.org/ietf/1id-abstracts.txt'>http://www.ietf.org/ietf/1id-abstracts.txt</a>.</p>
+<p>
+The list of Internet-Draft Shadow Directories can be accessed at
+<a href='http://www.ietf.org/shadow.html'>http://www.ietf.org/shadow.html</a>.</p>
+<p>
+This Internet-Draft will expire on September 27, 2008.</p>
 
-  ul.toc a::after {
-    content: leader('.') target-counter(attr(href), page);
-  }
-  
-  a.iref {
-    content: target-counter(attr(href), page);
-  }
-  
-  .print2col {
-    column-count: 2;
-    -moz-column-count: 2;
-  }
-}
+<h3>Abstract</h3>
 
-@page {
-  @top-left {
-       content: "INTERNET DRAFT"; 
-  } 
-  @top-right {
-       content: "Mar 2008"; 
-  } 
-  @top-center {
-       content: "URI Template"; 
-  } 
-  @bottom-left {
-       content: "Gregorio, et al."; 
-  } 
-  @bottom-center {
-       content: "Standards Track"; 
-  } 
-  @bottom-right {
-       content: "[Page " counter(page) "]"; 
-  } 
-}
+<p>
+                   A URI Template is a compact sequence of characters 
+                   used for the construction of URIs. 
+                   This specification defines the URI Template
+                   syntax and the process for expanding a URI Template into a
+                   URI, along with guidelines and security considerations for the 
+                   use of URI Templates on the Internet.
+                   The URI Template syntax allows for the construction
+                   of strings that are a superset of URIs, allowing an implementation
+                   to process any URI Template without knowing the scheme-specific
+                   requirements of every possible resulting URI.
+               
+</p>
+<h3>Editorial Note</h3>
 
-@page:first { 
-    @top-left {
-      content: normal;
-    }
-    @top-right {
-      content: normal;
-    }
-    @top-center {
-      content: normal;
-    }
-}
-</style><link rel="Contents" href="#rfc.toc"><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyright"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Characters" href="#rfc.section.2"><link rel="Chapter" title="3 URI Template" href="#rfc.section.3"><link rel="Chapter" title="4 Security Considerations" href="#rfc.section.4"><link rel="Chapter" title="5 IANA Considerations" href="#rfc.section.5"><link rel="Chapter" title="6 Appendix A - Parsing URI Template Expansions" href="#rfc.section.6"><link rel="Chapter" href="#rfc.section.7" title="7 Normative References"><link rel="Appendix" title="A Contributors" href="#rfc.section.A"><link rel="Appendix" title="B Revision History" href="#rfc.section.B"><meta name="generator" content="http://greenbytes.de/tech/webdav/rfc2629.xslt, Revision 1.310, 2007/01/07 13:32:43, XSLT vendor: libxslt http://xmlsoft.org/XSLT/"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.Creator" content="Gregorio, J.C."><meta name="DC.Creator" content="Hadley, M.H."><meta name="DC.Creator" content="Nottingham, M.N."><meta name="DC.Creator" content="Orchard, D.O."><meta name="DC.Identifier" content="urn:ietf:id:draft-gregorio-uritemplate-03"><meta name="DC.Date.Issued" scheme="ISO8601" content="2008-WRONG SYNTAX FOR MONTH"><meta name="DC.Description.Abstract" content="A URI Template is a compact sequence of characters used for the construction of URIs. This specification defines the URI Template syntax and the process for expanding a URI Template into a URI, along with guidelines and security considerations for the use of URI Templates on the Internet. The URI Template syntax allows for the construction of strings that are a superset of URIs, allowing an implementation to process any URI Template without knowing the scheme-specific requirements of every possible resulting URI."></head><body><table summary="header information" class="header" border="0" cellpadding="1" cellspacing="1"><tr><td class="front left">Network Working Group</td><td class="front right">J.C. Gregorio, Editor</td></tr><tr><td class="front left">Internet Draft</td><td class="front right">Google</td></tr><tr><td class="front left">
-        &lt;draft-gregorio-uritemplate-03&gt;
-      </td><td class="front right">M.H. Hadley, Editor</td></tr><tr><td class="front left">Intended status: Standards Track</td><td class="front right">Sun Microsystems</td></tr><tr><td class="front left">Expires: WRONG SYNTAX FOR MONTH</td><td class="front right">M.N. Nottingham, Editor</td></tr><tr><td class="front left"></td><td class="front right"></td></tr><tr><td class="front left"></td><td class="front right">D.O. Orchard</td></tr><tr><td class="front left"></td><td class="front right">BEA Systems, Inc.</td></tr><tr><td class="front left"></td><td class="front right">Mar 2008</td></tr></table><p class="title">URI Template<br><span class="filename">draft-gregorio-uritemplate-03</span></p><h1><a id="rfc.status" href="#rfc.status">Status of this Memo</a></h1><p>By submitting this Internet-Draft, each author represents that any applicable patent or other IPR claims of which he or she is aware have been or will be disclosed, and any of which he or she becomes aware will be disclosed, in accordance with Section 6 of BCP 79.</p><p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF), its areas, and its working groups. Note that other groups may also distribute working documents as Internet-Drafts.</p><p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or to cite them other than as &#8220;work in progress&#8221;.</p><p>The list of current Internet-Drafts can be accessed at &lt;<a href="http://www.ietf.org/ietf/1id-abstracts.txt">http://www.ietf.org/ietf/1id-abstracts.txt</a>&gt;.</p><p>The list of Internet-Draft Shadow Directories can be accessed at &lt;<a href="http://www.ietf.org/shadow.html">http://www.ietf.org/shadow.html</a>&gt;.</p><p>This Internet-Draft will expire in WRONG SYNTAX FOR MONTH.</p><h1><a id="rfc.copyrightnotice" href="#rfc.copyrightnotice">Copyright Notice</a></h1><p>Copyright © The IETF Trust (2008). All Rights Reserved.</p><h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1> <p>A URI Template is a compact sequence of characters used for the construction of URIs. This specification defines the URI Template syntax and the process for expanding a URI Template into a URI, along with guidelines and security considerations for the use of URI Templates on the Internet. The URI Template syntax allows for the construction of strings that are a superset of URIs, allowing an implementation to process any URI Template without knowing the scheme-specific requirements of every possible resulting URI.</p> <h1 id="rfc.note.1"><a href="#rfc.note.1">Editorial Note</a></h1> <p>To provide feedback on this Internet-Draft, join the <a href="http://lists.w3.org/Archives/Public/uri/">W3C URI mailing list (http://lists.w3.org/Archives/Public/uri/)</a>.</p> <hr class="noprint"><h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1><ul class="toc"><li class="tocline0">1.   <a href="#rfc.section.1">Introduction</a><ul class="toc"><li class="tocline1">1.1   <a href="#rfc.section.1.1">Overview</a></li><li class="tocline1">1.2   <a href="#rfc.section.1.2">Design Considerations</a></li><li class="tocline1">1.3   <a href="#rfc.section.1.3">Notational Conventions</a></li></ul></li><li class="tocline0">2.   <a href="#rfc.section.2">Characters</a></li><li class="tocline0">3.   <a href="#rfc.section.3">URI Template</a><ul class="toc"><li class="tocline1">3.1   <a href="#variables">Variables</a></li><li class="tocline1">3.2   <a href="#expansions">Template Expansions</a></li><li class="tocline1">3.3   <a href="#evaluating">URI Template Substitution</a><ul class="toc"><li class="tocline1">3.3.1   <a href="#opt">The 'opt' operator</a></li><li class="tocline1">3.3.2   <a href="#neg">The 'neg' operator</a></li><li class="tocline1">3.3.3   <a href="#prefix">The 'prefix' operator</a></li><li class="tocline1">3.3.4   <a href="#append">The 'append' operator</a></li><li class="tocline1">3.3.5   <a href="#join">The 'join' operator</a></li><li class="tocline1">3.3.6   <a href="#listjoin">The 'listjoin' operator</a></li></ul></li><li class="tocline1">3.4   <a href="#examples">Examples</a></li></ul></li><li class="tocline0">4.   <a href="#rfc.section.4">Security Considerations</a></li><li class="tocline0">5.   <a href="#iana">IANA Considerations</a></li><li class="tocline0">6.   <a href="#appendix_a">Appendix A - Parsing URI Template Expansions</a></li><li class="tocline0">7.   <a href="#rfc.references">Normative References</a></li><li class="tocline0"><a href="#rfc.authors">Authors' Addresses</a></li><li class="tocline0">A.   <a href="#rfc.section.A">Contributors</a></li><li class="tocline0">B.   <a href="#rfc.section.B">Revision History</a></li><li class="tocline0"><a href="#rfc.ipr">Intellectual Property and Copyright Statements</a></li></ul><h1 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a> Introduction</h1><p id="rfc.section.1.p.1">A URI Template provides a simple and extensible format for URI construction. A URI Template is a string that contains embedded expansions, text marked off in matching braces ('{', '}'), that denotes a part of the string that is to be substituted by a template processor to produce a URI. A URI Template is transformed into a URI by substituting the expansions with their calculated value.</p><p id="rfc.section.1.p.2">Several specifications have defined URI Templates with varying levels of formality, such as WSDL, WADL and OpenSearch. This specification is derived from these concepts, giving a rigorous definition to such templates.</p><p id="rfc.section.1.p.3">This specification uses the terms "character" and "coded character set" in accordance with the definitions provided in <a href="#RFC2978"><cite title="IANA Charset Registration Procedures">[RFC2978]</cite></a>, and "character encoding" in place of what <a href="#RFC2978"><cite title="IANA Charset Registration Procedures">[RFC2978]</cite></a> refers to as a "charset".</p><h2 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1</a> Overview</h2><p id="rfc.section.1.1.p.1">A URI Template allows a structural description of URIs while allowing a consumer of the template to construct a final URI by providing the values of the expansion variables. For example, given the following URI Template:</p><div id="rfc.figure.u.1"></div><pre>
-    http://www.example.com/users/{userid}</pre><p id="rfc.section.1.1.p.3">And the following variable value</p><div id="rfc.figure.u.2"></div><pre>
-    userid := fred</pre><p id="rfc.section.1.1.p.5">The expansion of the URI Template is:</p><div id="rfc.figure.u.3"></div><pre>
-    http://www.example.com/users/fred</pre><p id="rfc.section.1.1.p.7">URI Templates can be used as a machine-readable forms language. By allowing clients to form their own identifiers based on templates given to them by the URI's authority it's possible to construct dynamic systems that use more of the URI than traditional HTML forms. For example:</p><div id="rfc.figure.u.4"></div><pre>
-    http://www.example.org/products/{upc}/buyers?page={page_num}</pre> <p id="rfc.section.1.1.p.9">URI Templates can also be used to compose URI-centric protocols without impinging on authorities' control of their URI space. For example, there are many emerging conventions for passing around login information between sites using URIs. Forcing people to use a well-known query parameter isn't good practice, but using URI Templates allows different sites to specify local ways of conveying the same information:</p><div id="rfc.figure.u.5"></div><pre>
-    http://auth.example.com/userauth;{return-uri}</pre><div id="rfc.figure.u.6"></div><pre>
-    http://login.example.org/login?back={return-uri}</pre><h2 id="rfc.section.1.2"><a href="#rfc.section.1.2">1.2</a> Design Considerations</h2><p id="rfc.section.1.2.p.1">The URI Template syntax has been designed to carefully balance the need for a powerful substitution mechanism with ease of implementation and security. The syntax is designed to be easy to parse while at the same time providing enough flexibility to express many common templating scenarios. On the balance, the template processing is not Turing complete, thus avoiding a number of security issues, ala the billion-laughs attack of XML DTDs.</p><p id="rfc.section.1.2.p.2">Another consideration was to keep the syntax and processing in-line with the pre-existing templating schemes present in OpenSearch, WSDL and WADL.</p><p id="rfc.section.1.2.p.3">The final design consideration was control over the placement of reserved characters in the URI generated from a URI Template. The reserved characters in a URI Template can only appear in the non-expansion text, or in the argument to an operator, both locations are dictated by the URI Template author. Given the percent-encoding rules for variable values this means that the source of all structure, i.e reserved characters, in a URI generated from a URI Template is decided by the URI Template author.</p><h2 id="rfc.section.1.3"><a href="#rfc.section.1.3">1.3</a> Notational Conventions</h2><p id="rfc.section.1.3.p.1">This specification uses the Augmented Backus-Naur Form (ABNF) notation of <a href="#RFC4234"><cite title="Augmented BNF for Syntax Specifications: ABNF">[RFC4234]</cite></a>, including the following core ABNF syntax rules defined by that specification: ALPHA (letters) and DIGIT (decimal digits). See <a href="#RFC3986"><cite title="Uniform Resource Identifier (URI): Generic Syntax">[RFC3986]</cite></a> for the definitions of the URI-reference, percent-encoded, reserved, and unreserved rules.</p><p id="rfc.section.1.3.p.2">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a>.</p><h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> Characters</h1><p id="rfc.section.2.p.1">A URI Template is a sequence of characters, and has the same issues as URIs with regard to codepoints and character sets. That is, URI Template characters are frequently encoded as octets for transport or presentation. This specification does not mandate any particular character encoding for mapping between URI characters and the octets used to store or transmit those characters. When a URI appears in a protocol element, the character encoding is defined by that protocol; without such a definition, a URI is assumed to be in the same character encoding as the surrounding text.</p><p id="rfc.section.2.p.2">The ABNF notation defines its terminal values to be non-negative integers (codepoints) based on the US-ASCII coded character set <a href="#ASCII"><cite title="Coded Character Set - 7-bit American Standard Code for Information Interchange">[ASCII]</cite></a>. Because a URI is a sequence of characters, we must invert that relation in order to understand the URI syntax. Therefore, the integer values used by the ABNF must be mapped back to their corresponding characters via US-ASCII in order to complete the syntax rules.</p><h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> URI Template</h1><p id="rfc.section.3.p.1">A URI Template is a sequence of characters that contains one or more embedded template expansions, see <a href="#expansions" title="Template Expansions">Section 3.2</a>. Each expansion references one or more variables whose values are used in when determining the substition value for an expansion. A URI Template becomes a URI when the template expansions are substituted with their values (see <a href="#evaluating" title="URI Template Substitution">Section 3.3</a>). The generated URI will be a URI-reference, i.e. either an absolute URI or a relative reference.</p><h2 id="rfc.section.3.1"><a href="#rfc.section.3.1">3.1</a> <a id="variables" href="#variables">Variables</a></h2><p id="rfc.section.3.1.p.1">The value of every non-list variable, and the individual values in list variables, must come from ( unreserved / pct-encoded ). For variable values that are strings that have characters outside that range, the entire string must be converted into UTF-8 <a href="#RFC3629"><cite title="UTF-8, a transformation format of ISO 10646">[RFC3629]</cite></a>, and then every octet of the UTF-8 string that falls outside of ( unreserved / pct-encoded ) MUST be percent-encoded, as per <a href="#RFC3986"><cite title="Uniform Resource Identifier (URI): Generic Syntax">[RFC3986]</cite></a>, section 2.1.</p><p id="rfc.section.3.1.p.2">This does not imply that every variable value can be decoded into a Unicode string. For example, a variable value may be a binary blob that has been percent-encoded before being passed into the template processor.</p><p id="rfc.section.3.1.p.3">The Unicode Standard <a href="#UNIV4"><cite title="The Unicode Standard, Version 4.0.1, defined by: The Unicode Standard, Version 4.0 (Reading, MA, Addison-Wesley, 2003. ISBN 0-321-18578-1), as amended by Unicode 4.0.1 (http://www.unicode.org/versions/Unicode4.0.1/)">[UNIV4]</cite></a> defines various equivalences between sequences of characters for various purposes. Unicode Standard Annex #15 <a href="#UTR15"><cite title="Unicode Normalization Forms">[UTR15]</cite></a> defines various Normalization Forms for these equivalences, in particular Normalization Form C (NFC, Canonical Decomposition, followed by Canonical Composition) and Normalization Form KC (NFKC, Compatibility Decomposition, followed by Canonical Composition). Since different Normalized Forms unicode strings will have different UTF-8 represenations it is RECOMMEDED that unicode strings use Normalized Form NFC.</p><p id="rfc.section.3.1.p.4">The meaning of 'defined' for a variable is progamming language and library specific and beyond the scope of this specification. Also beyond the scope of this specification is the allowable programming constructs that can be used for a list variable used in the 'listjoin' operator. For example, a Python implementation might allow only built-in list types, or it may allow any iterable to be used as the source for a list variable.</p><p id="rfc.section.3.1.p.5">A variable may appear in more than one expansion in a URI Template. The value used for that variable must remain the same for every template expansion when converting a URI Template into a URI.</p><h2 id="rfc.section.3.2"><a href="#rfc.section.3.2">3.2</a> <a id="expansions" href="#expansions">Template Expansions</a></h2><p id="rfc.section.3.2.p.1">Template expansions are the parameterized components of a URI Template. A template expansion MUST match the 'expansion' rule.</p><div id="rfc.figure.u.7"></div> <pre>
+<p>To provide feedback on this Internet-Draft, join the 
+                   <a href='http://lists.w3.org/Archives/Public/uri/'>W3C URI mailing
+                       list (http://lists.w3.org/Archives/Public/uri/)</a>.
+               
+</p><a name="toc"></a><br /><hr />
+<h3>Table of Contents</h3>
+<p class="toc">
+<a href="#anchor1">1.</a>&nbsp;
+Introduction<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor2">1.1.</a>&nbsp;
+Overview<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor3">1.2.</a>&nbsp;
+Design Considerations<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor4">1.3.</a>&nbsp;
+Notational Conventions<br />
+<a href="#anchor5">2.</a>&nbsp;
+Characters<br />
+<a href="#anchor6">3.</a>&nbsp;
+URI Template<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#variables">3.1.</a>&nbsp;
+Variables<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#expansions">3.2.</a>&nbsp;
+Template Expansions<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#evaluating">3.3.</a>&nbsp;
+URI Template Substitution<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#opt">3.3.1.</a>&nbsp;
+The 'opt' operator<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#neg">3.3.2.</a>&nbsp;
+The 'neg' operator<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#prefix">3.3.3.</a>&nbsp;
+The 'prefix' operator<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#append">3.3.4.</a>&nbsp;
+The 'append' operator<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#join">3.3.5.</a>&nbsp;
+The 'join' operator<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#listjoin">3.3.6.</a>&nbsp;
+The 'listjoin' operator<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#examples">3.4.</a>&nbsp;
+Examples<br />
+<a href="#anchor7">4.</a>&nbsp;
+Security Considerations<br />
+<a href="#iana">5.</a>&nbsp;
+IANA Considerations<br />
+<a href="#appendix_a">6.</a>&nbsp;
+Appendix A - Parsing URI Template Expansions<br />
+<a href="#rfc.references1">7.</a>&nbsp;
+Normative References<br />
+<a href="#anchor9">Appendix&nbsp;A.</a>&nbsp;
+Contributors<br />
+<a href="#anchor10">Appendix&nbsp;B.</a>&nbsp;
+Revision History<br />
+<a href="#rfc.authors">&#167;</a>&nbsp;
+Authors' Addresses<br />
+<a href="#rfc.copyright">&#167;</a>&nbsp;
+Intellectual Property and Copyright Statements<br />
+</p>
+<br clear="all" />
+
+<a name="anchor1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1"></a><h3>1.&nbsp;
+Introduction</h3>
+
+<p>
+                   A URI Template provides a simple and extensible format 
+                   for URI construction.  A URI Template is a string that
+                   contains embedded expansions, text marked off in matching
+                   braces ('{', '}'), that denotes a part of the string that is
+                   to be substituted by a template processor to
+                   produce a URI.  A URI Template is transformed into a URI by
+                   substituting the expansions with their calculated value.
+               
+</p>
+<p>
+                   Several specifications have defined URI Templates
+                   with varying levels of formality, such as WSDL, WADL and OpenSearch.  This
+                   specification is derived from these concepts, giving a
+                   rigorous definition to such templates.
+               
+</p>
+<p>
+                   This specification uses the terms "character" and "coded
+                   character set" in accordance with the definitions provided
+                   in <a class='info' href='#RFC2978'>[RFC2978]<span> (</span><span class='info'>Freed, N. and J. Postel, &ldquo;IANA Charset Registration Procedures,&rdquo; October&nbsp;2000.</span><span>)</span></a>, and "character encoding" in place of what
+                   <a class='info' href='#RFC2978'>[RFC2978]<span> (</span><span class='info'>Freed, N. and J. Postel, &ldquo;IANA Charset Registration Procedures,&rdquo; October&nbsp;2000.</span><span>)</span></a> refers to as a "charset".
+               
+</p>
+<a name="anchor2"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.1"></a><h3>1.1.&nbsp;
+Overview</h3>
+
+<p>
+                       A URI Template allows a structural description of URIs
+                       while allowing a consumer of the template to construct a
+                       final URI by providing the values of the expansion
+                       variables. For example, given the following URI Template:
+                   
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+    http://www.example.com/users/{userid}</pre></div>
+<p>And the following variable value
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+    userid := fred</pre></div>
+<p>The expansion of the URI Template is:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+    http://www.example.com/users/fred</pre></div>
+<p>
+                       URI Templates can be used as a machine-readable 
+                       forms language. By allowing clients to form their own
+                       identifiers based on templates given to them by the URI's authority
+                       it's possible to construct dynamic systems that use more of the URI
+                       than traditional HTML forms. For example:
+                   
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+    http://www.example.org/products/{upc}/buyers?page={page_num}</pre></div>
+<p>
+                       URI Templates can also be used to compose URI-centric protocols
+                       without impinging on authorities' control of their URI space. For example,
+                       there are many emerging conventions for passing around login
+                       information between sites using URIs. Forcing people to use a well-known 
+                       query parameter isn't good practice, but using URI Templates
+                       allows different sites to specify local ways of conveying the same
+                       information:
+                   
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+    http://auth.example.com/userauth;{return-uri}</pre></div><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+    http://login.example.org/login?back={return-uri}</pre></div>
+<a name="anchor3"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.2"></a><h3>1.2.&nbsp;
+Design Considerations</h3>
+
+<p>
+                       The URI Template syntax has been designed to carefully balance
+                       the need for a powerful substitution mechanism with ease 
+                       of implementation and security. The syntax is designed
+                       to be easy to parse while at the same time providing 
+                       enough flexibility to express many common templating
+                       scenarios. On the balance, the template processing is 
+                       not Turing complete, thus avoiding a number of 
+                       security issues, ala the  billion-laughs attack 
+                       of XML DTDs.
+                   
+</p>
+<p>
+                       Another consideration was to keep the syntax and processing 
+                       in-line with the pre-existing templating schemes present
+                       in OpenSearch, WSDL and WADL. 
+                   
+</p>
+<p>
+                       The final design consideration was control over
+                       the placement of reserved characters in the 
+                       URI generated from a URI Template. The reserved characters
+                       in a URI Template can only appear in the non-expansion
+                       text, or in the argument to an operator, both locations
+                       are dictated by the URI Template author. Given
+                       the percent-encoding rules for variable values
+                       this means that the source of all structure, i.e
+                       reserved characters, in a URI generated from a 
+                       URI Template is decided by the URI Template author.
+                   
+</p>
+<a name="anchor4"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.3"></a><h3>1.3.&nbsp;
+Notational Conventions</h3>
+
+<p>
+                       This specification uses the Augmented Backus-Naur Form
+                       (ABNF) notation of <a class='info' href='#RFC4234'>[RFC4234]<span> (</span><span class='info'>Crocker, D., Ed. and P. Overell, &ldquo;Augmented BNF for Syntax Specifications: ABNF,&rdquo; October&nbsp;2005.</span><span>)</span></a>, including
+                       the following core ABNF syntax rules defined by that
+                       specification: ALPHA (letters) and DIGIT (decimal
+                       digits).  See <a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;Uniform Resource Identifier (URI): Generic Syntax,&rdquo; January&nbsp;2005.</span><span>)</span></a> for the
+                       definitions of the URI-reference, percent-encoded,
+                       reserved, and unreserved rules.  
+</p>
+<p>
+                       The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+                       "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",
+                       "MAY", and "OPTIONAL" in this document are to be
+                       interpreted as described in <a class='info' href='#RFC2119'>[RFC2119]<span> (</span><span class='info'>Bradner, S., &ldquo;Key words for use in RFCs to Indicate Requirement Levels,&rdquo; March&nbsp;1997.</span><span>)</span></a>.
+                   
+</p>
+<a name="anchor5"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2"></a><h3>2.&nbsp;
+Characters</h3>
+
+<p>
+                   A URI Template is a sequence of characters, and has the same
+                   issues as URIs with regard to codepoints and character sets.
+                   That is, URI Template characters are frequently encoded
+                   as octets for transport or presentation.  This specification
+                   does not mandate any particular character encoding for
+                   mapping between URI characters and the octets used to store
+                   or transmit those characters.  When a URI appears in a
+                   protocol element, the character encoding is defined by that
+                   protocol; without such a definition, a URI is assumed to be
+                   in the same character encoding as the surrounding text.
+               
+</p>
+<p>
+                   The ABNF notation defines its terminal values to be
+                   non-negative integers (codepoints) based on the US-ASCII
+                   coded character set <a class='info' href='#ASCII'>[ASCII]<span> (</span><span class='info'>American National Standards Institute, &ldquo;Coded Character Set - 7-bit American Standard Code for Information Interchange,&rdquo; 1986.</span><span>)</span></a>.  Because a URI is a sequence of
+                   characters, we must invert that relation in order to
+                   understand the URI syntax.  Therefore, the integer values
+                   used by the ABNF must be mapped back to their corresponding
+                   characters via US-ASCII in order to complete the syntax
+                   rules.
+
+               
+</p>
+<a name="anchor6"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3"></a><h3>3.&nbsp;
+URI Template</h3>
+
+<p>
+                   A URI Template is a sequence of characters that contains one
+                   or more embedded template expansions, see <a class='info' href='#expansions'>Section&nbsp;3.2<span> (</span><span class='info'>Template Expansions</span><span>)</span></a>. Each expansion references one or
+                   more variables whose values are used in when determining the
+                   substition value for an expansion.  A URI Template becomes a
+                   URI when the template expansions are substituted with their
+                   values (see <a class='info' href='#evaluating'>Section&nbsp;3.3<span> (</span><span class='info'>URI Template Substitution</span><span>)</span></a>). The generated
+                   URI will be a URI-reference, i.e. either an absolute 
+                   URI or a relative reference.
+               
+</p>
+<a name="variables"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.1"></a><h3>3.1.&nbsp;
+Variables</h3>
+
+<p>
+                       The value of every non-list variable, and the individual
+                       values in list variables, must come from ( unreserved /
+                       pct-encoded ).  For variable values that are strings
+                       that have characters outside that range, the entire
+                       string must be converted into UTF-8 <a class='info' href='#RFC3629'>[RFC3629]<span> (</span><span class='info'>Yergeau, F., &ldquo;UTF-8, a transformation format of ISO 10646,&rdquo; November&nbsp;2003.</span><span>)</span></a>, and then
+                       every octet of the UTF-8 string that falls outside of (
+                       unreserved / pct-encoded ) MUST be percent-encoded, as
+                       per <a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;Uniform Resource Identifier (URI): Generic Syntax,&rdquo; January&nbsp;2005.</span><span>)</span></a>, section 2.1.
+                   
+</p>
+<p>
+                       This does not imply that every variable value can be
+                       decoded into a Unicode string. For example, a variable
+                       value may be a binary blob that has been percent-encoded
+                       before being passed into the template processor.
+                   
+</p>
+<p>
+                       The Unicode Standard <a class='info' href='#UNIV4'>[UNIV4]<span> (</span><span class='info'>The Unicode Consortium, &ldquo;The Unicode Standard, Version                   4.0.1, defined by: The Unicode Standard, Version 4.0                   (Reading, MA, Addison-Wesley, 2003. ISBN                   0-321-18578-1), as amended by Unicode 4.0.1                   (http://www.unicode.org/versions/Unicode4.0.1/),&rdquo; March&nbsp;2004.</span><span>)</span></a> defines various
+                       equivalences between sequences of characters for various
+                       purposes.  Unicode Standard Annex #15 <a class='info' href='#UTR15'>[UTR15]<span> (</span><span class='info'>Davis, M. and M. Duerst, &ldquo;Unicode Normalization Forms,&rdquo; April&nbsp;2003.</span><span>)</span></a> defines
+                       various Normalization Forms for these equivalences, in
+                       particular Normalization Form C (NFC, Canonical
+                       Decomposition, followed by Canonical Composition) and
+                       Normalization Form KC (NFKC, Compatibility
+                       Decomposition, followed by Canonical Composition). Since
+                       different Normalized Forms unicode strings will have
+                       different UTF-8 represenations it is RECOMMEDED that
+                       unicode strings use Normalized Form NFC.
+                   
+</p>
+<p>
+                       The meaning of 'defined' for a variable is progamming
+                       language and library specific and beyond the scope of
+                       this specification. Also beyond the scope of this
+                       specification is the allowable programming constructs
+                       that can be used for a list variable used in the
+                       'listjoin' operator. For example, a Python
+                       implementation might allow only built-in list types, or
+                       it may allow any iterable to be used as the source for a
+                       list variable.
+                   
+</p>
+<p>
+                       A variable may appear in more than one expansion in a
+                       URI Template. The value used for that variable must
+                       remain the same for every template expansion when
+                       converting a URI Template into a URI. 
+                   
+</p>
+<a name="expansions"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.2"></a><h3>3.2.&nbsp;
+Template Expansions</h3>
+
+<p>
+                       Template expansions are the parameterized components of a URI Template.
+                       A template expansion MUST match the 'expansion' rule.
+                   
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
  op          = 1*ALPHA
  arg         = *(reserved / unreserved / pct-encoded)
  var         = varname [ '=' vardefault ]
@@ -358,11 +500,182 @@ li.indline1 {
  vardefault  = *(unreserved / pct-encoded)
  operator    = "-" op "|" arg "|" vars
  expansion   = "{" ( var / operator ) "}"
-                           
-                       </pre> <h2 id="rfc.section.3.3"><a href="#rfc.section.3.3">3.3</a> <a id="evaluating" href="#evaluating">URI Template Substitution</a></h2><p id="rfc.section.3.3.p.1">Template substitution is the process of turning a URI Template into a URI given definitions for the variables used in the template. Substitution replaces each expansion with its calculated value.</p><p id="rfc.section.3.3.p.2">Every expansion consists of either a variable ('var') or an operator expression. In a variable ('var') expansion, if the variable is defined and non-empty then substitute the value of the variable, otherwise substitute the default value. If no default value is given then substitute with the empty string.</p><p id="rfc.section.3.3.p.3">If the expansion is an operator then the substitution value is determined by the given operator. Each operator works only on the variables that are defined within their expansion.</p><h3 id="rfc.section.3.3.1"><a href="#rfc.section.3.3.1">3.3.1</a> <a id="opt" href="#opt">The 'opt' operator</a></h3><p id="rfc.section.3.3.1.p.1">If the one or more of the variables are defined and non-empty then substitute the value of 'arg', otherwise substitute the empty string.</p><h3 id="rfc.section.3.3.2"><a href="#rfc.section.3.3.2">3.3.2</a> <a id="neg" href="#neg">The 'neg' operator</a></h3><p id="rfc.section.3.3.2.p.1">If all of the variables are un-defined or empty then substitute the value of arg, otherwise substitute the empty string.</p><h3 id="rfc.section.3.3.3"><a href="#rfc.section.3.3.3">3.3.3</a> <a id="prefix" href="#prefix">The 'prefix' operator</a></h3><p id="rfc.section.3.3.3.p.1">The prefix operator MUST only have one variable in its expansion. If the variable is defined and non-empty then substitute the value of arg followed by the value of the variable, otherwise substitute the empty string.</p><h3 id="rfc.section.3.3.4"><a href="#rfc.section.3.3.4">3.3.4</a> <a id="append" href="#append">The 'append' operator</a></h3><p id="rfc.section.3.3.4.p.1">The append operator MUST only have one variable in its expansion. If the variable is defined and non-empty then substitute the value of the variable followed by the value of arg, otherwise substitute the empty string.</p><h3 id="rfc.section.3.3.5"><a href="#rfc.section.3.3.5">3.3.5</a> <a id="join" href="#join">The 'join' operator</a></h3><p id="rfc.section.3.3.5.p.1">For each variable that is defined and non-empty create a keyvalue string that is the concatenation of the variable name, "=", and the variable value. Concatenate more than one keyvalue string with intervening values of arg to create the substitution value.</p><h3 id="rfc.section.3.3.6"><a href="#rfc.section.3.3.6">3.3.6</a> <a id="listjoin" href="#listjoin">The 'listjoin' operator</a></h3><p id="rfc.section.3.3.6.p.1">The listjoin operator MUST have only one variable in its expansion and that variable must be a list. If the list is non-empty then substitute the concatenation of all the list members with intevening values of arg.</p><p id="rfc.section.3.3.p.4">The result of substitution MUST match the URI-reference rule and SHOULD also match any known rules for the scheme of the resulting URI.</p><h2 id="rfc.section.3.4"><a href="#rfc.section.3.4">3.4</a> <a id="examples" href="#examples">Examples</a></h2><div id="rfc.table.1"><div id="example-table"></div><p>Given the following template variable names and values:</p><table summary="
+
+</pre></div>
+<a name="evaluating"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.3"></a><h3>3.3.&nbsp;
+URI Template Substitution</h3>
+
+<p>
+                       Template substitution is the process of turning
+                       a URI Template into a URI given definitions
+                       for the variables used in the template. Substitution
+                       replaces each expansion with its calculated value.
+                   
+</p>
+<p>
+                       Every expansion consists of either a variable ('var') or
+                       an operator expression.  In a variable ('var')
+                       expansion, if the variable is defined and non-empty then
+                       substitute the value of the variable, otherwise
+                       substitute the default value. If no default value is
+                       given then substitute with the empty string.  
+                   
+</p>
+<p>
+                       If the expansion is an operator then the substitution value
+                       is determined by the given operator. Each operator
+                       works only on the variables that are defined within
+                       their expansion.
+                   
+</p>
+<p>
+                       The result of substitution 
+                       MUST match the URI-reference rule and SHOULD also match
+                       any known rules for the scheme of the resulting URI.
+                   
+</p>
+<a name="opt"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.3.1"></a><h3>3.3.1.&nbsp;
+The 'opt' operator</h3>
+
+<p>
+                           If the one or more of the variables are defined and
+                           non-empty then substitute the value of 'arg', otherwise
+                           substitute the empty string.
+                       
+</p>
+<a name="neg"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.3.2"></a><h3>3.3.2.&nbsp;
+The 'neg' operator</h3>
+
+<p>
+                           If all of the variables are un-defined or empty
+                           then substitute the value of arg, otherwise
+                           substitute the empty string.
+                       
+</p>
+<a name="prefix"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.3.3"></a><h3>3.3.3.&nbsp;
+The 'prefix' operator</h3>
+
+<p>
+                           The prefix operator MUST only have one variable in
+                           its expansion.  If the variable is defined and
+                           non-empty then substitute the value of arg followed
+                           by the value of the variable, otherwise substitute
+                           the empty string. 
+                       
+</p>
+<a name="append"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.3.4"></a><h3>3.3.4.&nbsp;
+The 'append' operator</h3>
+
+<p>
+                           The append operator MUST only have one variable in
+                           its expansion.  If the variable is defined and
+                           non-empty then substitute the value of the variable
+                           followed by the value of arg, otherwise substitute
+                           the empty string. 
+                       
+</p>
+<a name="join"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.3.5"></a><h3>3.3.5.&nbsp;
+The 'join' operator</h3>
+
+<p>
+                           For each variable that is defined and non-empty
+                           create a keyvalue string that is the concatenation 
+                           of the variable name, "=", and the
+                           variable value. Concatenate more than one keyvalue
+                           string with intervening values of arg to 
+                           create the substitution value. 
+                       
+</p>
+<a name="listjoin"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.3.6"></a><h3>3.3.6.&nbsp;
+The 'listjoin' operator</h3>
+
+<p>
+                           The listjoin operator MUST have only one variable
+                           in its expansion and that variable must be a list.
+                           If the list is non-empty then substitute 
+                           the concatenation of all the list members with intevening
+                           values of arg.
+                       
+</p>
+<a name="examples"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.4"></a><h3>3.4.&nbsp;
+Examples</h3>
+<br /><hr class="insert" />
+<a name="example-table"></a>
+
+<p style='text-align: center'>
                            Given the following template variable names and
                            values:
-                       " class="tt full" cellpadding="3" cellspacing="0"><thead><tr><th class="left">Name</th><th class="left">Value</th></tr></thead><tbody><tr><td>a</td><td>foo</td></tr><tr><td>b</td><td>bar</td></tr><tr><td>data</td><td>10,20,30</td></tr><tr><td>points</td><td>["10","20", "30"]</td></tr><tr><td>list0</td><td>[]</td></tr><tr><td>str0</td><td></td></tr><tr><td>reserved</td><td>:/?#[]@!$&amp;'()*+,;=</td></tr><tr><td>u</td><td>\u2654\u2655</td></tr><tr><td>a_b</td><td>baz</td></tr></tbody></table><p class="figure">Table 1</p></div><p id="rfc.section.3.4.p.1">The name 'foo' has not been defined, the value of 'str0' is the empty string, and both list0 and points are lists. The variable 'u' is a string of two unicode characters, the WHITE CHESS KING (0x2654) and the WHITE CHESS QUEEN (0x2655).</p><p id="rfc.section.3.4.p.2">The following URI Templates will be expanded as shown:</p><p id="rfc.section.3.4.p.3">----</p><div id="rfc.figure.u.8"></div> <pre>
+                       
+</p><table class="full" align="center" border="0" cellpadding="2" cellspacing="2">
+<col align="left"><col align="left">
+<tr><th align="left">Name</th><th align="left">Value</th></tr>
+<tr>
+<td align="left">a</td>
+<td align="left">foo</td>
+</tr>
+<tr>
+<td align="left">b</td>
+<td align="left">bar</td>
+</tr>
+<tr>
+<td align="left">data</td>
+<td align="left">10,20,30</td>
+</tr>
+<tr>
+<td align="left">points</td>
+<td align="left">["10","20", "30"]</td>
+</tr>
+<tr>
+<td align="left">list0</td>
+<td align="left">[]</td>
+</tr>
+<tr>
+<td align="left">str0</td>
+<td align="left">&nbsp;</td>
+</tr>
+<tr>
+<td align="left">reserved</td>
+<td align="left">:/?#[]@!$&amp;'()*+,;=</td>
+</tr>
+<tr>
+<td align="left">u</td>
+<td align="left">\u2654\u2655</td>
+</tr>
+<tr>
+<td align="left">a_b</td>
+<td align="left">baz</td>
+</tr>
+</table>
+<br clear="all" />
+<table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Table 1&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<p>The name 'foo' has 
+                       not been defined, the value of 'str0' is the empty string,
+                       and both list0 and points are lists. 
+                       The variable 'u' is a string of two unicode characters, the WHITE CHESS KING (0x2654)
+                       and the WHITE CHESS QUEEN (0x2655).
+                   
+</p>
+<p>The following URI Templates will be expanded as shown:
+</p>
+<p>    ----
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
  http://example.org/?q={a}
  http://example.org/?q=foo
 
@@ -408,7 +721,55 @@ li.indline1 {
  http://example.org/{a}{-prefix|/-/|a}/
  http://example.org/foo/-/foo/
 
-                       </pre> <p id="rfc.section.3.4.p.5">----</p><h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> Security Considerations</h1><p id="rfc.section.4.p.1">A URI Template does not contain active or executable content. Other security considerations are the same as those for URIs, see section 7 of RFC3986.</p><h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a id="iana" href="#iana">IANA Considerations</a></h1><p id="rfc.section.5.p.1">In common with RFC3986, URI scheme names form a registered namespace that is managed by IANA according to the procedures defined in <a href="#RFC4395"><cite title="Guidelines and Registration Procedures for New URI Schemes">[RFC4395]</cite></a>. No IANA actions are required by this document.</p><h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a id="appendix_a" href="#appendix_a">Appendix A - Parsing URI Template Expansions</a></h1><p id="rfc.section.6.p.1">Parsing a valid URI Template expansion does not require building a parser from the given ABNF. Instead, the set of allowed characters in each part of URI Template expansion has been chosen to avoid complex parsing, and breaking an expansion into its component parts can be achieved by a series of splits of the character string.</p><p id="rfc.section.6.p.2">Here is example Python code that parses a URI Template expansion and returns the operator, argument, and variables as a tuple. The variables are returned as a dictionary of variable names mapped to their default values. If no default is given then the name maps to None.</p><div id="rfc.figure.u.9"></div><pre>
+</pre></div>
+<p>    ----
+</p>
+<a name="anchor7"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4"></a><h3>4.&nbsp;
+Security Considerations</h3>
+
+<p>
+                   A URI Template does not contain active or executable content. Other
+                   security considerations are the same as those for URIs, see section 7
+                   of RFC3986.
+               
+</p>
+<a name="iana"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5"></a><h3>5.&nbsp;
+IANA Considerations</h3>
+
+<p>
+                   In common with RFC3986, URI scheme names form a registered
+                   namespace that is managed by IANA according to the
+                   procedures defined in <a class='info' href='#RFC4395'>[RFC4395]<span> (</span><span class='info'>Hansen, T., Hardie, T., and L. Masinter, &ldquo;Guidelines and Registration Procedures for New URI Schemes,&rdquo; February&nbsp;2006.</span><span>)</span></a>.  No IANA
+                   actions are required by this document.  
+               
+</p>
+<a name="appendix_a"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6"></a><h3>6.&nbsp;
+Appendix A - Parsing URI Template Expansions</h3>
+
+<p>
+                   Parsing a valid URI Template expansion does not require
+                   building a parser from the given ABNF. Instead, the set of allowed
+                   characters in each part of URI Template expansion has been
+                   chosen to avoid complex parsing, and breaking an expansion into
+                   its component parts can be achieved by a series of splits
+                   of the character string.                    
+               
+</p>
+<p>
+                   Here is example Python code that parses a URI Template 
+                   expansion and returns the operator, argument, and
+                   variables as a tuple. The variables are returned
+                   as a dictionary of variable names mapped to their
+                   default values. If no default is given then the 
+                   name maps to None.
+               
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
  def parse_expansion(expansion):
     if "|" in expansion:
         (op, arg, vars_) = expansion.split("|")
@@ -426,20 +787,154 @@ li.indline1 {
         variables[varname] = vardefault
 
     return (op, arg, variables)
-               </pre><p id="rfc.section.6.p.4">And here is an example of the parse_expansion() function being used.</p><div id="rfc.figure.u.10"></div><pre>
+</pre></div>
+<p>
+                   And here is an example of the parse_expansion() function being 
+                   used.
+               
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
 &gt;&gt;&gt; parse_expansion("-join|&amp;|a,b,c=1")
 ('join', '&amp;', {'a': None, 'c': '1', 'b': None})
 &gt;&gt;&gt; parse_expansion("c=1")
 (None, None, {'c': '1'})
-               </pre><h1 id="rfc.references"><a href="#rfc.section.7">7.</a> Normative References</h1><table summary="Normative References" border="0" cellpadding="2">                  <tr><td class="topnowrap"><b id="ASCII">[ASCII]</b></td><td class="top">American National Standards Institute, &#8220;Coded Character Set - 7-bit American Standard Code for Information Interchange&#8221;, ANSI X3.4, 1986.</td></tr><tr><td class="topnowrap"><b id="RFC2119">[RFC2119]</b></td><td class="top"><a href="mailto:sob@harvard.edu" title="Harvard University">Bradner, S.</a>, &#8220;<a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>&#8221;, BCP 14, RFC 2119, March 1997.</td></tr><tr><td class="topnowrap"><b id="RFC2978">[RFC2978]</b></td><td class="top">Freed, N. and J. Postel, &#8220;<a href="http://tools.ietf.org/html/rfc2978">IANA Charset Registration Procedures</a>&#8221;, BCP 19, RFC 2978, October 2000.</td></tr><tr><td class="topnowrap"><b id="RFC3629">[RFC3629]</b></td><td class="top">Yergeau, F., &#8220;<a href="http://tools.ietf.org/html/rfc3629">UTF-8, a transformation format of ISO 10646</a>&#8221;, STD 63, RFC 3629, November 2003.</td></tr><tr><td class="topnowrap"><b id="RFC3986">[RFC3986]</b></td><td class="top">Berners-Lee, T., Fielding, R., and L. Masinter, &#8220;<a href="http://tools.ietf.org/html/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a>&#8221;, STD 66, RFC 3986, January 2005.</td></tr><tr><td class="topnowrap"><b id="RFC4234">[RFC4234]</b></td><td class="top"><a href="mailto:dcrocker@bbiw.net" title="Brandenburg InternetWorking">Crocker, D., Ed.</a> and <a href="mailto:paul.overell@thus.net" title="THUS plc.">P. Overell</a>, &#8220;<a href="http://tools.ietf.org/html/rfc4234">Augmented BNF for Syntax Specifications: ABNF</a>&#8221;, RFC 4234, October 2005.</td></tr><tr><td class="topnowrap"><b id="RFC4395">[RFC4395]</b></td><td class="top">Hansen, T., Hardie, T., and L. Masinter, &#8220;<a href="http://tools.ietf.org/html/rfc4395">Guidelines and Registration Procedures for New URI Schemes</a>&#8221;, BCP 115, RFC 4395, February 2006.</td></tr><tr><td class="topnowrap"><b id="UNIV4">[UNIV4]</b></td><td class="top">The Unicode Consortium, &#8220;The Unicode Standard, Version
+</pre></div>
+<a name="rfc.references1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>7.&nbsp;Normative References</h3>
+<table width="99%" border="0">
+<tr><td class="author-text" valign="top"><a name="ASCII">[ASCII]</a></td>
+<td class="author-text">American National Standards Institute, &ldquo;Coded Character Set - 7-bit American Standard Code for Information Interchange,&rdquo; ANSI&nbsp;X3.4, 1986.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2119">[RFC2119]</a></td>
+<td class="author-text"><a href="mailto:sob@harvard.edu">Bradner, S.</a>, &ldquo;<a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>,&rdquo; BCP&nbsp;14, RFC&nbsp;2119, March&nbsp;1997 (<a href="ftp://ftp.isi.edu/in-notes/rfc2119.txt">TXT</a>, <a href="http://xml.resource.org/public/rfc/html/rfc2119.html">HTML</a>, <a href="http://xml.resource.org/public/rfc/xml/rfc2119.xml">XML</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2978">[RFC2978]</a></td>
+<td class="author-text">Freed, N. and J. Postel, &ldquo;<a href="http://tools.ietf.org/html/rfc2978">IANA Charset Registration Procedures</a>,&rdquo; BCP&nbsp;19, RFC&nbsp;2978, October&nbsp;2000 (<a href="ftp://ftp.isi.edu/in-notes/rfc2978.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC3629">[RFC3629]</a></td>
+<td class="author-text">Yergeau, F., &ldquo;<a href="http://tools.ietf.org/html/rfc3629">UTF-8, a transformation format of ISO 10646</a>,&rdquo; STD&nbsp;63, RFC&nbsp;3629, November&nbsp;2003 (<a href="ftp://ftp.isi.edu/in-notes/rfc3629.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC3986">[RFC3986]</a></td>
+<td class="author-text">Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;<a href="http://tools.ietf.org/html/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a>,&rdquo; STD&nbsp;66, RFC&nbsp;3986, January&nbsp;2005 (<a href="ftp://ftp.isi.edu/in-notes/rfc3986.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC4234">[RFC4234]</a></td>
+<td class="author-text"><a href="mailto:dcrocker@bbiw.net">Crocker, D., Ed.</a> and <a href="mailto:paul.overell@thus.net">P. Overell</a>, &ldquo;<a href="http://tools.ietf.org/html/rfc4234">Augmented BNF for Syntax Specifications: ABNF</a>,&rdquo; RFC&nbsp;4234, October&nbsp;2005 (<a href="ftp://ftp.isi.edu/in-notes/rfc4234.txt">TXT</a>, <a href="http://xml.resource.org/public/rfc/html/rfc4234.html">HTML</a>, <a href="http://xml.resource.org/public/rfc/xml/rfc4234.xml">XML</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC4395">[RFC4395]</a></td>
+<td class="author-text">Hansen, T., Hardie, T., and L. Masinter, &ldquo;<a href="http://tools.ietf.org/html/rfc4395">Guidelines and Registration Procedures for New URI Schemes</a>,&rdquo; BCP&nbsp;115, RFC&nbsp;4395, February&nbsp;2006 (<a href="ftp://ftp.isi.edu/in-notes/rfc4395.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="UNIV4">[UNIV4]</a></td>
+<td class="author-text">The Unicode Consortium, &ldquo;The Unicode Standard, Version
                   4.0.1, defined by: The Unicode Standard, Version 4.0
                   (Reading, MA, Addison-Wesley, 2003. ISBN
                   0-321-18578-1), as amended by Unicode 4.0.1
-                  (http://www.unicode.org/versions/Unicode4.0.1/)&#8221;, March 2004.</td></tr><tr><td class="topnowrap"><b id="UTR15">[UTR15]</b></td><td class="top">Davis, M. and M. Duerst, &#8220; Unicode Normalization Forms
-&#8221;, Unicode Standard Annex # 15, April 2003.</td></tr></table><h1 id="rfc.authors">Authors' Addresses</h1><address class="vcard"><span class="vcardline"><span class="fn">Joe Gregorio</span>
-          (editor)
-        <span class="n hidden"><span class="family-name">Gregorio</span><span class="given-name">Joe</span></span></span><span class="org vcardline">Google</span><span class="vcardline">EMail: <a href="mailto:joe@bitworking.org"><span class="email">joe@bitworking.org</span></a></span><span class="vcardline">URI: <a href="http://bitworking.org/" class="url">http://bitworking.org/</a></span></address><address class="vcard"><span class="vcardline"><span class="fn">Marc Hadley</span>
-          (editor)
-        <span class="n hidden"><span class="family-name">Hadley</span><span class="given-name">Marc</span></span></span><span class="org vcardline">Sun Microsystems</span><span class="vcardline">EMail: <a href="mailto:Marc.Hadley@sun.com"><span class="email">Marc.Hadley@sun.com</span></a></span><span class="vcardline">URI: <a href="http://sun.com/" class="url">http://sun.com/</a></span></address><address class="vcard"><span class="vcardline"><span class="fn">Mark Nottingham</span>
-          (editor)
-        <span class="n hidden"><span class="family-name">Nottingham</span><span class="given-name">Mark</span></span></span><span class="vcardline">EMail: <a href="mailto:mnot@pobox.com"><span class="email">mnot@pobox.com</span></a></span><span class="vcardline">URI: <a href="http://mnot.net/" class="url">http://mnot.net/</a></span></address><address class="vcard"><span class="vcardline"><span class="fn">David Orchard</span><span class="n hidden"><span class="family-name">Orchard</span><span class="given-name">David</span></span></span><span class="org vcardline">BEA Systems, Inc.</span><span class="vcardline">EMail: <a href="mailto:dorchard@bea.com"><span class="email">dorchard@bea.com</span></a></span><span class="vcardline">URI: <a href="http://bea.com/" class="url">http://bea.com/</a></span></address><h1 id="rfc.section.A"><a href="#rfc.section.A">A.</a> Contributors</h1><p id="rfc.section.A.p.1">The following people made significant contributions to this specification: DeWitt Clinton and James Snell.</p><h1 id="rfc.section.B"><a href="#rfc.section.B">B.</a> Revision History</h1><p id="rfc.section.B.p.1">02 - Added operators and came up with coherent percent-encoding and reserved character story. Added large examples section which is extracted and tested against the implementation.</p><p id="rfc.section.B.p.2">01</p><p id="rfc.section.B.p.3">00 - Initial Revision.</p><h1><a id="rfc.copyright" href="#rfc.copyright">Full Copyright Statement</a></h1><p>Copyright © The IETF Trust (2008).</p><p>This document is subject to the rights, licenses and restrictions contained in BCP 78, and except as set forth therein, the authors retain all their rights.</p><p>This document and the information contained herein are provided on an &#8220;AS IS&#8221; basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY, THE IETF TRUST AND THE INTERNET ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.</p><h1><a id="rfc.ipr" href="#rfc.ipr">Intellectual Property</a></h1><p>The IETF takes no position regarding the validity or scope of any Intellectual Property Rights or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; nor does it represent that it has made any independent effort to identify any such rights. Information on the procedures with respect to rights in RFC documents can be found in BCP 78 and BCP 79.</p><p>Copies of IPR disclosures made to the IETF Secretariat and any assurances of licenses to be made available, or the result of an attempt made to obtain a general license or permission for the use of such proprietary rights by implementers or users of this specification can be obtained from the IETF on-line IPR repository at &lt;<a href="http://www.ietf.org/ipr">http://www.ietf.org/ipr</a>&gt;.</p><p>The IETF invites any interested party to bring to its attention any copyrights, patents or patent applications, or other proprietary rights that may cover technology that may be required to implement this standard. Please address the information to the IETF at <a href="mailto:ietf-ipr@ietf.org">ietf-ipr@ietf.org</a>.</p><h1>Acknowledgement</h1><p>Funding for the RFC Editor function is provided by the IETF Administrative Support Activity (IASA).</p></body></html>
+                  (http://www.unicode.org/versions/Unicode4.0.1/),&rdquo; March&nbsp;2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="UTR15">[UTR15]</a></td>
+<td class="author-text">Davis, M. and M. Duerst, &ldquo;<a href="http://www.unicode.org/unicode/reports/tr15/tr15-23.html">Unicode Normalization Forms</a>,&rdquo; Unicode Standard Annex #&nbsp;15, April&nbsp;2003.</td></tr>
+</table>
+
+<a name="anchor9"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.A"></a><h3>Appendix A.&nbsp;
+Contributors</h3>
+
+<p>
+                   The following people made significant contributions to this
+                   specification: DeWitt Clinton and James Snell.  
+               
+</p>
+<a name="anchor10"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B"></a><h3>Appendix B.&nbsp;
+Revision History</h3>
+
+<p>02 - Added operators and came up with coherent 
+                   percent-encoding and reserved character story.
+                    Added large examples section which is extracted
+                   and tested against the implementation.
+               
+</p>
+<p>01
+               
+</p>
+<p>00 - Initial Revision.
+               
+</p>
+<a name="rfc.authors"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>Authors' Addresses</h3>
+<table width="99%" border="0" cellpadding="0" cellspacing="0">
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Joe Gregorio (editor)</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Google</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:joe@bitworking.org">joe@bitworking.org</a></td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://bitworking.org/">http://bitworking.org/</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Marc Hadley (editor)</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Sun Microsystems</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:Marc.Hadley@sun.com">Marc.Hadley@sun.com</a></td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://sun.com/">http://sun.com/</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Mark Nottingham (editor)</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:mnot@pobox.com">mnot@pobox.com</a></td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://mnot.net/">http://mnot.net/</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">David Orchard</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">BEA Systems, Inc.</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:dorchard@bea.com">dorchard@bea.com</a></td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://bea.com/">http://bea.com/</a></td></tr>
+</table>
+<a name="rfc.copyright"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>Full Copyright Statement</h3>
+<p class='copyright'>
+Copyright &copy; The IETF Trust (2008).</p>
+<p class='copyright'>
+This document is subject to the rights,
+licenses and restrictions contained in BCP&nbsp;78,
+and except as set forth therein,
+the authors retain all their rights.</p>
+<p class='copyright'>
+This document and the information contained herein are provided
+on an &ldquo;AS IS&rdquo; basis and THE CONTRIBUTOR,
+THE ORGANIZATION HE/SHE REPRESENTS
+OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY, THE IETF TRUST
+AND THE INTERNET ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT
+THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY
+IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR
+PURPOSE.</p>
+<h3>Intellectual Property</h3>
+<p class='copyright'>
+The IETF takes no position regarding the validity or scope of any
+Intellectual Property Rights or other rights that might be claimed
+to pertain to the implementation or use of the technology
+described in this document or the extent to which any license
+under such rights might or might not be available; nor does it
+represent that it has made any independent effort to identify any
+such rights.
+Information on the procedures with respect to
+rights in RFC documents can be found in BCP&nbsp;78 and BCP&nbsp;79.</p>
+<p class='copyright'>
+Copies of IPR disclosures made to the IETF Secretariat and any
+assurances of licenses to be made available,
+or the result of an attempt made to obtain a general license or
+permission for the use of such proprietary rights by implementers or
+users of this specification can be obtained from the IETF on-line IPR
+repository at <a href='http://www.ietf.org/ipr'>http://www.ietf.org/ipr</a>.</p>
+<p class='copyright'>
+The IETF invites any interested party to bring to its attention
+any copyrights,
+patents or patent applications,
+or other
+proprietary rights that may cover technology that may be required
+to implement this standard.
+Please address the information to the IETF at <a href='mailto:ietf-ipr@ietf.org'>ietf-ipr@ietf.org</a>.</p>
+</body></html>

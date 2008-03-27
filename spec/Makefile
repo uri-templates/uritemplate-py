@@ -13,14 +13,14 @@ test: $(TARGET).txt
 	python work/explain.cgi --test
 
 $(TARGET).html: $(SOURCE).xml rfc2629.xslt
-	xsltproc rfc2629.xslt $(SOURCE).xml > $(TARGET).html
+	tclsh8.4 xml2rfc.tcl xml2html $(SOURCE).xml  $(TARGET).html
 
 $(TARGET).txt:  $(SOURCE).xml xml2rfc.tcl
 	tclsh8.4 xml2rfc.tcl xml2rfc $(SOURCE).xml $(TARGET).txt
 
 .PHONY: diff
 diff:
-	./rfcdiff.sh --html $(LAST).txt $(TARGET).txt
+	./rfcdiff --html $(LAST).txt $(TARGET).txt
 
 .PHONY: nits
 nits:
