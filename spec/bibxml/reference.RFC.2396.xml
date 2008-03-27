@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='RFC2396'>
+
+<front>
+<title abbrev='URI Generic Syntax'>Uniform Resource Identifiers (URI): Generic Syntax</title>
+<author initials='T.' surname='Berners-Lee' fullname='Tim Berners-Lee'>
+<organization abbrev='MIT/LCS'>World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code></postal>
+<facsimile>+1(617)258-8682</facsimile>
+<email>timbl@w3.org</email></address></author>
+<author initials='R.T.' surname='Fielding' fullname='Roy T. Fielding'>
+<organization abbrev='U.C. Irvine'>Department of Information and Computer Science</organization>
+<address>
+<postal>
+<street>University of California, Irvine</street>
+<city>Irvine</city>
+<region>CA</region>
+<code>92697-3425</code></postal>
+<facsimile>+1(949)824-1715</facsimile>
+<email>fielding@ics.uci.edu</email></address></author>
+<author initials='L.' surname='Masinter' fullname='Larry Masinter'>
+<organization abbrev='Xerox Corporation'>Xerox PARC</organization>
+<address>
+<postal>
+<street>3333 Coyote Hill Road</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94034</code></postal>
+<facsimile>+1(415)812-4333</facsimile>
+<email>masinter@parc.xerox.com</email></address></author>
+<date year='1998' month='August'></date>
+<area>Applications</area>
+<keyword>uniform resource</keyword>
+<keyword>URI</keyword>
+<abstract>
+<t>
+   A Uniform Resource Identifier (URI) is a compact string of characters
+   for identifying an abstract or physical resource.  This document
+   defines the generic syntax of URI, including both absolute and
+   relative forms, and guidelines for their use; it revises and replaces
+   the generic definitions in RFC 1738 and RFC 1808.
+</t>
+<t>
+   This document defines a grammar that is a superset of all valid URI,
+   such that an implementation can parse the common components of a URI
+   reference without knowing the scheme-specific requirements of every
+   possible identifier type.  This document does not define a generative
+   grammar for URI; that task will be performed by the individual
+   specifications of each URI scheme.
+</t></abstract>
+<note title='IESG Note'>
+<t>
+   This paper describes a "superset" of operations that can be applied
+   to URI.  It consists of both a grammar and a description of basic
+   functionality for URI.  To understand what is a valid URI, both the
+   grammar and the associated description have to be studied.  Some of
+   the functionality described is not applicable to all URI schemes, and
+   some operations are only possible when certain media types are
+   retrieved using the URI, regardless of the scheme used.
+</t></note></front>
+
+<seriesInfo name='RFC' value='2396' />
+<format type='TXT' octets='83639' target='ftp://ftp.isi.edu/in-notes/rfc2396.txt' />
+<format type='HTML' octets='116376' target='http://xml.resource.org/public/rfc/html/rfc2396.html' />
+<format type='XML' octets='95830' target='http://xml.resource.org/public/rfc/xml/rfc2396.xml' />
+</reference>

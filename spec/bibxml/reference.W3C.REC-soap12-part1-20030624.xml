@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='W3C.REC-soap12-part1-20030624'>
+<front>
+<title>SOAP Version 1.2 Part 1: Messaging Framework</title>
+
+<author initials='H' surname='Nielsen' fullname='Henrik Frystyk Nielsen'>
+    <organization />
+</author>
+
+<author initials='N' surname='Mendelsohn' fullname='Noah Mendelsohn'>
+    <organization />
+</author>
+
+<author initials='M' surname='Gudgin' fullname='Martin Gudgin'>
+    <organization />
+</author>
+
+<author initials='M' surname='Hadley' fullname='Marc Hadley'>
+    <organization />
+</author>
+
+<author initials='J' surname='Moreau' fullname='Jean-Jacques Moreau'>
+    <organization />
+</author>
+
+<date month='June' day='24' year='2003' />
+</front>
+
+<seriesInfo name='W3C REC' value='REC-soap12-part1-20030624' />
+<format type='HTML' target='http://www.w3.org/TR/2003/REC-soap12-part1-20030624' />
+</reference>

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='RFC3987'>
+
+<front>
+<title>Internationalized Resource Identifiers (IRIs)</title>
+<author initials='M.' surname='Duerst' fullname='M. Duerst'>
+<organization /></author>
+<author initials='M.' surname='Suignard' fullname='M. Suignard'>
+<organization /></author>
+<date year='2005' month='January' /></front>
+
+<seriesInfo name='RFC' value='3987' />
+<format type='TXT' octets='111190' target='ftp://ftp.isi.edu/in-notes/rfc3987.txt' />
+</reference>

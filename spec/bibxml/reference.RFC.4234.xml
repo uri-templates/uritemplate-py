@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='RFC4234'>
+
+<front>
+<title abbrev='ABNF'>Augmented BNF for Syntax Specifications: ABNF</title>
+<author fullname='Dave Crocker' initials='D.' role='editor' surname='Crocker'>
+<organization>Brandenburg InternetWorking</organization>
+<address>
+<postal>
+<street>675 Spruce Dr.</street>
+<city>Sunnyvale</city>
+<region>CA</region>
+<code>94086</code>
+<country>US</country></postal>
+<phone>+1.408.246.8253</phone>
+<email>dcrocker@bbiw.net</email></address></author>
+<author fullname='Paul Overell' initials='P.' surname='Overell'>
+<organization>THUS plc.</organization>
+<address>
+<postal>
+<street>1/2 Berkeley Square, </street>
+<street>99 Berkeley Street</street>
+<city>Glasgow</city>
+<code>G3 7HR</code>
+<country>UK</country></postal>
+<email>paul.overell@thus.net</email></address></author>
+<date year='2005' month='October' />
+<keyword>ABNF</keyword>
+<keyword>Augmented</keyword>
+<keyword>Backus-Naur</keyword>
+<keyword>Form</keyword>
+<keyword>electronic</keyword>
+<keyword>mail</keyword>
+<abstract>
+<t>Internet technical specifications often need to define a formal	
+			syntax.  Over the years, a modified version of Backus-Naur Form	
+			(BNF), called Augmented BNF (ABNF), has been popular among many	
+			Internet specifications.  The current specification documents ABNF.	
+			It balances compactness and simplicity, with reasonable	
+			representational power.  The differences between standard BNF and	
+			ABNF involve naming rules, repetition, alternatives, order-	
+			independence, and value ranges.  This specification also supplies	
+			additional rule definitions and encoding for a core lexical analyzer	
+			of the type common to several Internet specifications.
+      </t></abstract></front>
+
+<seriesInfo name='RFC' value='4234' />
+<format type='TXT' octets='26351' target='ftp://ftp.isi.edu/in-notes/rfc4234.txt' />
+<format type='HTML' octets='44815' target='http://xml.resource.org/public/rfc/html/rfc4234.html' />
+<format type='XML' octets='35945' target='http://xml.resource.org/public/rfc/xml/rfc4234.xml' />
+</reference>

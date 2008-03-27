@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='W3C.REC-xmlbase-20010627'>
+<front>
+<title>XML Base</title>
+
+<author initials='J' surname='Marsh' fullname='J. Marsh'>
+    <organization />
+</author>
+
+<date month='June' day='27' year='2001' />
+</front>
+
+<seriesInfo name='W3C REC' value='W3C.REC-xmlbase-20010627' />
+<format type='HTML' target='http://www.w3.org/TR/2001/REC-xmlbase-20010627' />
+</reference>

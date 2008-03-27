@@ -1,0 +1,616 @@
+
+
+
+Network Working Group                                   J. Gregorio, Ed.
+Internet-Draft                                                       IBM
+Expires: April 1, 2007                                    M. Hadley, Ed.
+                                                        Sun Microsystems
+                                                           M. Nottingham
+                                                             Yahoo, Inc.
+                                                              D. Orchard
+                                                       BEA Systems, Inc.
+                                                      September 28, 2006
+
+
+                              URI Template
+                         draft-gregorio-00.txt
+
+Status of this Memo
+
+   By submitting this Internet-Draft, each author represents that any
+   applicable patent or other IPR claims of which he or she is aware
+   have been or will be disclosed, and any of which he or she becomes
+   aware will be disclosed, in accordance with Section 6 of BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on April 1, 2007.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2006).
+
+Abstract
+
+   URI Templates are URIs that contain embedded variables.  This
+   document defines the structure and syntax of URI Templates and
+   defines a corresponding XML simple type, the URITemplate, that may be
+
+
+
+Gregorio, et al.          Expires April 1, 2007                 [Page 1]
+
+Internet-Draft                URI Template                September 2006
+
+
+   used to define elements and attributes that contain URI Templates.
+
+Editorial Note
+
+   To provide feedback on this Internet-Draft, ????.
+
+Table of Contents
+
+   1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  3
+   2.  Notational Conventions . . . . . . . . . . . . . . . . . . . .  3
+   3.  Motivation . . . . . . . . . . . . . . . . . . . . . . . . . .  3
+   4.  URI Template . . . . . . . . . . . . . . . . . . . . . . . . .  3
+     4.1   Template Variables . . . . . . . . . . . . . . . . . . . .  3
+     4.2   Evaluating a URI Template  . . . . . . . . . . . . . . . .  4
+     4.3   Examples . . . . . . . . . . . . . . . . . . . . . . . . .  4
+   5.  URI Template Simple Profile  . . . . . . . . . . . . . . . . .  6
+     5.1   Examples . . . . . . . . . . . . . . . . . . . . . . . . .  6
+   6.  Security Considerations  . . . . . . . . . . . . . . . . . . .  7
+   7.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . .  8
+   8.  Normative References . . . . . . . . . . . . . . . . . . . . .  8
+       Authors' Addresses . . . . . . . . . . . . . . . . . . . . . .  8
+   A.  Contributors . . . . . . . . . . . . . . . . . . . . . . . . .  9
+   B.  Revision History . . . . . . . . . . . . . . . . . . . . . . .  9
+       Intellectual Property and Copyright Statements . . . . . . . . 10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gregorio, et al.          Expires April 1, 2007                 [Page 2]
+
+Internet-Draft                URI Template                September 2006
+
+
+1.  Introduction
+
+   URI Templates are URIs that contain embedded variables.  This
+   document defines the structure and syntax of URI Templates and
+   defines a corresponding XML simple type, the URITemplate, that may be
+   used to define elements and attributes that contain URI Templates.
+
+2.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+3.  Motivation
+
+   URI Templates are useful in a number of scenarios including web
+   service documentation and application code.  A standard syntax and
+   well-defined substitution rules will improve interop.
+
+4.  URI Template
+
+   A URI Template is a sequence of characters that contains one or more
+   embedded template variables Section 4.1.  A URI Template becomes a
+   URI when the template variables are substituted with the template
+   variables string values.  The following shows an example URI
+   Template:
+
+   http://example.com/widgets/{widget_id}
+
+   If the value of the widget_id variable is "xyzzy", the resulting URI
+   after substitution is:
+
+   http://example.com/widgets/xyzzy
+
+
+4.1  Template Variables
+
+   Template variables are the parameterized components of a URI
+   Template, their representation is described below.  A template
+   variable MUST match the template-var production.
+
+    template-char = unreserved / reserved /
+             "|" / "^" / "<" / ">" / '"' / "\" /
+             "`" / "%"
+
+    template-name  = 1*template-char
+    template-var  = "{" template-name "}"
+
+
+
+
+Gregorio, et al.          Expires April 1, 2007                 [Page 3]
+
+Internet-Draft                URI Template                September 2006
+
+
+   This specification uses the Augmented Backus-Naur Form (ABNF)
+   notation of [RFC2234].  See [RFC3986] for reserved and unreserved
+   productions.
+
+   The range of characters allowed in template-name is large.  This was
+   intentional as it is expected that follow-on specifications will
+   create profiles of URI Templates that may restrict the characters
+   allowed for either names or values, or give special meaning to some
+   characters under particular applications or contexts.  For example,
+   Section 5 defines a profile of URI Templates where any template-name
+   that ends with a '?' is optional.
+
+4.2  Evaluating a URI Template
+
+   Evaluating a URI Template consists of replacing each occurrence of a
+   template variable with the string value of that variable.  Obtaining
+   the string value of a template variable is an application-specific
+   process, this specification places no constraints on the mechanism
+   employed.  Template variables MAY appear in a URI Template any number
+   of times.
+
+   If the value of a template variable would conflict with a reserved
+   character's purpose as a delimiter, then the conflicting data must be
+   percent-encoded before substitution.  That is, merely doing rote
+   substitution on template variables could result in the generation of
+   an invalid URI for a particular scheme.  Specifications that use URI
+   Templates are expected to take this into consideration in how they
+   use such templates.
+
+   When the values of any template variables have been substituted into
+   a URI template, the resulting string MUST match the URI-reference
+   production of RFC 3986 and MUST also match the productions for the
+   scheme in the final URI.
+
+   If the value of a template variable contains characters outside the
+   allowed set for the component of the URI that it parameterizes, such
+   characters MUST be encoded as described in RFC 3986.
+
+4.3  Examples
+
+   Given the following template names and values
+
+
+
+
+
+
+
+
+
+
+Gregorio, et al.          Expires April 1, 2007                 [Page 4]
+
+Internet-Draft                URI Template                September 2006
+
+
+       Name                                Value
+       ------------------------------------------------------------
+       a                                   fred
+       b                                   barney
+       c                                   cheeseburger
+       %20                                 this-is-spinal-tap
+       a|b                                 none%20of%20the%20above
+       schema                              https
+       p                                   quote=to+bo+or+not+to+be
+       !$&'()*+,;=:/?#[]@|^<>''\`          hello
+       e
+       ?                                   hullo
+
+   Note that the name 'wilma' has not been defined, and the value of 'e'
+   is the empty string.
+
+   The following URI Templates will be expanded as shown:
+
+       http://example.org/{a}/{b}/
+       http://example.org/fred/barney/
+
+       http://example.org/{a}{b}/
+       http://example.org/fredbarney/
+
+       http://example.org/page1#{a}
+       http://example.org/page1#fred
+
+       {scheme}://{%20}.example.org?date={wilma?}&option={a}
+       https://this-is-spinal-tap.example.org?date=&option=fred
+
+       http://example.org/{a|b}
+       http://example.org/none%20of%20the%20above
+
+       http://example.org?{p}
+       http://example.org?quote=to+bo+or+not+to+be
+
+       http://example.com/{!$&'()*+,;=:/?#[]@|^<>''\`}
+       http://example.com/hello
+
+       http://example.com/order/{c}/{c}/{c}/
+       http://example.com/order/cheeseburger/cheeseburger/cheeseburger/
+
+       http://example.com/{?}
+       http://example.com/hullo
+
+       http://example.com/{e}/
+       http://example.com//
+
+
+
+
+Gregorio, et al.          Expires April 1, 2007                 [Page 5]
+
+Internet-Draft                URI Template                September 2006
+
+
+   The following are examples of URI Template expansions that are not
+   legal.
+
+       Name                                Value
+       ------------------------------------------------------------
+       a                                   fred barney
+       b                                   %
+
+   The following URI Templates are expanded with the given values and do
+   not produce legal URIs.
+
+       http://example.org/{a}
+       http://example.org/fred barney
+
+       http://example.org/{b}/
+       http://example.org/%/
+
+
+5.  URI Template Simple Profile
+
+   This specification defines one profile for URI Templates that
+   restricts the allowed set of characters in a template name and also
+   defines special handling for the '?' character.  If a URI Template is
+   specified as conforming to the Simple Profile then its template
+   variables will match the production for simple-template-var.
+
+    simple-template-char = unreserved
+    simple-template-name = 1*a-template-char
+    simple-template-var  = "{" template-name [ "?" ] "}"
+
+   The optional trailing "?" is given a special significance.  If the
+   template variable ends with "?" then the template variable is
+   optional and the template processor need not supply a value for that
+   variable during substitution.  If the template variable is not
+   supplied then the template variable is substituted with a zero length
+   string.  The trailing "?" is not considered part of the name of the
+   template variable.
+
+5.1  Examples
+
+   Given the following names and values:
+
+       Name                                Value
+       ------------------------------------------------------------
+       a                                   fred
+       c                                   cheeseburger
+       p                                   quote=to+bo+or+not+to+be
+       e
+
+
+
+Gregorio, et al.          Expires April 1, 2007                 [Page 6]
+
+Internet-Draft                URI Template                September 2006
+
+
+       -._~                                hello
+
+   Note that the name 'wilma' has not been defined, and the value of 'e'
+   is the empty string.
+
+   The following templates are taken as Simple Profile URI Templates.
+   They will be expanded as shown:
+
+       http://example.org/{a}/{c}/
+       http://example.org/fred/cheeseburger/
+
+       http://example.org/{a}{b}/
+       http://example.org/fredcheeseburger/
+
+       http://example.org?{p}
+       http://example.org?quote=to+bo+or+not+to+be
+
+       http://example.com/{-._~}
+       http://example.com/hello
+
+       http://example.com/{-._~}?
+       http://example.com/hello?
+
+       http://example.com/{-._~?}
+       http://example.com/hello
+
+       http://example.com/{wilma?}
+       http://example.com/
+
+       http://example.com/{wilma?}/
+       http://example.com//
+
+       http://example.com/{wilma?}?
+       http://example.com/?
+
+       http://example.com/{e}/
+       http://example.com//
+
+       http://example.com/{e?}/
+       http://example.com//
+
+
+6.  Security Considerations
+
+   A URI Template does not contain active or executable content.  Other
+   security considerations are the same as those for URIs, see section 7
+   of RFC3986.
+
+
+
+
+Gregorio, et al.          Expires April 1, 2007                 [Page 7]
+
+Internet-Draft                URI Template                September 2006
+
+
+7.  IANA Considerations
+
+   In common with RFC3986, URI scheme names form a registered namespace
+   that is managed by IANA according to the procedures defined in
+   [RFC2717].  No IANA actions are required by this document.
+
+8.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC2234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
+              Specifications: ABNF", RFC 2234, November 1997.
+
+   [RFC2717]  Petke, R. and I. King, "Registration Procedures for URL
+              Scheme Names", BCP 35, RFC 2717, November 1999.
+
+   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
+              Resource Identifier (URI): Generic Syntax", STD 66,
+              RFC 3986, January 2005.
+
+
+Authors' Addresses
+
+   Joe Gregorio (editor)
+   IBM
+
+   Email: joe@bitworking.org
+   URI:   http://ibm.com/
+
+
+   Mark Hadley (editor)
+   Sun Microsystems
+
+   Email: Marc.Hadley@sun.com
+   URI:   http://sun.com/
+
+
+   Mark Nottingham
+   Yahoo, Inc.
+
+   Email: mnot@pobox.com
+   URI:   http://mnot.net/
+
+
+
+
+
+
+
+
+Gregorio, et al.          Expires April 1, 2007                 [Page 8]
+
+Internet-Draft                URI Template                September 2006
+
+
+   David Orchard
+   BEA Systems, Inc.
+
+   Email: dorchard@bea.com
+   URI:   http://bea.com/
+
+Appendix A.  Contributors
+
+   The following people made significant contributions to this
+   specification: DeWitt Clinton and James Snell.
+
+Appendix B.  Revision History
+
+   00 - Initial Revision.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gregorio, et al.          Expires April 1, 2007                 [Page 9]
+
+Internet-Draft                URI Template                September 2006
+
+
+Intellectual Property Statement
+
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the procedures with respect to rights in RFC documents can be
+   found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at
+   ietf-ipr@ietf.org.
+
+   The IETF has been notified of intellectual property rights claimed in
+   regard to some or all of the specification contained in this
+   document.  For more information consult the online list of claimed
+   rights.
+
+
+Disclaimer of Validity
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY AND THE INTERNET
+   ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE
+   INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Copyright Statement
+
+   Copyright (C) The Internet Society (2006).  This document is subject
+   to the rights, licenses and restrictions contained in BCP 78, and
+   except as set forth therein, the authors retain all their rights.
+
+
+
+
+
+Gregorio, et al.          Expires April 1, 2007                [Page 10]
+
+Internet-Draft                URI Template                September 2006
+
+
+Acknowledgment
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gregorio, et al.          Expires April 1, 2007                [Page 11]
+

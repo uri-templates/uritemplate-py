@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='RFC2617'>
+
+<front>
+<title abbrev='HTTP Authentication'>HTTP Authentication: Basic and Digest Access Authentication</title>
+<author initials='J.' surname='Franks' fullname='John Franks'>
+<organization>Northwestern University, Department of Mathematics</organization>
+<address>
+<postal>
+<street>Northwestern University</street>
+<city>Evanston</city>
+<region>IL</region>
+<code>60208-2730</code>
+<country>USA</country></postal>
+<email>john@math.nwu.edu</email></address></author>
+<author initials='P.M.' surname='Hallam-Baker' fullname='Phillip M. Hallam-Baker'>
+<organization>Verisign Inc.</organization>
+<address>
+<postal>
+<street>301 Edgewater Place</street>
+<street>Suite 210</street>
+<city>Wakefield</city>
+<region>MA</region>
+<code>01880</code>
+<country>USA</country></postal>
+<email>pbaker@verisign.com</email></address></author>
+<author initials='J.L.' surname='Hostetler' fullname='Jeffery L. Hostetler'>
+<organization>AbiSource, Inc.</organization>
+<address>
+<postal>
+<street>6 Dunlap Court</street>
+<city>Savoy</city>
+<region>IL</region>
+<code>61874</code>
+<country>USA</country></postal>
+<email>jeff@AbiSource.com</email></address></author>
+<author initials='S.D.' surname='Lawrence' fullname='Scott D. Lawrence'>
+<organization>Agranat Systems, Inc.</organization>
+<address>
+<postal>
+<street>5 Clocktower Place</street>
+<street>Suite 400</street>
+<city>Maynard</city>
+<region>MA</region>
+<code>01754</code>
+<country>USA</country></postal>
+<email>lawrence@agranat.com</email></address></author>
+<author initials='P.J.' surname='Leach' fullname='Paul J. Leach'>
+<organization>Microsoft Corporation</organization>
+<address>
+<postal>
+<street>1 Microsoft Way</street>
+<city>Redmond</city>
+<region>WA</region>
+<code>98052</code>
+<country>USA</country></postal>
+<email>paulle@microsoft.com</email></address></author>
+<author initials='A.' surname='Luotonen' fullname='Ari Luotonen'>
+<organization>Netscape Communications Corporation</organization>
+<address>
+<postal>
+<street>501 East Middlefield Road</street>
+<city>Mountain View</city>
+<region>CA</region>
+<code>94043</code>
+<country>USA</country></postal></address></author>
+<author initials='L.' surname='Stewart' fullname='Lawrence C. Stewart'>
+<organization>Open Market, Inc.</organization>
+<address>
+<postal>
+<street>215 First Street</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02142</code>
+<country>USA</country></postal>
+<email>stewart@OpenMarket.com</email></address></author>
+<date year='1999' month='June' />
+<abstract>
+<t>
+   "HTTP/1.0", includes the specification for a Basic Access
+   Authentication scheme. This scheme is not considered to be a secure
+   method of user authentication (unless used in conjunction with some
+   external secure system such as SSL ), as the user name and
+   password are passed over the network as cleartext.
+      </t>
+<t>
+   This document also provides the specification for HTTP's
+   authentication framework, the original Basic authentication scheme
+   and a scheme based on cryptographic hashes, referred to as "Digest
+   Access Authentication".  It is therefore also intended to serve as a
+   replacement for RFC 2069 .  Some optional elements specified by
+   RFC 2069 have been removed from this specification due to problems
+   found since its publication; other new elements have been added for
+   compatibility, those new elements have been made optional, but are
+   strongly recommended.
+      </t>
+<t>
+   Like Basic, Digest access authentication verifies that both parties
+   to a communication know a shared secret (a password); unlike Basic,
+   this verification can be done without sending the password in the
+   clear, which is Basic's biggest weakness. As with most other
+   authentication protocols, the greatest sources of risks are usually
+   found not in the core protocol itself but in policies and procedures
+   surrounding its use.
+    </t></abstract></front>
+
+<seriesInfo name='RFC' value='2617' />
+<format type='TXT' octets='77638' target='ftp://ftp.isi.edu/in-notes/rfc2617.txt' />
+<format type='HTML' octets='100323' target='http://xml.resource.org/public/rfc/html/rfc2617.html' />
+<format type='XML' octets='85507' target='http://xml.resource.org/public/rfc/xml/rfc2617.xml' />
+</reference>

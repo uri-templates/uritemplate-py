@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='W3C.REC-xml-20040204'>
+<front>
+<title>Extensible Markup Language (XML) 1.0 (Third Edition)</title>
+
+<author initials='F' surname='Yergeau' fullname='F. Yergeau'>
+    <organization />
+</author>
+
+<author initials='J' surname='Paoli' fullname='Jean Paoli'>
+    <organization />
+</author>
+
+<author initials='C' surname='Sperberg-McQueen' fullname='C. M. Sperberg-McQueen'>
+    <organization />
+</author>
+
+<author initials='T' surname='Bray' fullname='Tim Bray'>
+    <organization />
+</author>
+
+<author initials='E' surname='Maler' fullname='Eve Maler'>
+    <organization />
+</author>
+
+<date month='February' day='4' year='2004' />
+</front>
+
+<seriesInfo name='W3C REC' value='REC-xml-20040204' />
+<format type='HTML' target='http://www.w3.org/TR/2004/REC-xml-20040204' />
+</reference>

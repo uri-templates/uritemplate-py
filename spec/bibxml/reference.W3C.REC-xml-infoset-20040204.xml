@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='W3C.REC-xml-infoset-20040204'>
+<front>
+<title>XML Information Set (Second Edition)</title>
+
+<author initials='J' surname='Cowan' fullname='J. Cowan'>
+    <organization />
+</author>
+
+<author initials='R' surname='Tobin' fullname='R Tobin'>
+    <organization />
+</author>
+
+<author initials='A' surname='Layman' fullname='A Layman'>
+    <organization />
+</author>
+
+<date month='February' day='04' year='2004' />
+</front>
+
+<seriesInfo name='W3C REC' value='W3C.REC-xml-infoset-20040204' />
+<format type='HTML' target='http://www.w3.org/TR/2004/REC-xml-infoset-20040204' />
+</reference>

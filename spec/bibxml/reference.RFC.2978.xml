@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='RFC2978'>
+
+<front>
+<title>IANA Charset Registration Procedures</title>
+<author initials='N.' surname='Freed' fullname='N. Freed'>
+<organization /></author>
+<author initials='J.' surname='Postel' fullname='J. Postel'>
+<organization /></author>
+<date year='2000' month='October' />
+<abstract>
+<t>Multipurpose Internet Mail Extensions (MIME) and various other Internet protocols are capable of using many different charsets.  This in turn means that the ability to label different charsets is essential.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+
+<seriesInfo name='BCP' value='19' />
+<seriesInfo name='RFC' value='2978' />
+<format type='TXT' octets='21615' target='ftp://ftp.isi.edu/in-notes/rfc2978.txt' />
+</reference>

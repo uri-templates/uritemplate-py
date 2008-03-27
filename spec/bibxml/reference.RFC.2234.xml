@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='RFC2234'>
+
+<front>
+<title abbrev='ABNF for Syntax Specifications'>Augmented BNF for Syntax Specifications: ABNF</title>
+<author initials='D.' surname='Crocker' fullname='David H. Crocker' role='editor'>
+<organization>Internet Mail Consortium</organization>
+<address>
+<postal>
+<street>675 Spruce Dr.</street>
+<city>Sunnyvale</city>
+<region>CA</region>
+<code>94086</code>
+<country>US</country></postal>
+<phone>+1 408 246 8253</phone>
+<facsimile>+1 408 249 6205</facsimile>
+<email>dcrocker@imc.org</email></address></author>
+<author initials='P.' surname='Overell' fullname='Paul Overell'>
+<organization>Demon Internet Ltd.</organization>
+<address>
+<postal>
+<street>Dorking Business Park</street>
+<street>Dorking</street>
+<city>Surrey</city>
+<region>England</region>
+<code>RH4 1HN</code>
+<country>UK</country></postal>
+<email>paulo@turnpike.com</email></address></author>
+<date year='1997' month='November' />
+<keyword>ABNF</keyword>
+<keyword>Augmented</keyword>
+<keyword>Backus-Naur</keyword>
+<keyword>Form</keyword>
+<keyword>electronic</keyword>
+<keyword>mail</keyword></front>
+
+<seriesInfo name='RFC' value='2234' />
+<format type='TXT' octets='24265' target='ftp://ftp.isi.edu/in-notes/rfc2234.txt' />
+<format type='HTML' octets='36695' target='http://xml.resource.org/public/rfc/html/rfc2234.html' />
+<format type='XML' octets='24067' target='http://xml.resource.org/public/rfc/xml/rfc2234.xml' />
+</reference>

@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>
+   <!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>
+   <!ENTITY rfc4234 SYSTEM 'bibxml/reference.RFC.4234.xml'>
+   <!ENTITY rfc4395 SYSTEM 'bibxml/reference.RFC.4395.xml'>
+
+   <!ENTITY rfc2978 SYSTEM 'bibxml/reference.RFC.2978.xml'>
+   <!ENTITY rfc3629 SYSTEM 'bibxml/reference.RFC.3629.xml'>
+   <!ENTITY ASCII SYSTEM    'bibxml/_reference.ANSI.X3-4.1986.xml'>
+   <!ENTITY UNIV4 SYSTEM    'bibxml/univ4.xml'>
+   <!ENTITY UTR15 SYSTEM    'bibxml/utr15.xml'>
+   ]>
+
+
+   <!--<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>-->
+
+   <?rfc toc="yes" ?>
+   <?rfc symrefs="yes" ?>
+   <?rfc sortrefs="yes"?>
+   <?rfc iprnotified="yes" ?>
+   <?rfc strict="yes" ?>
+   <?rfc compact="yes" ?>
+   <?rfc comments="yes" ?>
+   <?rfc inline="yes" ?>
+   <?rfc tocdepth="3" ?>
+   <!-- 
+   1. Update the docName
+   2. Update the date
+   3. Update the Revision History.
+   -->
+
+   <rfc category="std" ipr="full3978" docName="draft-gregorio-uritemplate-03">
+       <front>
+           <title>URI Template</title>
+
+           <author initials='J.C.' surname="Gregorio" fullname='Joe Gregorio' role="editor">
+               <organization>Google</organization>
+               <address>
+                   <email>joe@bitworking.org</email>
+                   <uri>http://bitworking.org/</uri>
+               </address>
+           </author>
+
+           <author initials='M.H.' surname="Hadley" fullname='Marc Hadley' role="editor">
+               <organization>Sun Microsystems</organization>
+               <address>
+                   <email>Marc.Hadley@sun.com</email>
+                   <uri>http://sun.com/</uri>
+               </address>
+           </author>
+
+           <author initials='M.N.' surname="Nottingham" fullname='Mark Nottingham' role="editor">
+               <organization></organization>
+               <address>
+                   <email>mnot@pobox.com</email>
+                   <uri>http://mnot.net/</uri>
+               </address>
+           </author>
+
+           <author initials='D.O.' surname="Orchard" fullname='David Orchard'> 
+               <organization>BEA Systems, Inc.</organization>
+               <address>
+                   <email>dorchard@bea.com</email>
+                   <uri>http://bea.com/</uri>
+               </address>
+           </author>
+
+
+           <date day="26" month="Mar" year="2008"/>
+           <abstract>
+
+               <t>
+                   A URI Template is a compact sequence of characters 
+                   used for the construction of URIs. 
+                   This specification defines the URI Template
+                   syntax and the process for expanding a URI Template into a
+                   URI, along with guidelines and security considerations for the 
+                   use of URI Templates on the Internet.
+                   The URI Template syntax allows for the construction
+                   of strings that are a superset of URIs, allowing an implementation
+                   to process any URI Template without knowing the scheme-specific
+                   requirements of every possible resulting URI.
+               </t>
+
+           </abstract>
+
+           <note title="Editorial Note">
+               <t>To provide feedback on this Internet-Draft, join the 
+                   <eref
+                       target="http://lists.w3.org/Archives/Public/uri/">W3C URI mailing
+                       list (http://lists.w3.org/Archives/Public/uri/)</eref>.
+               </t>
+           </note>
+       </front>
+
+       <middle>
+
+           <section title="Introduction">
+
+               <t>
+                   A URI Template provides a simple and extensible format 
+                   for URI construction.  A URI Template is a string that
+                   contains embedded expansions, text marked off in matching
+                   braces ('{', '}'), that denotes a part of the string that is
+                   to be substituted by a template processor to
+                   produce a URI.  A URI Template is transformed into a URI by
+                   substituting the expansions with their calculated value.
+               </t>
+               <t>
+                   Several specifications have defined URI Templates
+                   with varying levels of formality, such as WSDL, WADL and OpenSearch.  This
+                   specification is derived from these concepts, giving a
+                   rigorous definition to such templates.
+               </t>
+
+               <t>
+                   This specification uses the terms "character" and "coded
+                   character set" in accordance with the definitions provided
+                   in <xref target="RFC2978"/>, and "character encoding" in place of what
+                   <xref target="RFC2978"/> refers to as a "charset".
+               </t>
+
+               <section title="Overview">
+
+                   <t>
+                       A URI Template allows a structural description of URIs
+                       while allowing a consumer of the template to construct a
+                       final URI by providing the values of the expansion
+                       variables. For example, given the following URI Template:
+                   </t>
+
+                   <figure><artwork>
+    http://www.example.com/users/{userid}</artwork></figure>
+
+                   <t>And the following variable value</t>
+
+                   <figure><artwork>
+    userid := fred</artwork></figure>
+
+                   <t>The expansion of the URI Template is:</t>
+
+                   <figure><artwork>
+    http://www.example.com/users/fred</artwork></figure>
+
+                   <t>
+                       URI Templates can be used as a machine-readable 
+                       forms language. By allowing clients to form their own
+                       identifiers based on templates given to them by the URI's authority
+                       it's possible to construct dynamic systems that use more of the URI
+                       than traditional HTML forms. For example:
+                   </t>
+
+                   <figure><artwork>
+    http://www.example.org/products/{upc}/buyers?page={page_num}</artwork> </figure>
+
+                   <t>
+                       URI Templates can also be used to compose URI-centric protocols
+                       without impinging on authorities' control of their URI space. For example,
+                       there are many emerging conventions for passing around login
+                       information between sites using URIs. Forcing people to use a well-known 
+                       query parameter isn't good practice, but using URI Templates
+                       allows different sites to specify local ways of conveying the same
+                       information:
+                   </t>
+
+                   <figure><artwork>
+    http://auth.example.com/userauth;{return-uri}</artwork></figure>
+                   <figure><artwork>
+    http://login.example.org/login?back={return-uri}</artwork></figure>
+
+               </section>
+               <section title="Design Considerations">
+                   <t>
+                       The URI Template syntax has been designed to carefully balance
+                       the need for a powerful substitution mechanism with ease 
+                       of implementation and security. The syntax is designed
+                       to be easy to parse while at the same time providing 
+                       enough flexibility to express many common templating
+                       scenarios. On the balance, the template processing is 
+                       not Turing complete, thus avoiding a number of 
+                       security issues, ala the  billion-laughs attack 
+                       of XML DTDs.
+                   </t>
+                   <t>
+                       Another consideration was to keep the syntax and processing 
+                       in-line with the pre-existing templating schemes present
+                       in OpenSearch, WSDL and WADL. 
+                   </t>
+                   <t>
+                       The final design consideration was control over
+                       the placement of reserved characters in the 
+                       URI generated from a URI Template. The reserved characters
+                       in a URI Template can only appear in the non-expansion
+                       text, or in the argument to an operator, both locations
+                       are dictated by the URI Template author. Given
+                       the percent-encoding rules for variable values
+                       this means that the source of all structure, i.e
+                       reserved characters, in a URI generated from a 
+                       URI Template is decided by the URI Template author.
+                   </t>
+
+               </section>
+	       
+	     
+
+               <section title="Notational Conventions">
+                   <t>
+                       This specification uses the Augmented Backus-Naur Form
+                       (ABNF) notation of <xref target="RFC4234"/>, including
+                       the following core ABNF syntax rules defined by that
+                       specification: ALPHA (letters) and DIGIT (decimal
+                       digits).  See <xref target="RFC3986"/> for the
+                       definitions of the URI-reference, percent-encoded,
+                       reserved, and unreserved rules.  </t>
+
+                   <t>
+                       The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+                       "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",
+                       "MAY", and "OPTIONAL" in this document are to be
+                       interpreted as described in <xref target="RFC2119"/>.
+                   </t> 
+
+               </section>
+           </section>
+           <section title="Characters">
+               <t>
+                   A URI Template is a sequence of characters, and has the same
+                   issues as URIs with regard to codepoints and character sets.
+                   That is, URI Template characters are frequently encoded
+                   as octets for transport or presentation.  This specification
+                   does not mandate any particular character encoding for
+                   mapping between URI characters and the octets used to store
+                   or transmit those characters.  When a URI appears in a
+                   protocol element, the character encoding is defined by that
+                   protocol; without such a definition, a URI is assumed to be
+                   in the same character encoding as the surrounding text.
+               </t>
+               <t>
+                   The ABNF notation defines its terminal values to be
+                   non-negative integers (codepoints) based on the US-ASCII
+                   coded character set <xref target="ASCII"/>.  Because a URI is a sequence of
+                   characters, we must invert that relation in order to
+                   understand the URI syntax.  Therefore, the integer values
+                   used by the ABNF must be mapped back to their corresponding
+                   characters via US-ASCII in order to complete the syntax
+                   rules.
+
+               </t>
+           </section>
+
+           <section title="URI Template">
+
+               <t>
+                   A URI Template is a sequence of characters that contains one
+                   or more embedded template expansions, see <xref
+                       target="expansions"/>. Each expansion references one or
+                   more variables whose values are used in when determining the
+                   substition value for an expansion.  A URI Template becomes a
+                   URI when the template expansions are substituted with their
+                   values (see <xref target="evaluating"/>). The generated
+                   URI will be a URI-reference, i.e. either an absolute 
+                   URI or a relative reference.
+               </t>
+
+               <section title="Variables" anchor="variables">
+                   <t>
+                       The value of every non-list variable, and the individual
+                       values in list variables, must come from ( unreserved /
+                       pct-encoded ).  For variable values that are strings
+                       that have characters outside that range, the entire
+                       string must be converted into UTF-8 <xref target="RFC3629"/>, and then
+                       every octet of the UTF-8 string that falls outside of (
+                       unreserved / pct-encoded ) MUST be percent-encoded, as
+                       per <xref target="RFC3986"/>, section 2.1.
+                   </t>
+                   <t>
+                       This does not imply that every variable value can be
+                       decoded into a Unicode string. For example, a variable
+                       value may be a binary blob that has been percent-encoded
+                       before being passed into the template processor.
+                   </t>
+                   <t>
+                       The Unicode Standard <xref target="UNIV4"/> defines various
+                       equivalences between sequences of characters for various
+                       purposes.  Unicode Standard Annex #15 <xref target="UTR15"/> defines
+                       various Normalization Forms for these equivalences, in
+                       particular Normalization Form C (NFC, Canonical
+                       Decomposition, followed by Canonical Composition) and
+                       Normalization Form KC (NFKC, Compatibility
+                       Decomposition, followed by Canonical Composition). Since
+                       different Normalized Forms unicode strings will have
+                       different UTF-8 represenations it is RECOMMEDED that
+                       unicode strings use Normalized Form NFC.
+                   </t>
+                   <t>
+                       The meaning of 'defined' for a variable is progamming
+                       language and library specific and beyond the scope of
+                       this specification. Also beyond the scope of this
+                       specification is the allowable programming constructs
+                       that can be used for a list variable used in the
+                       'listjoin' operator. For example, a Python
+                       implementation might allow only built-in list types, or
+                       it may allow any iterable to be used as the source for a
+                       list variable.
+                   </t>
+                   <t>
+                       A variable may appear in more than one expansion in a
+                       URI Template. The value used for that variable must
+                       remain the same for every template expansion when
+                       converting a URI Template into a URI. 
+                   </t>
+               </section>
+
+               <section title="Template Expansions" anchor="expansions">
+
+                   <t>
+                       Template expansions are the parameterized components of a URI Template.
+                       A template expansion MUST match the 'expansion' rule.
+                   </t>
+                   <figure>
+                       <artwork><![CDATA[
+ op          = 1*ALPHA
+ arg         = *(reserved / unreserved / pct-encoded)
+ var         = varname [ '=' vardefault ]
+ vars        = var [ *("," var) ]
+ varname     = (ALPHA / DIGIT)*(ALPHA / DIGIT / "." / "_" / "-" )
+ vardefault  = *(unreserved / pct-encoded)
+ operator    = "-" op "|" arg "|" vars
+ expansion   = "{" ( var / operator ) "}"
+                           ]]>
+                       </artwork>
+                   </figure>
+
+                 </section>
+                 <section title="URI Template Substitution" anchor="evaluating">
+                   <t>
+                       Template substitution is the process of turning
+                       a URI Template into a URI given definitions
+                       for the variables used in the template. Substitution
+                       replaces each expansion with its calculated value.
+                   </t>
+                   <t>
+                       Every expansion consists of either a variable ('var') or
+                       an operator expression.  In a variable ('var')
+                       expansion, if the variable is defined and non-empty then
+                       substitute the value of the variable, otherwise
+                       substitute the default value. If no default value is
+                       given then substitute with the empty string.  
+                   </t>
+                   <t>
+                       If the expansion is an operator then the substitution value
+                       is determined by the given operator. Each operator
+                       works only on the variables that are defined within
+                       their expansion.
+                   </t>
+
+                   <section title="The 'opt' operator" anchor="opt">
+                       <t>
+                           If the one or more of the variables are defined and
+                           non-empty then substitute the value of 'arg', otherwise
+                           substitute the empty string.
+                       </t>
+                   </section>
+
+                   <section title="The 'neg' operator" anchor="neg">
+                       <t>
+                           If all of the variables are un-defined or empty
+                           then substitute the value of arg, otherwise
+                           substitute the empty string.
+                       </t>
+                   </section>
+
+                   <section title="The 'prefix' operator" anchor="prefix">
+                       <t>
+                           The prefix operator MUST only have one variable in
+                           its expansion.  If the variable is defined and
+                           non-empty then substitute the value of arg followed
+                           by the value of the variable, otherwise substitute
+                           the empty string. 
+                       </t>
+                   </section>
+
+                   <section title="The 'append' operator" anchor="append">
+                       <t>
+                           The append operator MUST only have one variable in
+                           its expansion.  If the variable is defined and
+                           non-empty then substitute the value of the variable
+                           followed by the value of arg, otherwise substitute
+                           the empty string. 
+                       </t>
+                   </section>
+
+                   <section title="The 'join' operator" anchor="join">
+                       <t>
+                           For each variable that is defined and non-empty
+                           create a keyvalue string that is the concatenation 
+                           of the variable name, "=", and the
+                           variable value. Concatenate more than one keyvalue
+                           string with intervening values of arg to 
+                           create the substitution value. 
+                       </t>
+                   </section>
+
+                   <section title="The 'listjoin' operator" anchor="listjoin">
+                       <t>
+                           The listjoin operator MUST have only one variable
+                           in its expansion and that variable must be a list.
+                           If the list is non-empty then substitute 
+                           the concatenation of all the list members with intevening
+                           values of arg.
+                       </t>
+                   </section>
+
+                   <t>
+                       The result of substitution 
+                       MUST match the URI-reference rule and SHOULD also match
+                       any known rules for the scheme of the resulting URI.
+                   </t>
+
+               </section>
+               <section title="Examples" anchor="examples">
+
+                   <texttable anchor="example-table">
+                       <preamble>
+                           Given the following template variable names and
+                           values:
+                       </preamble>
+                       <ttcol>Name</ttcol>  <ttcol>Value</ttcol>
+                       <c>a</c>     <c>foo</c>
+                       <c>b</c>     <c>bar</c>
+                       <c>data</c>     <c>10,20,30</c>
+                       <c>points</c>     <c>["10","20", "30"]</c>
+                       <c>list0</c>     <c>[]</c>
+                       <c>str0</c>     <c></c>
+                       <c>reserved</c>     <c>:/?#[]@!$&amp;'()*+,;=</c>
+                       <c>u</c>     <c>\u2654\u2655</c>
+                       <c>a_b</c>     <c>baz</c>
+                   </texttable>
+
+                   <t>The name 'foo' has 
+                       not been defined, the value of 'str0' is the empty string,
+                       and both list0 and points are lists. 
+                       The variable 'u' is a string of two unicode characters, the WHITE CHESS KING (0x2654)
+                       and the WHITE CHESS QUEEN (0x2655).
+                   </t>
+
+                   <t>The following URI Templates will be expanded as shown:</t>
+                   <t>    ----</t>
+
+                   <figure>
+                       <artwork>
+ http://example.org/?q={a}
+ http://example.org/?q=foo
+
+ http://example.org/{foo}
+ http://example.org/
+
+ relative/{reserved}/
+ relative/%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D/
+
+ http://example.org/{foo=fred}
+ http://example.org/fred
+
+ http://example.org/{foo=%25}/
+ http://example.org/%25/
+
+ /{-prefix|#|foo}
+ /
+
+ ./{-prefix|#|str0}
+ ./
+
+ /{-append|/|a}{-opt|data|points}{-neg|@|a}{-prefix|#|b}
+ /foo/data#bar
+
+ http://example.org/q={u}
+ http://example.org/q=%E2%99%94%E2%99%95
+
+ http://example.org/?{-join|&amp;|a,data}
+ http://example.org/?a=foo&amp;data=10%2C20%2C30
+
+ http://example.org/?d={-listjoin|,|points}&amp;{-join|&amp;|a,b}
+ http://example.org/?d=10,20,30&amp;a=foo&amp;b=bar
+
+ http://example.org/?d={-listjoin|,|list0}&amp;{-join|&amp;|foo}
+ http://example.org/?d=&amp;
+
+ http://example.org/?d={-listjoin|&amp;d=|points}
+ http://example.org/?d=10&amp;d=20&amp;d=30
+
+ http://example.org/{a}{b}/{a_b}
+ http://example.org/foobar/baz
+
+ http://example.org/{a}{-prefix|/-/|a}/
+ http://example.org/foo/-/foo/
+
+                       </artwork>
+                   </figure>
+                   <t>    ----</t>
+
+               </section>
+
+
+           </section>
+
+           <section title="Security Considerations">
+               <t>
+                   A URI Template does not contain active or executable content. Other
+                   security considerations are the same as those for URIs, see section 7
+                   of RFC3986.
+               </t>
+           </section>
+
+           <section title="IANA Considerations" anchor="iana">
+               <t>
+                   In common with RFC3986, URI scheme names form a registered
+                   namespace that is managed by IANA according to the
+                   procedures defined in <xref target="RFC4395"/>.  No IANA
+                   actions are required by this document.  
+               </t>
+           </section>
+           <section title="Appendix A - Parsing URI Template Expansions" anchor="appendix_a">
+               <t>
+                   Parsing a valid URI Template expansion does not require
+                   building a parser from the given ABNF. Instead, the set of allowed
+                   characters in each part of URI Template expansion has been
+                   chosen to avoid complex parsing, and breaking an expansion into
+                   its component parts can be achieved by a series of splits
+                   of the character string.                    
+               </t>
+               <t>
+                   Here is example Python code that parses a URI Template 
+                   expansion and returns the operator, argument, and
+                   variables as a tuple. The variables are returned
+                   as a dictionary of variable names mapped to their
+                   default values. If no default is given then the 
+                   name maps to None.
+               </t>
+               <figure><artwork>
+ def parse_expansion(expansion):
+    if "|" in expansion:
+        (op, arg, vars_) = expansion.split("|")
+        op = op[1:]
+    else:
+        (op, arg, vars_) = (None, None, expansion)
+    vars_ = vars_.split(",")
+
+    variables = {}
+    for var in vars_:
+        if "=" in var:
+            (varname, vardefault) = var.split("=")
+        else:
+            (varname, vardefault) = (var, None)
+        variables[varname] = vardefault
+
+    return (op, arg, variables)
+               </artwork></figure>
+
+               <t>
+                   And here is an example of the parse_expansion() function being 
+                   used.
+               </t>
+               <figure><artwork>
+>>> parse_expansion("-join|&amp;|a,b,c=1")
+('join', '&amp;', {'a': None, 'c': '1', 'b': None})
+>>> parse_expansion("c=1")
+(None, None, {'c': '1'})
+               </artwork></figure>
+           </section>
+
+
+
+       </middle>
+       <back> 
+
+
+           <references title='Normative References'>
+               &ASCII;
+               &UNIV4;
+               &UTR15;
+               &rfc2119; 
+               &rfc2978; 
+               &rfc3986; 
+               &rfc3629; 
+               &rfc4234; 
+               &rfc4395; 
+           </references>
+
+           <section title="Contributors">
+               <t>
+                   The following people made significant contributions to this
+                   specification: DeWitt Clinton and James Snell.  
+               </t>
+           </section>
+
+
+           <section title="Revision History">
+               <t>02 - Added operators and came up with coherent 
+                   percent-encoding and reserved character story.
+                    Added large examples section which is extracted
+                   and tested against the implementation.
+               </t>
+
+               <t>01
+               </t>
+
+               <t>00 - Initial Revision.
+               </t>
+           </section>
+
+       </back>
+   </rfc>

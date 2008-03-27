@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='RFC4287'>
+
+<front>
+<title>The Atom Syndication Format</title>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham'>
+<organization /></author>
+<author initials='R.' surname='Sayre' fullname='R. Sayre'>
+<organization /></author>
+
+<date year='2005' month='December' /></front>
+
+<seriesInfo name='RFC' value='4287' />
+<format type='TXT'  target='http://ftp.rfc-editor.org/in-notes/rfc4287.txt' />
+</reference>

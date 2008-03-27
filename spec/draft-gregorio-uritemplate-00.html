@@ -1,0 +1,405 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>URI Template</title><style type="text/css" title="Xml2Rfc (sans serif)">
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+a:active {
+  text-decoration: underline;
+}
+address {
+  margin-top: 1em;
+  margin-left: 2em;
+  font-style: normal;
+}
+body {
+  
+  color: #000000;
+  font-family: verdana, helvetica, arial, sans-serif;
+  font-size: 10pt;
+}
+dl {
+  margin-left: 2em;
+}
+h1 {
+  color: #333333;
+  font-size: 14pt;
+  line-height: 21pt;
+  page-break-after: avoid;
+}
+h1.np {
+  page-break-before: always;
+}
+h1 a {
+  color: #333333;
+}
+h2 {
+  color: #000000;
+  font-size: 12pt;
+  line-height: 15pt;
+  page-break-after: avoid;
+}
+h2 a {
+  color: #000000;
+}
+h3 {
+  color: #000000;
+  font-size: 10pt;
+  page-break-after: avoid;
+}
+h3 a {
+  color: #000000;
+}
+h4 {
+  color: #000000;
+  font-size: 10pt;
+  page-break-after: avoid;
+}
+h4 a {
+  color: #000000;
+}
+h5 {
+  color: #000000;
+  font-size: 10pt;
+  page-break-after: avoid;
+}
+h5 a {
+  color: #000000;
+}
+img {
+  margin-left: 3em;
+}
+li {
+  margin-left: 2em;
+  margin-right: 2em;
+}
+ol {
+  margin-left: 2em;
+  margin-right: 2em;
+}
+p {
+  margin-left: 2em;
+  margin-right: 2em;
+}
+pre {
+  margin-left: 3em;
+  background-color: lightyellow;
+}
+table {
+  margin-left: 2em;
+}
+table.header {
+  width: 95%;
+  font-size: 10pt;
+  color: white;
+}
+td.top {
+  vertical-align: top;
+}
+td.topnowrap {
+  vertical-align: top;
+  white-space: nowrap; 
+}
+td.right {
+  text-align: right;
+}
+td.header-l {
+  background-color: gray;
+  width: 50%;
+}
+td.header-r {
+  background-color: gray;
+  width: 50%;
+  text-align: right;
+}
+thead {
+  display:table-header-group;
+}
+ul.toc {
+  list-style: none;
+  margin-left: 1.5em;
+  margin-right: 0em;
+  padding-left: 0em;
+}
+li.tocline0 {
+  line-height: 150%;
+  font-weight: bold;
+  font-size: 10pt;
+  margin-left: 0em;
+  margin-right: 0em;
+}
+li.tocline1 {
+  line-height: normal;
+  font-weight: normal;
+  font-size: 9pt;
+  margin-left: 0em;
+  margin-right: 0em;
+}
+li.tocline2 {
+  font-size: 0pt;
+}
+ul.ind {
+  list-style: none;
+  margin-left: 1.5em;
+  margin-right: 0em;
+  padding-left: 0em;
+}
+li.indline0 {
+  font-weight: bold;
+  line-height: 200%;
+  margin-left: 0em;
+  margin-right: 0em;
+}
+li.indline1 {
+  font-weight: normal;
+  line-height: 150%;
+  margin-left: 0em;
+  margin-right: 0em;
+}
+.comment {
+  background-color: yellow;
+}
+.editingmark {
+  background-color: khaki;
+}
+.error {
+  font-size: 14pt;
+  background-color: red;
+}
+.toowide {
+  color: red;
+  font-weight: bold;
+}
+.title {
+  color: #990000;
+  font-size: 18pt;
+  line-height: 18pt;
+  font-weight: bold;
+  text-align: center;
+}
+.figure {
+  font-weight: bold;
+  text-align: center;
+  font-size: 9pt;
+}
+.filename {
+  color: #333333;
+  font-weight: bold;
+  font-size: 12pt;
+  line-height: 21pt;
+  text-align: center;
+}
+.warning {
+  font-size: 14pt;
+  background-color: yellow;
+}
+del {
+  color: red;
+  text-decoration: line-through;
+}
+.del {
+  color: red;
+  text-decoration: line-through;
+}
+.fn {
+  font-weight: bold;
+}
+ins {
+  color: green;
+  text-decoration: underline;
+}
+.ins {
+  color: green;
+  text-decoration: underline;
+}
+.pn {
+  position: absolute;
+  color: white;
+}
+.pn:hover {
+  color: #C8A8FF;
+}
+.vcardline {
+  display: block;
+}
+
+table.openissue {
+  background-color: khaki;
+  border-width: thin;
+  border-style: solid;
+  border-color: black;
+}
+
+table.closedissue {
+  background-color: white;
+  border-width: thin;
+  border-style: solid;
+  border-color: gray;
+  color: gray; 
+}
+
+.closed-issue {
+  border: solid;
+  border-width: thin;
+  background-color: lime;
+  font-size: smaller;
+  font-weight: bold;
+}
+
+.open-issue {
+  border: solid;
+  border-width: thin;
+  background-color: red;
+  font-size: smaller;
+  font-weight: bold;
+}
+
+.editor-issue {
+  border: solid;
+  border-width: thin;
+  background-color: yellow;
+  font-size: smaller;
+  font-weight: bold;
+}
+
+@media print {
+  .noprint {
+    display: none;
+  }
+  
+  table.header {
+    width: 90%;
+  }
+
+  td.header-l {
+    width: 50%;
+    color: black;
+    background-color: white;
+    vertical-align: top;
+    font-size: 10pt;
+  }
+
+  td.header-r {
+    width: 33%;
+    color: black;
+    background-color: white;
+    vertical-align: top;
+    text-align: right;
+    font-size: 10pt;
+  }
+
+  ul.toc a::after {
+    content: leader('.') target-counter(attr(href), page);
+  }
+  
+  a.iref {
+    content: target-counter(attr(href), page);
+  }
+}
+
+@page {
+  @top-left {
+       content: "INTERNET DRAFT"; 
+  } 
+  @top-right {
+       content: "October 2006"; 
+  } 
+  @top-center {
+       content: "URI Template"; 
+  } 
+  @bottom-left {
+       content: "Gregorio, et al."; 
+  } 
+  @bottom-center {
+       content: "Standards Track"; 
+  } 
+  @bottom-right {
+       content: "[Page " counter(page) "]"; 
+  } 
+}
+
+@page:first { 
+    @top-left {
+      content: normal;
+    }
+    @top-right {
+      content: normal;
+    }
+    @top-center {
+      content: normal;
+    }
+}
+</style><link rel="Contents" href="#rfc.toc"><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyright"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Notational Conventions" href="#rfc.section.2"><link rel="Chapter" title="3 Motivation" href="#rfc.section.3"><link rel="Chapter" title="4 URI Template" href="#rfc.section.4"><link rel="Chapter" title="5 Security Considerations" href="#rfc.section.5"><link rel="Chapter" title="6 IANA Considerations" href="#rfc.section.6"><link rel="Chapter" href="#rfc.section.7" title="7 Normative References"><link rel="Appendix" title="A Contributors" href="#rfc.section.A"><link rel="Appendix" title="B Revision History" href="#rfc.section.B"><meta name="generator" content="http://greenbytes.de/tech/webdav/rfc2629.xslt, Revision 1.220, 2005/04/11 11:37:53, XSLT vendor: libxslt http://xmlsoft.org/XSLT/"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.Creator" content="Gregorio, J.C."><meta name="DC.Creator" content="Hadley, M.H."><meta name="DC.Creator" content="Nottingham, M.N."><meta name="DC.Creator" content="Orchard, D.O."><meta name="DC.Identifier" content="urn:ietf:id:draft-gregorio-uritemplate-00.txt"><meta name="DC.Date.Issued" scheme="ISO8601" content="2006-10"><meta name="DC.Description.Abstract" content="URI Templates are strings that can be transformed into URIs after embedded variables are substituted. This document defines the structure and syntax of URI Templates."></head><body><table summary="header information" class="header" border="0" cellpadding="1" cellspacing="1"><tr><td class="header-l">Network Working Group </td><td class="header-r">J.C. Gregorio, Editor </td></tr><tr><td class="header-l">INTERNET DRAFT </td><td class="header-r">individual </td></tr><tr><td class="header-l">
+        &lt;draft-gregorio-uritemplate-00.txt&gt;
+       </td><td class="header-r">M.H. Hadley, Editor </td></tr><tr><td class="header-l">Category: Standards Track </td><td class="header-r">Sun Microsystems </td></tr><tr><td class="header-l">Expires: April 2007 </td><td class="header-r">M.N. Nottingham </td></tr><tr><td class="header-l"> </td><td class="header-r">individual </td></tr><tr><td class="header-l"> </td><td class="header-r">D.O. Orchard </td></tr><tr><td class="header-l"> </td><td class="header-r">BEA Systems, Inc. </td></tr><tr><td class="header-l"> </td><td class="header-r">October 2006 </td></tr></table><p class="title"><br>URI Template<br><span class="filename">draft-gregorio-uritemplate-00.txt</span></p><h1><a name="rfc.status" href="#rfc.status">Status of this Memo</a></h1><p>By submitting this Internet-Draft, each author represents that any applicable patent or other IPR claims of which he or she is aware have been or will be disclosed, and any of which he or she becomes aware will be disclosed, in accordance with Section 6 of BCP 79.</p><p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF), its areas, and its working groups. Note that other groups may also distribute working documents as Internet-Drafts.</p><p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or to cite them other than as &#8220;work in progress&#8221;.</p><p>The list of current Internet-Drafts can be accessed at &lt;<a href="http://www.ietf.org/ietf/1id-abstracts.txt">http://www.ietf.org/ietf/1id-abstracts.txt</a>&gt;.</p><p>The list of Internet-Draft Shadow Directories can be accessed at &lt;<a href="http://www.ietf.org/shadow.html">http://www.ietf.org/shadow.html</a>&gt;.</p><p>This Internet-Draft will expire in April 2007.</p><h1><a name="rfc.copyrightnotice" href="#rfc.copyrightnotice">Copyright Notice</a></h1><p>Copyright © The Internet Society (2006). All Rights Reserved.</p><h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1> <p>URI Templates are strings that can be transformed into URIs after embedded variables are substituted. This document defines the structure and syntax of URI Templates.</p> <h1 id="rfc.note.1"><a href="#rfc.note.1"></a>Editorial Note</h1> <p>To provide feedback on this Internet-Draft, join the <a href="http://lists.w3.org/Archives/Public/uri/">W3C URI mailing list (http://lists.w3.org/Archives/Public/uri/)</a>.</p> <hr class="noprint"><h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1><ul class="toc"><li class="tocline0">1.   <a href="#rfc.section.1">Introduction</a></li><li class="tocline0">2.   <a href="#rfc.section.2">Notational Conventions</a></li><li class="tocline0">3.   <a href="#motivation">Motivation</a></li><li class="tocline0">4.   <a href="#rfc.section.4">URI Template</a><ul class="toc"><li class="tocline1">4.1   <a href="#variables">Template Variables</a></li><li class="tocline1">4.2   <a href="#evaluating">URI Template Substitution</a></li><li class="tocline1">4.3   <a href="#examples">Examples</a></li></ul></li><li class="tocline0">5.   <a href="#rfc.section.5">Security Considerations</a></li><li class="tocline0">6.   <a href="#iana">IANA Considerations</a></li><li class="tocline0">7.   <a href="#rfc.references">Normative References</a></li><li class="tocline0"><a href="#rfc.authors">Authors' Addresses</a></li><li class="tocline0">A.   <a href="#rfc.section.A">Contributors</a></li><li class="tocline0">B.   <a href="#rfc.section.B">Revision History</a></li><li class="tocline0"><a href="#rfc.ipr">Intellectual Property and Copyright Statements</a></li></ul><h1 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a> Introduction</h1><p id="rfc.section.1.p.1">URI Templates are strings that contain embedded variables that are transformed into URIs after embedded variables are substituted. This document defines the structure and syntax of URI Templates.</p><p id="rfc.section.1.p.2">URI Templates are useful when it's necessary to convey the structure of a URI in a well-defined way. For example, documentation of an interface exposed by a Web site might use a template to show people how to find information about a user;</p><div id="rfc.figure.u.1"></div> <pre>
+    http://www.example.com/users/{userid}
+</pre> <p id="rfc.section.1.p.4">URI Templates can also be thought of as the basis of a machine- readable forms language; by allowing clients to form their own identifiers based on templates given to them by the URI's authority, it's possible to construct dynamic systems that use more of the URI than traditional HTML forms are able to. For example,</p><div id="rfc.figure.u.2"></div> <pre>
+    http://www.example.org/products/{upc}/buyers?page={page_num}
+</pre> <p id="rfc.section.1.p.6">Finally, URI Templates can be used to compose URI-centric protocols without impinging on authorities' control of their URIs. For example, there are many emerging conventions for passing around login information between sites using URIs. Forcing people to use a well- known query parameter isn't good practice, but using a URI parameter allows different sites to specify local ways of conveying the same information;</p><div id="rfc.figure.u.3"></div> <pre>
+    http://login.example.org/login?back={return-uri}
+    http://auth.example.com/userauth;{return-uri}
+</pre> <p id="rfc.section.1.p.8">This specification defines the basic syntax and processing of URI Templates. Each application of URI Templates will need to define its own profile of this specification that indicates what template variables are available, how to convey them to clients, and what their appropriate use is in that context.</p><h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> Notational Conventions</h1><p id="rfc.section.2.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="#RFC2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a>.</p><p id="rfc.section.2.p.2">This specification uses the Augmented Backus-Naur Form (ABNF) notation of <a href="#RFC2234" title="Augmented BNF for Syntax Specifications: ABNF">[RFC2234]</a>. See <a href="#RFC3986" title="Uniform Resource Identifier (URI): Generic Syntax">[RFC3986]</a> for reserved and unreserved productions.</p><h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a name="motivation" href="#motivation">Motivation</a></h1><p id="rfc.section.3.p.1">URI Templates are useful in a number of scenarios including web service documentation and application code. A standard syntax and well-defined substitution rules will improve interop.</p><h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> URI Template</h1><p id="rfc.section.4.p.1">A URI Template is a sequence of characters that contains one or more embedded template variables <a href="#variables" title="Template Variables">Section 4.1</a>. A URI Template becomes a URI when the template variables are substituted with the template variables string values, see <a href="#evaluating" title="URI Template Substitution">Section 4.2</a>. The following shows an example URI Template:</p><div id="rfc.figure.u.4"></div> <pre>
+http://example.com/widgets/{widget_id}
+</pre> <p id="rfc.section.4.p.3">If the value of the widget_id variable is "xyzzy", the resulting URI after substitution is:</p><div id="rfc.figure.u.5"></div> <pre>
+http://example.com/widgets/xyzzy
+</pre> <h2 id="rfc.section.4.1"><a href="#rfc.section.4.1">4.1</a> <a name="variables" href="#variables">Template Variables</a></h2><p id="rfc.section.4.1.p.1">Template variables are the parameterized components of a URI Template, their representation is described below. A template variable MUST match the template-var production.</p><div id="rfc.figure.u.6"></div> <pre>
+ template-char = unreserved 
+ template-name  = 1*template-char 
+ template-var  = "{" template-name "}" 
+</pre> <h2 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2</a> <a name="evaluating" href="#evaluating">URI Template Substitution</a></h2><p id="rfc.section.4.2.p.1">Evaluating a URI Template consists of replacing each occurrence of a template variable with the string value of that variable. Obtaining the string value of a template variable is an application-specific process, this specification places no constraints on the mechanism employed. Template variables MAY appear in a URI Template any number of times.</p><p id="rfc.section.4.2.p.2">If the value of a template variable would conflict with a reserved character's purpose as a delimiter, then the conflicting data must be percent-encoded before substitution. That is, merely doing rote substitution on template variables could result in the generation of an invalid URI for a particular scheme. Specifications that use URI Templates are expected to take this into consideration in how they use such templates.</p><p id="rfc.section.4.2.p.3">When the values of any template variables have been substituted into a URI template, the resulting string MUST match the URI-reference production of RFC 3986 and MUST also match the productions for the scheme in the final URI.</p><p id="rfc.section.4.2.p.4">This specification presumes that the value of a template variable does not contain characters outside the allowed set for the component(s) of the URI that it parameterizes.</p><h2 id="rfc.section.4.3"><a href="#rfc.section.4.3">4.3</a> <a name="examples" href="#examples">Examples</a></h2><p id="rfc.section.4.3.p.1">Given the following template names and values</p><div id="rfc.figure.u.7"></div> <pre>
+    Name                                Value
+    ------------------------------------------------------------
+    a                                   fred
+    b                                   barney
+    c                                   cheeseburger
+    20                                  this-is-spinal-tap
+    a~b                                 none%20of%20the%20above
+    schema                              https
+    p                                   quote=to+bo+or+not+to+be
+    e                                        
+    q                                   hullo#world
+</pre> <p id="rfc.section.4.3.p.3">Note that the name 'wilma' has not been defined, and the value of 'e' is the empty string.</p><p id="rfc.section.4.3.p.4">The following URI Templates will be expanded as shown:</p><div id="rfc.figure.u.8"></div> <pre>
+    http://example.org/{a}/{b}/
+    http://example.org/fred/barney/
+
+    http://example.org/{a}{b}/
+    http://example.org/fredbarney/
+
+    http://example.org/page1#{a}
+    http://example.org/page1#fred
+
+    {scheme}://{20}.example.org?date={wilma}&amp;option={a}
+    https://this-is-spinal-tap.example.org?date=&amp;option=fred
+
+    http://example.org/{a~b}
+    http://example.org/none%20of%20the%20above
+
+    http://example.org?{p}
+    http://example.org?quote=to+bo+or+not+to+be
+
+    http://example.com/order/{c}/{c}/{c}/
+    http://example.com/order/cheeseburger/cheeseburger/cheeseburger/
+
+    http://example.com/{q}
+    http://example.com/hullo#world
+
+    http://example.com/{e}/
+    http://example.com//
+</pre> <p id="rfc.section.4.3.p.6">The following are examples of URI Template expansions that are not legal.</p><div id="rfc.figure.u.9"></div> <pre>
+    Name                                Value
+    ------------------------------------------------------------
+    a                                   fred barney
+    b                                   % 
+</pre> <p id="rfc.section.4.3.p.8">The following URI Templates are expanded with the given values and do not produce legal URIs.</p><div id="rfc.figure.u.10"></div> <pre>
+    http://example.org/{a}
+    http://example.org/fred barney
+
+    http://example.org/{b}/
+    http://example.org/%/
+</pre> <h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> Security Considerations</h1><p id="rfc.section.5.p.1">A URI Template does not contain active or executable content. Other security considerations are the same as those for URIs, see section 7 of RFC3986.</p><h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a name="iana" href="#iana">IANA Considerations</a></h1><p id="rfc.section.6.p.1">In common with RFC3986, URI scheme names form a registered namespace that is managed by IANA according to the procedures defined in <a href="#RFC2717" title="Registration Procedures for URL Scheme Names">[RFC2717]</a>. No IANA actions are required by this document.</p><h1 id="rfc.references"><a name="rfc.references"></a><a href="#rfc.section.7">7.</a> Normative References</h1><table summary="Normative References" border="0" cellpadding="2">        <tr><td class="topnowrap"><b><a name="RFC2119">[RFC2119]</a></b></td><td class="top"><a href="mailto:sob@harvard.edu" title="Harvard University">Bradner, S.</a>, &#8220;<a href="http://www.ietf.org/rfc/rfc2119.txt">Key words for use in RFCs to Indicate Requirement Levels</a>&#8221;, BCP 14, RFC 2119, March 1997.</td></tr><tr><td class="topnowrap"><b><a name="RFC2234">[RFC2234]</a></b></td><td class="top"><a href="mailto:dcrocker@imc.org" title="Internet Mail Consortium">Crocker, D., Ed.</a> and <a href="mailto:paulo@turnpike.com" title="Demon Internet Ltd.">P. Overell</a>, &#8220;<a href="http://www.ietf.org/rfc/rfc2234.txt">Augmented BNF for Syntax Specifications: ABNF</a>&#8221;, RFC 2234, November 1997.</td></tr><tr><td class="topnowrap"><b><a name="RFC2717">[RFC2717]</a></b></td><td class="top"><a href="mailto:rpetke@wcom.net" title="UUNET Technologies">Petke, R.</a> and <a href="mailto:iking@microsoft.com" title="Microsoft Corporation">I. King</a>, &#8220;<a href="http://www.ietf.org/rfc/rfc2717.txt">Registration Procedures for URL Scheme Names</a>&#8221;, BCP 35, RFC 2717, November 1999.</td></tr><tr><td class="topnowrap"><b><a name="RFC3986">[RFC3986]</a></b></td><td class="top">Berners-Lee, T., Fielding, R., and L. Masinter, &#8220;<a href="http://www.ietf.org/rfc/rfc3986.txt">Uniform Resource Identifier (URI): Generic Syntax</a>&#8221;, STD 66, RFC 3986, January 2005.</td></tr></table><h1 id="rfc.authors">Authors' Addresses</h1><address class="vcard"><span class="vcardline"><span class="fn">Joe Gregorio</span>
+          (editor)
+        <span class="n" style="display: none"><span class="Family-Name">Gregorio</span><span class="Given-Name">Joe</span></span></span><span class="org vcardline">individual</span><span class="adr vcardline"></span><span class="vcardline">EMail: <a href="mailto:joe@bitworking.org"><span class="email">joe@bitworking.org</span></a></span><span class="vcardline">URI: <a href="http://bitworking.org/" class="url">http://bitworking.org/</a></span></address><address class="vcard"><span class="vcardline"><span class="fn">Marc Hadley</span>
+          (editor)
+        <span class="n" style="display: none"><span class="Family-Name">Hadley</span><span class="Given-Name">Marc</span></span></span><span class="org vcardline">Sun Microsystems</span><span class="adr vcardline"></span><span class="vcardline">EMail: <a href="mailto:Marc.Hadley@sun.com"><span class="email">Marc.Hadley@sun.com</span></a></span><span class="vcardline">URI: <a href="http://sun.com/" class="url">http://sun.com/</a></span></address><address class="vcard"><span class="vcardline"><span class="fn">Mark Nottingham</span><span class="n" style="display: none"><span class="Family-Name">Nottingham</span><span class="Given-Name">Mark</span></span></span><span class="org vcardline">individual</span><span class="adr vcardline"></span><span class="vcardline">EMail: <a href="mailto:mnot@pobox.com"><span class="email">mnot@pobox.com</span></a></span><span class="vcardline">URI: <a href="http://mnot.net/" class="url">http://mnot.net/</a></span></address><address class="vcard"><span class="vcardline"><span class="fn">David Orchard</span><span class="n" style="display: none"><span class="Family-Name">Orchard</span><span class="Given-Name">David</span></span></span><span class="org vcardline">BEA Systems, Inc.</span><span class="adr vcardline"></span><span class="vcardline">EMail: <a href="mailto:dorchard@bea.com"><span class="email">dorchard@bea.com</span></a></span><span class="vcardline">URI: <a href="http://bea.com/" class="url">http://bea.com/</a></span></address><h1 id="rfc.section.A"><a href="#rfc.section.A">A.</a> Contributors</h1><p id="rfc.section.A.p.1">The following people made significant contributions to this specification: DeWitt Clinton and James Snell.</p><h1 id="rfc.section.B"><a href="#rfc.section.B">B.</a> Revision History</h1><p id="rfc.section.B.p.1">00 - Initial Revision.</p><h1><a name="rfc.ipr" href="#rfc.ipr">Intellectual Property Statement</a></h1><p>The IETF takes no position regarding the validity or scope of any Intellectual Property Rights or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; nor does it represent that it has made any independent effort to identify any such rights. Information on the procedures with respect to rights in RFC documents can be found in BCP 78 and BCP 79.</p><p>Copies of IPR disclosures made to the IETF Secretariat and any assurances of licenses to be made available, or the result of an attempt made to obtain a general license or permission for the use of such proprietary rights by implementers or users of this specification can be obtained from the IETF on-line IPR repository at &lt;<a href="http://www.ietf.org/ipr">http://www.ietf.org/ipr</a>&gt;.</p><p>The IETF invites any interested party to bring to its attention any copyrights, patents or patent applications, or other proprietary rights that may cover technology that may be required to implement this standard. Please address the information to the IETF at <a href="mailto:ietf-ipr@ietf.org">ietf-ipr@ietf.org</a>.</p><h1><a name="rfc.disclaimer" href="#rfc.disclaimer">Disclaimer of Validity</a></h1><p>This document and the information contained herein are provided on an &#8220;AS IS&#8221; basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY AND THE INTERNET ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.</p><h1><a name="rfc.copyright" href="#rfc.copyright">Copyright Statement</a></h1><p>Copyright © The Internet Society (2006). This document is subject to the rights, licenses and restrictions contained in BCP 78, and except as set forth therein, the authors retain all their rights.</p><h1>Acknowledgement</h1><p>Funding for the RFC Editor function is currently provided by the Internet Society.</p></body></html>

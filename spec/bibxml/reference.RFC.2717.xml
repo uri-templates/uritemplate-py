@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='RFC2717'>
+
+<front>
+<title>Registration Procedures for URL Scheme Names</title>
+<author initials='R.' surname='Petke' fullname='Rich Petke'>
+<organization>UUNET Technologies</organization>
+<address>
+<postal>
+<street>5000 Britton Road</street>
+<street>P. O. Box 5000</street>
+<city>Hilliard</city>
+<region>OH</region>
+<code>43026-5000</code>
+<country>USA</country></postal>
+<phone>+1 614 723 4157</phone>
+<facsimile>+1 614 723 8407</facsimile>
+<email>rpetke@wcom.net</email></address></author>
+<author initials='I.' surname='King' fullname='Ian King'>
+<organization>Microsoft Corporation</organization>
+<address>
+<postal>
+<street>One Microsoft Way</street>
+<city>Redmond</city>
+<region>WA</region>
+<code>98052-6399</code>
+<country>USA</country></postal>
+<phone>+1 425 703 2293</phone>
+<facsimile>+1 425 936 7329</facsimile>
+<email>iking@microsoft.com</email></address></author>
+<date year='1999' month='November' />
+<area>Applications</area>
+<keyword>URL scheme</keyword>
+<keyword>uniform resource identifier</keyword>
+<keyword>uniform resource locator</keyword>
+<keyword>URI</keyword>
+<keyword>URL</keyword>
+<keyword>URN</keyword>
+<keyword>WWW</keyword>
+<abstract>
+<t>
+This document defines the process by which new URL scheme names are registered.
+</t></abstract></front>
+
+<seriesInfo name='BCP' value='35' />
+<seriesInfo name='RFC' value='2717' />
+<format type='TXT' octets='19780' target='ftp://ftp.isi.edu/in-notes/rfc2717.txt' />
+<format type='HTML' octets='28935' target='http://xml.resource.org/public/rfc/html/rfc2717.html' />
+<format type='XML' octets='22817' target='http://xml.resource.org/public/rfc/xml/rfc2717.xml' />
+</reference>

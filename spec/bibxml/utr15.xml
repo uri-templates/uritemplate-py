@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor="UTR15">
+
+<front>
+<title> Unicode Normalization Forms
+</title>
+
+<author initials='M.' surname='Davis' fullname='M. Davis'> <organization /></author>
+<author initials='M.' surname='Duerst' fullname='M. Duerst'> <organization /></author>
+
+<date month="April" year="2003" />
+</front>
+
+<seriesInfo name='Unicode Standard Annex #' value='15' />
+<format type='TXT' octets='107347' target='http://www.unicode.org/unicode/reports/tr15/tr15-23.html' />
+
+
+</reference>

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='RFC3339'>
+
+<front>
+<title>Date and Time on the Internet: Timestamps</title>
+<author initials='G.' surname='Klyne' fullname='G. Klyne'>
+<organization /></author>
+<author initials='C.' surname='Newman' fullname='C. Newman'>
+<organization /></author>
+<date year='2002' month='July' /></front>
+
+<seriesInfo name='RFC' value='3339' />
+<format type='TXT' octets='35064' target='ftp://ftp.isi.edu/in-notes/rfc3339.txt' />
+</reference>

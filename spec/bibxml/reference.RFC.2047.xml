@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='RFC2047'>
+
+<front>
+<title>MIME (Multipurpose Internet Mail Extensions) Part Three: Message Header Extensions for Non-ASCII Text</title>
+<author initials='K.' surname='Moore' fullname='K. Moore'>
+<organization /></author>
+
+<date year='1996' month='November' /></front>
+
+<seriesInfo name='RFC' value='2047' />
+<format type='TXT'  target='http://ftp.rfc-editor.org/in-notes/rfc2047.txt' />
+</reference>
+
