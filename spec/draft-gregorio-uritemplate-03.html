@@ -346,10 +346,7 @@ Design Considerations</h3>
                        of implementation and security. The syntax is designed
                        to be easy to parse while at the same time providing
                        enough flexibility to express many common templating
-                       scenarios. On the balance, the template processing is
-                       not Turing complete, thus avoiding a number of
-                       security issues, ala the billion-laughs attack
-                       of XML DTDs.
+                       scenarios.
                    
 </p>
 <p>
@@ -465,7 +462,7 @@ URI Template</h3>
                    A URI Template is a sequence of characters that contains any number of
 		   embedded template expansions, see <a class='info' href='#expansions'>Section&nbsp;4.2<span> (</span><span class='info'>Template Expansions</span><span>)</span></a>.
 		   Each expansion references one or
-		   more variables whose values are used in when determining the
+		   more variables whose values are used when determining the
 		   substition value for an expansion.  A URI Template becomes a
 		   URI when all the template expansions are substituted with their
 		   values (see <a class='info' href='#evaluating'>Section&nbsp;4.4<span> (</span><span class='info'>URI Template Substitution</span><span>)</span></a>). The generated
@@ -531,7 +528,7 @@ Template Expansions</h3>
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
  op          = 1*ALPHA
  arg         = *(reserved / unreserved / pct-encoded)
- var         = varname [ '=' vardefault ]
+ var         = varname [ "=" vardefault ]
  vars        = var [ *("," var) ]
  varname     = (ALPHA / DIGIT)*(ALPHA / DIGIT / "." / "_" / "-" )
  vardefault  = *(unreserved / pct-encoded)
@@ -811,7 +808,7 @@ The 'list' operator</h3>
                            in its expansion and that variable must be a list.
 			   More than one variable is an error.
                            If the list is non-empty then substitute
-                           the concatenation of all the list members with intevening
+                           the concatenation of all the list members with intervening
                            values of arg. If the list is empty or the variable is undefined them 
 			   substitute the empty string.
                        
@@ -888,6 +885,10 @@ Examples</h3>
 <td align="left">plugh</td>
 <td align="left">["\u017F\u0307", "\u0073\u0307"]</td>
 </tr>
+<tr>
+<td align="left">1-a_b.c</td>
+<td align="left">100</td>
+</tr>
 </table>
 <br clear="all" />
 <table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Table 1&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
@@ -933,6 +934,9 @@ Examples</h3>
 
  telnet:192.0.2.16{-opt|:80|grault}
  telnet:192.0.2.16:80
+
+  :{1-a_b.c}:
+  ::
 </pre></div>
 <p>    ----
 </p>
@@ -1045,7 +1049,7 @@ Contributors</h3>
 
 <p>
                    The following people made significant contributions to this
-                   specification: DeWitt Clinton, John Cowan, and James Snell.
+                   specification: Michaeljohn Clement, DeWitt Clinton, John Cowan, James H. Manger, and James Snell.
                
 </p>
 <a name="anchor12"></a><br /><hr />

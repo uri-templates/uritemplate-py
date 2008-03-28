@@ -75,16 +75,16 @@ Table of Contents
    2.  Characters . . . . . . . . . . . . . . . . . . . . . . . . . .  5
    3.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . . .  5
    4.  URI Template . . . . . . . . . . . . . . . . . . . . . . . . .  5
-     4.1.  Variables  . . . . . . . . . . . . . . . . . . . . . . . .  6
+     4.1.  Variables  . . . . . . . . . . . . . . . . . . . . . . . .  5
      4.2.  Template Expansions  . . . . . . . . . . . . . . . . . . .  6
-     4.3.  Error Handling . . . . . . . . . . . . . . . . . . . . . .  7
+     4.3.  Error Handling . . . . . . . . . . . . . . . . . . . . . .  6
      4.4.  URI Template Substitution  . . . . . . . . . . . . . . . .  7
        4.4.1.  ('var') substitution . . . . . . . . . . . . . . . . .  8
        4.4.2.  The 'opt' operator . . . . . . . . . . . . . . . . . .  8
        4.4.3.  The 'neg' operator . . . . . . . . . . . . . . . . . .  8
        4.4.4.  The 'prefix' operator  . . . . . . . . . . . . . . . .  9
        4.4.5.  The 'suffix' operator  . . . . . . . . . . . . . . . .  9
-       4.4.6.  The 'join' operator  . . . . . . . . . . . . . . . . . 10
+       4.4.6.  The 'join' operator  . . . . . . . . . . . . . . . . .  9
        4.4.7.  The 'list' operator  . . . . . . . . . . . . . . . . . 10
      4.5.  Examples . . . . . . . . . . . . . . . . . . . . . . . . . 11
    5.  Security Considerations  . . . . . . . . . . . . . . . . . . . 12
@@ -185,9 +185,7 @@ Internet-Draft                URI Template                      Mar 2008
    need for a powerful substitution mechanism with ease of
    implementation and security.  The syntax is designed to be easy to
    parse while at the same time providing enough flexibility to express
-   many common templating scenarios.  On the balance, the template
-   processing is not Turing complete, thus avoiding a number of security
-   issues, ala the billion-laughs attack of XML DTDs.
+   many common templating scenarios.
 
    Another consideration was to keep the syntax and processing in-line
    with the pre-existing templating schemes present in OpenSearch, WSDL
@@ -217,6 +215,8 @@ Internet-Draft                URI Template                      Mar 2008
    notation of [RFC5234], including the following core ABNF syntax rules
    defined by that specification: ALPHA (letters) and DIGIT (decimal
    digits).  See [RFC3986] for the definitions of the URI-reference,
+   percent-encoded, reserved, and unreserved rules.
+
 
 
 
@@ -224,8 +224,6 @@ Gregorio, et al.       Expires September 27, 2008               [Page 4]
 
 Internet-Draft                URI Template                      Mar 2008
 
-
-   percent-encoded, reserved, and unreserved rules.
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
@@ -265,14 +263,16 @@ Internet-Draft                URI Template                      Mar 2008
 
    A URI Template is a sequence of characters that contains any number
    of embedded template expansions, see Section 4.2.  Each expansion
-   references one or more variables whose values are used in when
+   references one or more variables whose values are used when
    determining the substition value for an expansion.  A URI Template
    becomes a URI when all the template expansions are substituted with
    their values (see Section 4.4).  The generated URI will be a URI-
    reference, i.e. either an absolute URI or a relative reference.
 
+4.1.  Variables
 
-
+   Every variable is either a Unicode string or a list of Unicode
+   strings.
 
 
 
@@ -280,11 +280,6 @@ Gregorio, et al.       Expires September 27, 2008               [Page 5]
 
 Internet-Draft                URI Template                      Mar 2008
 
-
-4.1.  Variables
-
-   Every variable is either a Unicode string or a list of Unicode
-   strings.
 
    A template expansion MAY reference variables that are unknown to the
    template processor.  Those variables are 'undefined' and template
@@ -317,24 +312,12 @@ Internet-Draft                URI Template                      Mar 2008
 
     op          = 1*ALPHA
     arg         = *(reserved / unreserved / pct-encoded)
-    var         = varname [ '=' vardefault ]
+    var         = varname [ "=" vardefault ]
     vars        = var [ *("," var) ]
     varname     = (ALPHA / DIGIT)*(ALPHA / DIGIT / "." / "_" / "-" )
     vardefault  = *(unreserved / pct-encoded)
     operator    = "-" op "|" arg "|" vars
     expansion   = "{" ( var / operator ) "}"
-
-
-
-
-
-
-
-
-
-Gregorio, et al.       Expires September 27, 2008               [Page 6]
-
-Internet-Draft                URI Template                      Mar 2008
 
 
 4.3.  Error Handling
@@ -345,6 +328,14 @@ Internet-Draft                URI Template                      Mar 2008
    language specific and beyond the scope of this document how the
    template processor signals that an error has occured and that a URI
    will not be generated from the template.
+
+
+
+
+Gregorio, et al.       Expires September 27, 2008               [Page 6]
+
+Internet-Draft                URI Template                      Mar 2008
+
 
 4.4.  URI Template Substitution
 
@@ -385,14 +376,6 @@ Internet-Draft                URI Template                      Mar 2008
    determined by the given operator.  Each operator works only on the
    variables that are defined within their expansion.
 
-
-
-
-Gregorio, et al.       Expires September 27, 2008               [Page 7]
-
-Internet-Draft                URI Template                      Mar 2008
-
-
    The result of substitution MUST match the URI-reference rule and
    SHOULD also match any known rules for the scheme of the resulting
    URI.
@@ -402,6 +385,13 @@ Internet-Draft                URI Template                      Mar 2008
    Template.  The list of operators that a template processor knows is
    not constrained by this specification, that is, later specifications
    may add new operators.
+
+
+
+Gregorio, et al.       Expires September 27, 2008               [Page 7]
+
+Internet-Draft                URI Template                      Mar 2008
+
 
    Every expansion consists of either a variable ('var') or an operator
    expression ('operator'), and the rules for how to expand each of
@@ -442,17 +432,22 @@ Internet-Draft                URI Template                      Mar 2008
 
    Example:
 
+    foo := "fred"
+
+    "{-neg|fred@example.org|foo}" -> ""
+    "{-neg|fred@example.org|bar}" -> "fred@example.org"
+
+
+
+
+
+
 
 
 Gregorio, et al.       Expires September 27, 2008               [Page 8]
 
 Internet-Draft                URI Template                      Mar 2008
 
-
-    foo := "fred"
-
-    "{-neg|fred@example.org|foo}" -> ""
-    "{-neg|fred@example.org|bar}" -> "fred@example.org"
 
 4.4.4.  The 'prefix' operator
 
@@ -496,7 +491,12 @@ Internet-Draft                URI Template                      Mar 2008
     "{-suffix|/|baz}" -> ""
     "{-suffix|/|qux}" -> ""
 
+4.4.6.  The 'join' operator
 
+   Supplying a list variable to the join operator is an error.  For each
+   variable that is defined and non-empty create a keyvalue string that
+   is the concatenation of the variable name, "=", and the variable
+   value.  Concatenate more than one keyvalue string with intervening
 
 
 
@@ -505,12 +505,6 @@ Gregorio, et al.       Expires September 27, 2008               [Page 9]
 Internet-Draft                URI Template                      Mar 2008
 
 
-4.4.6.  The 'join' operator
-
-   Supplying a list variable to the join operator is an error.  For each
-   variable that is defined and non-empty create a keyvalue string that
-   is the concatenation of the variable name, "=", and the variable
-   value.  Concatenate more than one keyvalue string with intervening
    values of arg to create the substitution value.  The order of
    variables MUST be preserved during substitution.
 
@@ -529,7 +523,7 @@ Internet-Draft                URI Template                      Mar 2008
    The listjoin operator MUST have only one variable in its expansion
    and that variable must be a list.  More than one variable is an
    error.  If the list is non-empty then substitute the concatenation of
-   all the list members with intevening values of arg.  If the list is
+   all the list members with intervening values of arg.  If the list is
    empty or the variable is undefined them substitute the empty string.
 
    Example:
@@ -556,6 +550,12 @@ Internet-Draft                URI Template                      Mar 2008
 
 
 
+
+
+
+
+
+
 Gregorio, et al.       Expires September 27, 2008              [Page 10]
 
 Internet-Draft                URI Template                      Mar 2008
@@ -565,20 +565,21 @@ Internet-Draft                URI Template                      Mar 2008
 
           Given the following template variable names and values:
 
-               +--------+----------------------------------+
-               | Name   | Value                            |
-               +--------+----------------------------------+
-               | foo    | \u03d3                           |
-               | bar    | fred                             |
-               | baz    | 10,20,30                         |
-               | qux    | ["10","20","30"]                 |
-               | corge  | []                               |
-               | grault |                                  |
-               | garply | a/b/c                            |
-               | waldo  | ben & jerrys                     |
-               | fred   | ["fred", "", "wilma"]            |
-               | plugh  | ["\u017F\u0307", "\u0073\u0307"] |
-               +--------+----------------------------------+
+              +---------+----------------------------------+
+              | Name    | Value                            |
+              +---------+----------------------------------+
+              | foo     | \u03d3                           |
+              | bar     | fred                             |
+              | baz     | 10,20,30                         |
+              | qux     | ["10","20","30"]                 |
+              | corge   | []                               |
+              | grault  |                                  |
+              | garply  | a/b/c                            |
+              | waldo   | ben & jerrys                     |
+              | fred    | ["fred", "", "wilma"]            |
+              | plugh   | ["\u017F\u0307", "\u0073\u0307"] |
+              | 1-a_b.c | 200                              |
+              +---------+----------------------------------+
 
                                   Table 1
 
@@ -592,7 +593,6 @@ Internet-Draft                URI Template                      Mar 2008
    The following URI Templates will be expanded as shown:
 
    ----
-
 
 
 
@@ -647,6 +647,9 @@ Internet-Draft                URI Template                      Mar 2008
     telnet:192.0.2.16{-opt|:80|grault}
     telnet:192.0.2.16:80
 
+     :{1-a_b.c}:
+     :200:
+
    ----
 
 
@@ -662,9 +665,6 @@ Internet-Draft                URI Template                      Mar 2008
    In common with RFC3986, URI scheme names form a registered namespace
    that is managed by IANA according to the procedures defined in
    [RFC4395].  No IANA actions are required by this document.
-
-
-
 
 
 
@@ -762,7 +762,8 @@ Internet-Draft                URI Template                      Mar 2008
 Appendix A.  Contributors
 
    The following people made significant contributions to this
-   specification: DeWitt Clinton, John Cowan, and James Snell.
+   specification: Michaeljohn Clement, DeWitt Clinton, John Cowan, James
+   H. Manger, and James Snell.
 
 
 Appendix B.  Revision History
@@ -776,7 +777,6 @@ Appendix B.  Revision History
    reserved character story.  Added large examples section which is
    extracted and tested against the implementation.
 
-   01
 
 
 
@@ -784,6 +784,8 @@ Gregorio, et al.       Expires September 27, 2008              [Page 14]
 
 Internet-Draft                URI Template                      Mar 2008
 
+
+   01
 
    00 - Initial Revision.
 
@@ -815,8 +817,6 @@ Authors' Addresses
 
    Email: dorchard@bea.com
    URI:   http://bea.com/
-
-
 
 
 
