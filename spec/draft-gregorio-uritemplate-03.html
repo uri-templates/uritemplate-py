@@ -335,11 +335,6 @@ Overview</h3>
         Join 'var=value' for each variable
         in ['query', 'number'] with '&amp;'.
 </pre></div>
-<p>
-		     Obviously the use cases that drove OpenSearch, WADL and WSDL to
-		     incorporate URI Templates are also valid here.
-		   
-</p>
 <a name="anchor3"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.1.2"></a><h3>1.2.&nbsp;
@@ -550,7 +545,7 @@ Template Expansions</h3>
 Error Handling</h3>
 
 <p>
-		     During URI Template Substitution error conditions may arise.
+		     During template substitution error conditions may arise.
 		     The exact circumstances for those errors are described in
 		     <a class='info' href='#evaluating'>Section&nbsp;4.4<span> (</span><span class='info'>URI Template Substitution</span><span>)</span></a>. When an error occurs the
 		     template processor MUST NOT return a URI. It is language
@@ -782,13 +777,13 @@ The 'join' operator</h3>
 
 <p>
 			 Supplying a list variable to the join operator
-			 is an error.
-			 For each variable that is defined and non-empty
+			 is an error. For each variable that is defined and non-empty
 			 create a keyvalue string that is the concatenation
 			 of the variable name, "=", and the
 			 variable value. Concatenate more than one keyvalue
 			 string with intervening values of arg to
-			 create the substitution value.
+			 create the substitution value. The order of variables
+			 MUST be preserved during substitution.
                        
 </p>
 <p>

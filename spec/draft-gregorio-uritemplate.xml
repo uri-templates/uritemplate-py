@@ -4,7 +4,6 @@
    <!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>
    <!ENTITY rfc5234 SYSTEM 'bibxml/reference.RFC.5234.xml'>
    <!ENTITY rfc4395 SYSTEM 'bibxml/reference.RFC.4395.xml'>
-
    <!ENTITY rfc2978 SYSTEM 'bibxml/reference.RFC.2978.xml'>
    <!ENTITY rfc3629 SYSTEM 'bibxml/reference.RFC.3629.xml'>
    <!ENTITY ASCII SYSTEM    'bibxml/_reference.ANSI.X3-4.1986.xml'>
@@ -12,7 +11,7 @@
    <!ENTITY UTR15 SYSTEM    'bibxml/utr15.xml'>
    ]>
 
-   <!--<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>-->
+   <!--<?xml-stylesheet type='text/xsl' href='rfc2629.xslt'/ ?>-->
 
    <?rfc toc="yes" ?>
    <?rfc symrefs="yes" ?>
@@ -175,10 +174,7 @@
         in ['query', 'number'] with '&amp;'.
 				 </artwork></figure>
 
-                   <t>
-		     Obviously the use cases that drove OpenSearch, WADL and WSDL to
-		     incorporate URI Templates are also valid here.
-		   </t>
+
                </section>
 
                <section title="Design Considerations">
@@ -359,7 +355,7 @@
 
                  <section title="Error Handling" anchor="error">
                    <t>
-		     During URI Template Substitution error conditions may arise.
+		     During template substitution error conditions may arise.
 		     The exact circumstances for those errors are described in
 		     <xref target="evaluating"/>. When an error occurs the
 		     template processor MUST NOT return a URI. It is language
@@ -557,13 +553,13 @@ foo := "fred"
                    <section title="The 'join' operator" anchor="join">
                        <t>
 			 Supplying a list variable to the join operator
-			 is an error.
-			 For each variable that is defined and non-empty
+			 is an error. For each variable that is defined and non-empty
 			 create a keyvalue string that is the concatenation
 			 of the variable name, "=", and the
 			 variable value. Concatenate more than one keyvalue
 			 string with intervening values of arg to
-			 create the substitution value.
+			 create the substitution value. The order of variables
+			 MUST be preserved during substitution.
                        </t>
 		       <t>
 			 Example:
