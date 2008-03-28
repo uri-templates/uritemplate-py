@@ -396,7 +396,10 @@ Internet-Draft                URI Template                      Mar 2008
    Every expansion consists of either a variable ('var') or an operator
    expression ('operator'), and the rules for how to expand each of
    these is given below.  For every expansion a template MUST have at
-   least one variable.  It is an error if no variables are supplied.
+   least one variable name in the template expansion.  It is an error if
+   no variables are supplied.  All of the variables supplied to a
+   template expansion MAY be undefined and the expansion rules below
+   specify how to process the template expansion in that situation.
 
 4.4.1.  ('var') substitution
 
@@ -436,9 +439,6 @@ Internet-Draft                URI Template                      Mar 2008
 
     "{-neg|fred@example.org|foo}" -> ""
     "{-neg|fred@example.org|bar}" -> "fred@example.org"
-
-
-
 
 
 

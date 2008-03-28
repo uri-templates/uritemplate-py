@@ -429,8 +429,11 @@
                        Every expansion consists of either a variable ('var') or
                        an operator expression ('operator'), and the rules for how
 		       to expand each of these is given below. For every expansion
-		       a template MUST have at least one variable. It is an error
-		       if no variables are supplied.
+		       a template MUST have at least one variable name in the 
+		       template expansion. It is an error if no variables are supplied. 
+		       All of the variables supplied to a template expansion MAY be undefined
+		       and the expansion rules below specify how to process the template expansion
+		       in that situation.
 		   </t>
 
                    <section title="('var') substitution" anchor="var">
@@ -556,7 +559,7 @@ foo := "fred"
 			 variable value. Concatenate more than one keyvalue
 			 string with intervening values of arg to
 			 create the substitution value. The order of variables
-			 MUST be preserved during substitution.
+			 MUST be preserved during substitution. 
                        </t>
 		       <t>
 			 Example:
