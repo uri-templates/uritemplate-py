@@ -12,7 +12,7 @@ test: $(TARGET).txt
 	python ../explain.cgi --test
 	python test_draft_examples.py $(TARGET).txt
 
-$(TARGET).html: $(SOURCE).xml rfc2629.xslt
+$(TARGET).html: $(SOURCE).xml xml2rfc.tcl
 	tclsh8.4 xml2rfc.tcl xml2html $(SOURCE).xml  $(TARGET).html
 
 $(TARGET).txt:  $(SOURCE).xml xml2rfc.tcl

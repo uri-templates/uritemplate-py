@@ -524,7 +524,7 @@ foo := "fred"
 
                    <section title="The 'suffix' operator" anchor="append">
 
-                       <t>
+		     <t>
                            The prefix operator MUST only have one variable in
                            its expansion. More than one variable is an error condition.
 			   If the variable is undefined or an empty

@@ -627,8 +627,11 @@ URI Template Substitution</h3>
                        Every expansion consists of either a variable ('var') or
                        an operator expression ('operator'), and the rules for how
 		       to expand each of these is given below. For every expansion
-		       a template MUST have at least one variable. It is an error
-		       if no variables are supplied.
+		       a template MUST have at least one variable name in the 
+		       template expansion. It is an error if no variables are supplied. 
+		       All of the variables supplied to a template expansion MAY be undefined
+		       and the expansion rules below specify how to process the template expansion
+		       in that situation.
 		   
 </p>
 <a name="var"></a><br /><hr />
@@ -780,7 +783,7 @@ The 'join' operator</h3>
 			 variable value. Concatenate more than one keyvalue
 			 string with intervening values of arg to
 			 create the substitution value. The order of variables
-			 MUST be preserved during substitution.
+			 MUST be preserved during substitution. 
                        
 </p>
 <p>
@@ -887,7 +890,7 @@ Examples</h3>
 </tr>
 <tr>
 <td align="left">1-a_b.c</td>
-<td align="left">100</td>
+<td align="left">200</td>
 </tr>
 </table>
 <br clear="all" />
@@ -936,7 +939,7 @@ Examples</h3>
  telnet:192.0.2.16:80
 
   :{1-a_b.c}:
-  ::
+  :200:
 </pre></div>
 <p>    ----
 </p>
