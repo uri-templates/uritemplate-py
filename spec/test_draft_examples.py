@@ -1,11 +1,17 @@
 import re
-lines = file("draft-gregorio-uritemplate-02.txt", "r").readlines()
+import sys
+
+lines = file(sys.argv[1], "r").readlines()
+del sys.argv[1]
 
 vars_regex = re.compile(r"^\s*\|")
 vars_txt = [[w.strip() for w in l.strip().split('|')][1:3] for l in lines if vars_regex.search(l)]
 vars = {}
+
+ucode_strings = re.compile(r'"([^"]*)"')
 for (key, value) in vars_txt:
     if value and "[" == value[0]:
+        value = ucode_strings.sub(r'u"\1"', value)
         vars[key] = eval(value) 
     else:
         vars[key] = eval('u"""%s"""' % value) 

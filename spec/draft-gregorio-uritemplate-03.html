@@ -182,11 +182,11 @@ This Internet-Draft will expire on September 27, 2008.</p>
 <h3>Abstract</h3>
 
 <p>
-                   A URI Template is a compact sequence of characters 
-                   used for the construction of URIs. 
+                   A URI Template is a compact sequence of characters
+                   used for the construction of URIs.
                    This specification defines the URI Template
                    syntax and the process for expanding a URI Template into a
-                   URI, along with guidelines and security considerations for the 
+                   URI, along with guidelines and security considerations for the
                    use of URI Templates on the Internet.
                    The URI Template syntax allows for the construction
                    of strings that are a superset of URIs, allowing an implementation
@@ -196,7 +196,7 @@ This Internet-Draft will expire on September 27, 2008.</p>
 </p>
 <h3>Editorial Note</h3>
 
-<p>To provide feedback on this Internet-Draft, join the 
+<p>To provide feedback on this Internet-Draft, join the
                    <a href='http://lists.w3.org/Archives/Public/uri/'>W3C URI mailing
                        list (http://lists.w3.org/Archives/Public/uri/)</a>.
                
@@ -210,42 +210,50 @@ Overview<br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor3">1.2.</a>&nbsp;
 Design Considerations<br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor4">1.3.</a>&nbsp;
+Applicability<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor5">1.4.</a>&nbsp;
 Notational Conventions<br />
-<a href="#anchor5">2.</a>&nbsp;
+<a href="#anchor6">2.</a>&nbsp;
 Characters<br />
-<a href="#anchor6">3.</a>&nbsp;
+<a href="#anchor7">3.</a>&nbsp;
+Terminology<br />
+<a href="#anchor8">4.</a>&nbsp;
 URI Template<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#variables">3.1.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#variables">4.1.</a>&nbsp;
 Variables<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#expansions">3.2.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#expansions">4.2.</a>&nbsp;
 Template Expansions<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#evaluating">3.3.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#error">4.3.</a>&nbsp;
+Error Handling<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#evaluating">4.4.</a>&nbsp;
 URI Template Substitution<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#opt">3.3.1.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#var">4.4.1.</a>&nbsp;
+('var') substitution<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#opt">4.4.2.</a>&nbsp;
 The 'opt' operator<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#neg">3.3.2.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#neg">4.4.3.</a>&nbsp;
 The 'neg' operator<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#prefix">3.3.3.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#prefix">4.4.4.</a>&nbsp;
 The 'prefix' operator<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#append">3.3.4.</a>&nbsp;
-The 'append' operator<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#join">3.3.5.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#append">4.4.5.</a>&nbsp;
+The 'suffix' operator<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#join">4.4.6.</a>&nbsp;
 The 'join' operator<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#listjoin">3.3.6.</a>&nbsp;
-The 'listjoin' operator<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#examples">3.4.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#list">4.4.7.</a>&nbsp;
+The 'list' operator<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#examples">4.5.</a>&nbsp;
 Examples<br />
-<a href="#anchor7">4.</a>&nbsp;
+<a href="#anchor9">5.</a>&nbsp;
 Security Considerations<br />
-<a href="#iana">5.</a>&nbsp;
+<a href="#iana">6.</a>&nbsp;
 IANA Considerations<br />
-<a href="#appendix_a">6.</a>&nbsp;
+<a href="#appendix_a">7.</a>&nbsp;
 Appendix A - Parsing URI Template Expansions<br />
-<a href="#rfc.references1">7.</a>&nbsp;
+<a href="#rfc.references1">8.</a>&nbsp;
 Normative References<br />
-<a href="#anchor9">Appendix&nbsp;A.</a>&nbsp;
+<a href="#anchor11">Appendix&nbsp;A.</a>&nbsp;
 Contributors<br />
-<a href="#anchor10">Appendix&nbsp;B.</a>&nbsp;
+<a href="#anchor12">Appendix&nbsp;B.</a>&nbsp;
 Revision History<br />
 <a href="#rfc.authors">&#167;</a>&nbsp;
 Authors' Addresses<br />
@@ -260,7 +268,7 @@ Intellectual Property and Copyright Statements<br />
 Introduction</h3>
 
 <p>
-                   A URI Template provides a simple and extensible format 
+                   A URI Template provides a simple and extensible format
                    for URI construction.  A URI Template is a string that
                    contains embedded expansions, text marked off in matching
                    braces ('{', '}'), that denotes a part of the string that is
@@ -303,26 +311,10 @@ Overview</h3>
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
     http://www.example.com/users/fred</pre></div>
 <p>
-                       URI Templates can be used as a machine-readable 
-                       forms language. By allowing clients to form their own
-                       identifiers based on templates given to them by the URI's authority
-                       it's possible to construct dynamic systems that use more of the URI
-                       than traditional HTML forms. For example:
-                   
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
-    http://www.example.org/products/{upc}/buyers?page={page_num}</pre></div>
-<p>
-                       URI Templates can also be used to compose URI-centric protocols
-                       without impinging on authorities' control of their URI space. For example,
-                       there are many emerging conventions for passing around login
-                       information between sites using URIs. Forcing people to use a well-known 
-                       query parameter isn't good practice, but using URI Templates
-                       allows different sites to specify local ways of conveying the same
-                       information:
-                   
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
-    http://auth.example.com/userauth;{return-uri}</pre></div><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
-    http://login.example.org/login?back={return-uri}</pre></div>
+		     Obviously the use cases that drove OpenSearch, WADL and WSDL to
+		     incorporate URI Templates are also valid here.
+		   
+</p>
 <a name="anchor3"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.1.2"></a><h3>1.2.&nbsp;
@@ -330,38 +322,52 @@ Design Considerations</h3>
 
 <p>
                        The URI Template syntax has been designed to carefully balance
-                       the need for a powerful substitution mechanism with ease 
+                       the need for a powerful substitution mechanism with ease
                        of implementation and security. The syntax is designed
-                       to be easy to parse while at the same time providing 
+                       to be easy to parse while at the same time providing
                        enough flexibility to express many common templating
-                       scenarios. On the balance, the template processing is 
-                       not Turing complete, thus avoiding a number of 
-                       security issues, ala the  billion-laughs attack 
+                       scenarios. On the balance, the template processing is
+                       not Turing complete, thus avoiding a number of
+                       security issues, ala the billion-laughs attack
                        of XML DTDs.
                    
 </p>
 <p>
-                       Another consideration was to keep the syntax and processing 
+                       Another consideration was to keep the syntax and processing
                        in-line with the pre-existing templating schemes present
-                       in OpenSearch, WSDL and WADL. 
+                       in OpenSearch, WSDL and WADL.
                    
 </p>
 <p>
                        The final design consideration was control over
-                       the placement of reserved characters in the 
+                       the placement of reserved characters in the
                        URI generated from a URI Template. The reserved characters
                        in a URI Template can only appear in the non-expansion
                        text, or in the argument to an operator, both locations
                        are dictated by the URI Template author. Given
                        the percent-encoding rules for variable values
                        this means that the source of all structure, i.e
-                       reserved characters, in a URI generated from a 
+                       reserved characters, in a URI generated from a
                        URI Template is decided by the URI Template author.
                    
 </p>
 <a name="anchor4"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.1.3"></a><h3>1.3.&nbsp;
+Applicability</h3>
+
+<p>
+		   While URI Templates use a notation that is similar to some URI path matching
+		   notations in web frameworks, URI Templates were not designed for that use case,
+		   nor are they appropriate for that purpose.
+		   URI Templates are not URIs, they do not identify an abstract or physical
+		   resource, they are not to be treated like URIs,
+		   nor should not be used in places where a URI would be expected.
+		 
+</p>
+<a name="anchor5"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.4"></a><h3>1.4.&nbsp;
 Notational Conventions</h3>
 
 <p>
@@ -380,7 +386,7 @@ Notational Conventions</h3>
                        interpreted as described in <a class='info' href='#RFC2119'>[RFC2119]<span> (</span><span class='info'>Bradner, S., &ldquo;Key words for use in RFCs to Indicate Requirement Levels,&rdquo; March&nbsp;1997.</span><span>)</span></a>.
                    
 </p>
-<a name="anchor5"></a><br /><hr />
+<a name="anchor6"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.2"></a><h3>2.&nbsp;
 Characters</h3>
@@ -407,69 +413,74 @@ Characters</h3>
                    used by the ABNF must be mapped back to their corresponding
                    characters via US-ASCII in order to complete the syntax
                    rules.
-
                
 </p>
-<a name="anchor6"></a><br /><hr />
+<a name="anchor7"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.3"></a><h3>3.&nbsp;
+Terminology</h3>
+
+<p>
+	       </p>
+<ul class="text">
+<li>
+		   template processor - A program or library that converts a URI
+		   Template into a URI.
+		 
+</li>
+<li>
+		   template expansion - The text between '{' and '}', including the
+		   enclosing brackets.
+		 
+</li>
+</ul><p>
+	     
+</p>
+<a name="anchor8"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4"></a><h3>4.&nbsp;
 URI Template</h3>
 
 <p>
-                   A URI Template is a sequence of characters that contains one
-                   or more embedded template expansions, see <a class='info' href='#expansions'>Section&nbsp;3.2<span> (</span><span class='info'>Template Expansions</span><span>)</span></a>. Each expansion references one or
-                   more variables whose values are used in when determining the
-                   substition value for an expansion.  A URI Template becomes a
-                   URI when the template expansions are substituted with their
-                   values (see <a class='info' href='#evaluating'>Section&nbsp;3.3<span> (</span><span class='info'>URI Template Substitution</span><span>)</span></a>). The generated
-                   URI will be a URI-reference, i.e. either an absolute 
-                   URI or a relative reference.
+                   A URI Template is a sequence of characters that contains any number of
+		   embedded template expansions, see <a class='info' href='#expansions'>Section&nbsp;4.2<span> (</span><span class='info'>Template Expansions</span><span>)</span></a>.
+		   Each expansion references one or
+		   more variables whose values are used in when determining the
+		   substition value for an expansion.  A URI Template becomes a
+		   URI when all the template expansions are substituted with their
+		   values (see <a class='info' href='#evaluating'>Section&nbsp;4.4<span> (</span><span class='info'>URI Template Substitution</span><span>)</span></a>). The generated
+		   URI will be a URI-reference, i.e. either an absolute
+		   URI or a relative reference.
                
 </p>
 <a name="variables"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.3.1"></a><h3>3.1.&nbsp;
+<a name="rfc.section.4.1"></a><h3>4.1.&nbsp;
 Variables</h3>
 
 <p>
-                       The value of every non-list variable, and the individual
-                       values in list variables, must come from ( unreserved /
-                       pct-encoded ).  For variable values that are strings
-                       that have characters outside that range, the entire
-                       string must be converted into UTF-8 <a class='info' href='#RFC3629'>[RFC3629]<span> (</span><span class='info'>Yergeau, F., &ldquo;UTF-8, a transformation format of ISO 10646,&rdquo; November&nbsp;2003.</span><span>)</span></a>, and then
-                       every octet of the UTF-8 string that falls outside of (
-                       unreserved / pct-encoded ) MUST be percent-encoded, as
-                       per <a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;Uniform Resource Identifier (URI): Generic Syntax,&rdquo; January&nbsp;2005.</span><span>)</span></a>, section 2.1.
-                   
+		     Every variable is either a Unicode string or a list of Unicode strings.
+		   
 </p>
 <p>
-                       This does not imply that every variable value can be
-                       decoded into a Unicode string. For example, a variable
-                       value may be a binary blob that has been percent-encoded
-                       before being passed into the template processor.
-                   
+		     A template expansion MAY reference variables that are unknown
+		     to the template processor. Those variables are 'undefined'
+		     and template expansion takes into consideration 'undefined' variables.
+		     Conversely, every variable that he template processor knows about
+		     is considered 'defined'.
+		   
 </p>
 <p>
-                       The Unicode Standard <a class='info' href='#UNIV4'>[UNIV4]<span> (</span><span class='info'>The Unicode Consortium, &ldquo;The Unicode Standard, Version                   4.0.1, defined by: The Unicode Standard, Version 4.0                   (Reading, MA, Addison-Wesley, 2003. ISBN                   0-321-18578-1), as amended by Unicode 4.0.1                   (http://www.unicode.org/versions/Unicode4.0.1/),&rdquo; March&nbsp;2004.</span><span>)</span></a> defines various
-                       equivalences between sequences of characters for various
-                       purposes.  Unicode Standard Annex #15 <a class='info' href='#UTR15'>[UTR15]<span> (</span><span class='info'>Davis, M. and M. Duerst, &ldquo;Unicode Normalization Forms,&rdquo; April&nbsp;2003.</span><span>)</span></a> defines
-                       various Normalization Forms for these equivalences, in
-                       particular Normalization Form C (NFC, Canonical
-                       Decomposition, followed by Canonical Composition) and
-                       Normalization Form KC (NFKC, Compatibility
-                       Decomposition, followed by Canonical Composition). Since
-                       different Normalized Forms unicode strings will have
-                       different UTF-8 represenations it is RECOMMEDED that
-                       unicode strings use Normalized Form NFC.
-                   
+                       A variable that contains a string
+		       of length zero MUST NOT be considered 'undefined' by the template processor.
+		       A list variable that contains no members, that is of zero length, MUST NOT
+		       be considered 'undefined' by the template processor.
+		   
 </p>
 <p>
-                       The meaning of 'defined' for a variable is progamming
-                       language and library specific and beyond the scope of
-                       this specification. Also beyond the scope of this
+		       Beyond the scope of this
                        specification is the allowable programming constructs
-                       that can be used for a list variable used in the
-                       'listjoin' operator. For example, a Python
+                       that can be used for a list variable. For example, a Python
                        implementation might allow only built-in list types, or
                        it may allow any iterable to be used as the source for a
                        list variable.
@@ -477,14 +488,14 @@ Variables</h3>
 </p>
 <p>
                        A variable may appear in more than one expansion in a
-                       URI Template. The value used for that variable must
+                       URI Template. The value used for that variable MUST
                        remain the same for every template expansion when
-                       converting a URI Template into a URI. 
+                       converting a URI Template into a URI.
                    
 </p>
 <a name="expansions"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.3.2"></a><h3>3.2.&nbsp;
+<a name="rfc.section.4.2"></a><h3>4.2.&nbsp;
 Template Expansions</h3>
 
 <p>
@@ -502,26 +513,71 @@ Template Expansions</h3>
  expansion   = "{" ( var / operator ) "}"
 
 </pre></div>
+<a name="error"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.3"></a><h3>4.3.&nbsp;
+Error Handling</h3>
+
+<p>
+		     During URI Template Substitution error conditions may arise.
+		     The exact circumstances for those errors are described in
+		     <a class='info' href='#evaluating'>Section&nbsp;4.4<span> (</span><span class='info'>URI Template Substitution</span><span>)</span></a>. When an error occurs the
+		     template processor MUST NOT return a URI. It is language
+		     specific and beyond the scope of this document how the
+		     template processor signals that an error has occured and that
+		     a URI will not be generated from the template.
+		   
+</p>
 <a name="evaluating"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.3.3"></a><h3>3.3.&nbsp;
+<a name="rfc.section.4.4"></a><h3>4.4.&nbsp;
 URI Template Substitution</h3>
 
 <p>
-                       Template substitution is the process of turning
-                       a URI Template into a URI given definitions
-                       for the variables used in the template. Substitution
-                       replaces each expansion with its calculated value.
+		     Template substitution is the process of turning
+		     a URI Template into a URI given definitions
+		     for the variables used in the template. Substitution
+		     replaces each expansion with its calculated value.
+		     A template processor take two inputs, a URI Template and
+		     a set of variables, and returns a URI-reference.
+
                    
 </p>
 <p>
-                       Every expansion consists of either a variable ('var') or
-                       an operator expression.  In a variable ('var')
-                       expansion, if the variable is defined and non-empty then
-                       substitute the value of the variable, otherwise
-                       substitute the default value. If no default value is
-                       given then substitute with the empty string.  
+		       Before substitution the template processor MUST convert
+		       every variable value into a sequence of characters in ( unreserved / pct-encoded ).
+		       The template processor does that using the following algorithm:
+		       The template processor normalizes the string using NFKC, converts it to
+                       UTF-8 <a class='info' href='#RFC3629'>[RFC3629]<span> (</span><span class='info'>Yergeau, F., &ldquo;UTF-8, a transformation format of ISO 10646,&rdquo; November&nbsp;2003.</span><span>)</span></a>, and then
+                       every octet of the UTF-8 string that falls outside of
+		       ( unreserved ) MUST be percent-encoded, as
+                       per <a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;Uniform Resource Identifier (URI): Generic Syntax,&rdquo; January&nbsp;2005.</span><span>)</span></a>, section 2.1.
+		       For variables that are lists, the above algorithm is applied
+		       to each value in the list.
                    
+</p>
+<p>
+                       The Unicode Standard <a class='info' href='#UNIV4'>[UNIV4]<span> (</span><span class='info'>The Unicode Consortium, &ldquo;The Unicode Standard, Version                   4.0.1, defined by: The Unicode Standard, Version 4.0                   (Reading, MA, Addison-Wesley, 2003. ISBN                   0-321-18578-1), as amended by Unicode 4.0.1                   (http://www.unicode.org/versions/Unicode4.0.1/),&rdquo; March&nbsp;2004.</span><span>)</span></a> defines various
+                       equivalences between sequences of characters for various
+                       purposes.  Unicode Standard Annex #15 <a class='info' href='#UTR15'>[UTR15]<span> (</span><span class='info'>Davis, M. and M. Duerst, &ldquo;Unicode Normalization Forms,&rdquo; April&nbsp;2003.</span><span>)</span></a> defines
+                       various Normalization Forms for these equivalences, in
+                       particular Normalization Form KC (NFKC, Compatibility
+                       Decomposition, followed by Canonical Composition). Since
+                       different Normalized Forms unicode strings will have
+                       different UTF-8 represenations the only way to guarantee
+		       that template processors will produce the same URI is to
+		       require a common Normalized Form.
+                   
+</p>
+<p>
+		     Requiring that all characters outside of ( unreserved ) be
+		     percent encoded means that the only characters outside of
+		     ( unreserved ) that will appear in the generated URI-reference
+		     will come from outside the template expansions in the URI Template or
+		     from the argument of a template expansion. This means that the
+		     designer of the URI Template determines the placement of reserved characters in the
+		     resulting URI, and thus the structure of the resulting generated URI-reference.
+		   
 </p>
 <p>
                        If the expansion is an operator then the substitution value
@@ -531,89 +587,230 @@ URI Template Substitution</h3>
                    
 </p>
 <p>
-                       The result of substitution 
+                       The result of substitution
                        MUST match the URI-reference rule and SHOULD also match
                        any known rules for the scheme of the resulting URI.
                    
 </p>
+<p>
+		     If a template processor encounters an operator that it does not
+		     understand then it MUST fail and MUST NOT produce a URI from
+		     the URI Template. The list of operators that a template processor
+		     knows is not constrained by this specification, that is, later
+		     specifications may add new operators.
+		   
+</p>
+<p>
+                       Every expansion consists of either a variable ('var') or
+                       an operator expression ('operator'), and the rules for how
+		       to expand each of these is given below. For every expansion
+		       a template MUST have at least one variable. It is an error
+		       if no variables are supplied.
+		   
+</p>
+<a name="var"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.4.1"></a><h3>4.4.1.&nbsp;
+('var') substitution</h3>
+
+<p>
+			 In a variable ('var')
+			 expansion, if the variable is defined then
+			 substitute the value of the variable, otherwise
+			 substitute the default value. If no default value is
+			 given then substitute with the empty string.
+                       
+</p>
+<p>
+			 Example:
+			 </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+foo := "fred"
+
+"{foo}"        -&gt; "fred"
+"{bar=wilma}"  -&gt; "wilma"
+"{baz}"        -&gt; ""
+</pre></div><p>
+
+		       
+</p>
 <a name="opt"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.3.3.1"></a><h3>3.3.1.&nbsp;
+<a name="rfc.section.4.4.2"></a><h3>4.4.2.&nbsp;
 The 'opt' operator</h3>
 
 <p>
-                           If the one or more of the variables are defined and
-                           non-empty then substitute the value of 'arg', otherwise
-                           substitute the empty string.
+			   If each variable is undefined or an empty list
+			   then substitute the empty string, otherwise
+			   substitute the value of 'arg'.
                        
+</p>
+<p>
+			 Example:
+			 </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+ foo := "fred"
+
+ "{-opt|fred@example.org|foo}" -&gt; "fred@example.org"
+ "{-opt|fred@example.org|bar}" -&gt; ""
+</pre></div><p>
+
+		       
 </p>
 <a name="neg"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.3.3.2"></a><h3>3.3.2.&nbsp;
+<a name="rfc.section.4.4.3"></a><h3>4.4.3.&nbsp;
 The 'neg' operator</h3>
 
 <p>
-                           If all of the variables are un-defined or empty
+                           If each variable is undefined or an empty list
                            then substitute the value of arg, otherwise
                            substitute the empty string.
                        
 </p>
+<p>
+			 Example:
+			 </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+ foo := "fred"
+
+ "{-neg|fred@example.org|foo}" -&gt; ""
+ "{-neg|fred@example.org|bar}" -&gt; "fred@example.org"
+</pre></div><p>
+
+		       
+</p>
 <a name="prefix"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.3.3.3"></a><h3>3.3.3.&nbsp;
+<a name="rfc.section.4.4.4"></a><h3>4.4.4.&nbsp;
 The 'prefix' operator</h3>
 
 <p>
                            The prefix operator MUST only have one variable in
-                           its expansion.  If the variable is defined and
-                           non-empty then substitute the value of arg followed
-                           by the value of the variable, otherwise substitute
-                           the empty string. 
+                           its expansion. More than one variable is an error condition.
+			   If the variable is undefined or an empty
+			   list then substitute the empty string. If the variable
+			   is a defined non-list then substitute the value of arg preceeded
+                           by the value of the variable. If the variable is a defined list
+			   then substitute the concatenation of every list value preceeded
+			   by the arg.
                        
+</p>
+<p>
+			 Example:
+			 </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+ foo := "fred"
+ bar := ["fee", "fi", "fo", "fum"]
+ baz := []
+
+ "{-prefix|/|foo}" -&gt; "/fred"
+ "{-prefix|/|bar}" -&gt; "/fee/fi/fo/fum"
+ "{-prefix|/|baz}" -&gt; ""
+ "{-prefix|/|qux}" -&gt; ""
+</pre></div><p>
+
+		       
 </p>
 <a name="append"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.3.3.4"></a><h3>3.3.4.&nbsp;
-The 'append' operator</h3>
+<a name="rfc.section.4.4.5"></a><h3>4.4.5.&nbsp;
+The 'suffix' operator</h3>
 
 <p>
-                           The append operator MUST only have one variable in
-                           its expansion.  If the variable is defined and
-                           non-empty then substitute the value of the variable
-                           followed by the value of arg, otherwise substitute
-                           the empty string. 
+                           The prefix operator MUST only have one variable in
+                           its expansion. More than one variable is an error condition.
+			   If the variable is undefined or an empty
+			   list then substitute the empty string. If the variable
+			   is a defined non-list then substitute the value of arg followed
+                           by the value of the variable. If the variable is a defined list
+			   then substitute the concatenation of every list value followed
+			   by the arg.
                        
+</p>
+<p>
+			 Example:
+			 </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+ foo := "fred"
+ bar := ["fee", "fi", "fo", "fum"]
+ baz := []
+
+ "{-suffix|/|foo}" -&gt; "fred/"
+ "{-suffix|/|bar}" -&gt; "fee/fi/fo/fum/"
+ "{-suffix|/|baz}" -&gt; ""
+ "{-suffix|/|qux}" -&gt; ""
+</pre></div><p>
+
+		       
 </p>
 <a name="join"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.3.3.5"></a><h3>3.3.5.&nbsp;
+<a name="rfc.section.4.4.6"></a><h3>4.4.6.&nbsp;
 The 'join' operator</h3>
 
 <p>
-                           For each variable that is defined and non-empty
-                           create a keyvalue string that is the concatenation 
-                           of the variable name, "=", and the
-                           variable value. Concatenate more than one keyvalue
-                           string with intervening values of arg to 
-                           create the substitution value. 
+			 Supplying a list variable to the join operator
+			 is an error.
+			 For each variable that is defined and non-empty
+			 create a keyvalue string that is the concatenation
+			 of the variable name, "=", and the
+			 variable value. Concatenate more than one keyvalue
+			 string with intervening values of arg to
+			 create the substitution value.
                        
 </p>
-<a name="listjoin"></a><br /><hr />
+<p>
+			 Example:
+			 </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+ foo := "fred"
+ bar := "barney"
+ baz := ""
+
+ "{-join|&amp;|foo,bar,baz,qux}" -&gt; "foo=fred&amp;bar=barney&amp;baz="
+ "{-join|&amp;|bar}" -&gt; "bar=barney"
+ "{-join|&amp;|qux}" -&gt; ""
+</pre></div><p>
+
+		       
+</p>
+<a name="list"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.3.3.6"></a><h3>3.3.6.&nbsp;
-The 'listjoin' operator</h3>
+<a name="rfc.section.4.4.7"></a><h3>4.4.7.&nbsp;
+The 'list' operator</h3>
 
 <p>
                            The listjoin operator MUST have only one variable
                            in its expansion and that variable must be a list.
-                           If the list is non-empty then substitute 
+			   More than one variable is an error.
+                           If the list is non-empty then substitute
                            the concatenation of all the list members with intevening
-                           values of arg.
+                           values of arg. If the list is empty or the variable is undefined them 
+			   substitute the empty string.
                        
+</p>
+<p>
+			 Example:
+			 </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+ foo := ["fred", "barney", "wilma"]
+ bar := ["a", "", "c"]
+ baz := ["betty"]
+ qux := []
+
+ "{-list|/|foo}" -&gt; "fred/barney/wilma"
+ "{-list|/|bar}" -&gt; "a//c"
+ "{-list|/|baz}" -&gt; "betty"
+ "{-list|/|qux}" -&gt; ""
+ "{-list|/|corge}" -&gt; ""
+</pre></div><p>
+
+		       
 </p>
 <a name="examples"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.3.4"></a><h3>3.4.&nbsp;
+<a name="rfc.section.4.5"></a><h3>4.5.&nbsp;
 Examples</h3>
 <br /><hr class="insert" />
 <a name="example-table"></a>
@@ -626,107 +823,88 @@ Examples</h3>
 <col align="left"><col align="left">
 <tr><th align="left">Name</th><th align="left">Value</th></tr>
 <tr>
-<td align="left">a</td>
 <td align="left">foo</td>
+<td align="left">\u038e</td>
 </tr>
 <tr>
-<td align="left">b</td>
 <td align="left">bar</td>
+<td align="left">fred</td>
 </tr>
 <tr>
-<td align="left">data</td>
+<td align="left">baz</td>
 <td align="left">10,20,30</td>
 </tr>
 <tr>
-<td align="left">points</td>
-<td align="left">["10","20", "30"]</td>
+<td align="left">qux</td>
+<td align="left">["10","20","30"]</td>
 </tr>
 <tr>
-<td align="left">list0</td>
+<td align="left">corge</td>
 <td align="left">[]</td>
 </tr>
 <tr>
-<td align="left">str0</td>
+<td align="left">grault</td>
 <td align="left">&nbsp;</td>
 </tr>
 <tr>
-<td align="left">reserved</td>
-<td align="left">:/?#[]@!$&amp;'()*+,;=</td>
+<td align="left">garply</td>
+<td align="left">a/b/c</td>
 </tr>
 <tr>
-<td align="left">u</td>
-<td align="left">\u2654\u2655</td>
+<td align="left">waldo</td>
+<td align="left">ben &amp; jerrys</td>
 </tr>
 <tr>
-<td align="left">a_b</td>
-<td align="left">baz</td>
+<td align="left">fred</td>
+<td align="left">["fred", "", "wilma"]</td>
+</tr>
+<tr>
+<td align="left">plugh</td>
+<td align="left">["\u03de", "\u03d4\u1e9b"]</td>
 </tr>
 </table>
 <br clear="all" />
 <table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Table 1&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
 
-<p>The name 'foo' has 
-                       not been defined, the value of 'str0' is the empty string,
-                       and both list0 and points are lists. 
-                       The variable 'u' is a string of two unicode characters, the WHITE CHESS KING (0x2654)
-                       and the WHITE CHESS QUEEN (0x2655).
+<p>
+		     The variable 'foo' is the unicode character GREEK UPSILON WITH ACUTE AND HOOK SYMBOL.
+		     This character was chosen because it is one of only three characters that has
+		     a different normal form for each of the four normalization forms (NFC, NFD, NFKC, NFKD).
+                       The name 'xyzzy' has not been defined, the value of 'grault' is the empty string.
+		       The variables qux, corge, fred, and plugh are lists.
                    
 </p>
 <p>The following URI Templates will be expanded as shown:
 </p>
 <p>    ----
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
- http://example.org/?q={a}
- http://example.org/?q=foo
+ http://example.org/?q={bar}
+ http://example.org/?q=fred
 
- http://example.org/{foo}
- http://example.org/
-
- relative/{reserved}/
- relative/%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D/
-
- http://example.org/{foo=fred}
- http://example.org/fred
-
- http://example.org/{foo=%25}/
- http://example.org/%25/
-
- /{-prefix|#|foo}
+ /{xyzzy}
  /
 
- ./{-prefix|#|str0}
- ./
+ http://example.org/?{-join|�|foo,bar,baz}
+ http://example.org/?foo=&amp;bar=fred&amp;baz=10%2C20%2C30
 
- /{-append|/|a}{-opt|data|points}{-neg|@|a}{-prefix|#|b}
- /foo/data#bar
+ http://example.org/?d={-list|,|points}
+ http://example.org/?d=10,20,30
 
- http://example.org/q={u}
- http://example.org/q=%E2%99%94%E2%99%95
-
- http://example.org/?{-join|&amp;|a,data}
- http://example.org/?a=foo&amp;data=10%2C20%2C30
-
- http://example.org/?d={-listjoin|,|points}&amp;{-join|&amp;|a,b}
- http://example.org/?d=10,20,30&amp;a=foo&amp;b=bar
-
- http://example.org/?d={-listjoin|,|list0}&amp;{-join|&amp;|foo}
- http://example.org/?d=&amp;
-
- http://example.org/?d={-listjoin|&amp;d=|points}
+ http://example.org/?d={-list|&amp;d=|baz}
  http://example.org/?d=10&amp;d=20&amp;d=30
 
- http://example.org/{a}{b}/{a_b}
- http://example.org/foobar/baz
+ http://example.org/{bar}{bar}/{garply}
+ http://example.org/fredfred/a%2Fb%2Fc%2F
 
- http://example.org/{a}{-prefix|/-/|a}/
- http://example.org/foo/-/foo/
+ http://example.org/{bar}{-prefix|/|fred}
+ http://example.org/fred/fred//wilma
 
 </pre></div>
 <p>    ----
 </p>
-<a name="anchor7"></a><br /><hr />
+<a name="anchor9"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.4"></a><h3>4.&nbsp;
+<a name="rfc.section.5"></a><h3>5.&nbsp;
 Security Considerations</h3>
 
 <p>
@@ -737,19 +915,19 @@ Security Considerations</h3>
 </p>
 <a name="iana"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5"></a><h3>5.&nbsp;
+<a name="rfc.section.6"></a><h3>6.&nbsp;
 IANA Considerations</h3>
 
 <p>
                    In common with RFC3986, URI scheme names form a registered
                    namespace that is managed by IANA according to the
                    procedures defined in <a class='info' href='#RFC4395'>[RFC4395]<span> (</span><span class='info'>Hansen, T., Hardie, T., and L. Masinter, &ldquo;Guidelines and Registration Procedures for New URI Schemes,&rdquo; February&nbsp;2006.</span><span>)</span></a>.  No IANA
-                   actions are required by this document.  
+                   actions are required by this document.
                
 </p>
 <a name="appendix_a"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.6"></a><h3>6.&nbsp;
+<a name="rfc.section.7"></a><h3>7.&nbsp;
 Appendix A - Parsing URI Template Expansions</h3>
 
 <p>
@@ -758,15 +936,15 @@ Appendix A - Parsing URI Template Expansions</h3>
                    characters in each part of URI Template expansion has been
                    chosen to avoid complex parsing, and breaking an expansion into
                    its component parts can be achieved by a series of splits
-                   of the character string.                    
+                   of the character string.
                
 </p>
 <p>
-                   Here is example Python code that parses a URI Template 
+                   Here is example Python code that parses a URI Template
                    expansion and returns the operator, argument, and
                    variables as a tuple. The variables are returned
                    as a dictionary of variable names mapped to their
-                   default values. If no default is given then the 
+                   default values. If no default is given then the
                    name maps to None.
                
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
@@ -789,7 +967,7 @@ Appendix A - Parsing URI Template Expansions</h3>
     return (op, arg, variables)
 </pre></div>
 <p>
-                   And here is an example of the parse_expansion() function being 
+                   And here is an example of the parse_expansion() function being
                    used.
                
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
@@ -800,7 +978,7 @@ Appendix A - Parsing URI Template Expansions</h3>
 </pre></div>
 <a name="rfc.references1"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<h3>7.&nbsp;Normative References</h3>
+<h3>8.&nbsp;Normative References</h3>
 <table width="99%" border="0">
 <tr><td class="author-text" valign="top"><a name="ASCII">[ASCII]</a></td>
 <td class="author-text">American National Standards Institute, &ldquo;Coded Character Set - 7-bit American Standard Code for Information Interchange,&rdquo; ANSI&nbsp;X3.4, 1986.</td></tr>
@@ -826,22 +1004,27 @@ Appendix A - Parsing URI Template Expansions</h3>
 <td class="author-text">Davis, M. and M. Duerst, &ldquo;<a href="http://www.unicode.org/unicode/reports/tr15/tr15-23.html">Unicode Normalization Forms</a>,&rdquo; Unicode Standard Annex #&nbsp;15, April&nbsp;2003.</td></tr>
 </table>
 
-<a name="anchor9"></a><br /><hr />
+<a name="anchor11"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.A"></a><h3>Appendix A.&nbsp;
 Contributors</h3>
 
 <p>
                    The following people made significant contributions to this
-                   specification: DeWitt Clinton and James Snell.  
+                   specification: DeWitt Clinton, John Cowan, and James Snell.
                
 </p>
-<a name="anchor10"></a><br /><hr />
+<a name="anchor12"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.B"></a><h3>Appendix B.&nbsp;
 Revision History</h3>
 
-<p>02 - Added operators and came up with coherent 
+<p>03 - Added more examples. Introduced error conditions and defined
+	     their handling. Changed listjoin to list. Changed -append to -suffix,
+	     and allowed -prefix and -suffix to accept list variables. Clarified
+	     the handling of unicode.
+</p>
+<p>02 - Added operators and came up with coherent
                    percent-encoding and reserved character story.
                     Added large examples section which is extracted
                    and tested against the implementation.

@@ -69,32 +69,32 @@ Table of Contents
 
    1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  3
      1.1.  Overview . . . . . . . . . . . . . . . . . . . . . . . . .  3
-     1.2.  Design Considerations  . . . . . . . . . . . . . . . . . .  4
-     1.3.  Notational Conventions . . . . . . . . . . . . . . . . . .  4
+     1.2.  Design Considerations  . . . . . . . . . . . . . . . . . .  3
+     1.3.  Applicability  . . . . . . . . . . . . . . . . . . . . . .  4
+     1.4.  Notational Conventions . . . . . . . . . . . . . . . . . .  4
    2.  Characters . . . . . . . . . . . . . . . . . . . . . . . . . .  4
-   3.  URI Template . . . . . . . . . . . . . . . . . . . . . . . . .  5
-     3.1.  Variables  . . . . . . . . . . . . . . . . . . . . . . . .  5
-     3.2.  Template Expansions  . . . . . . . . . . . . . . . . . . .  6
-     3.3.  URI Template Substitution  . . . . . . . . . . . . . . . .  6
-       3.3.1.  The 'opt' operator . . . . . . . . . . . . . . . . . .  7
-       3.3.2.  The 'neg' operator . . . . . . . . . . . . . . . . . .  7
-       3.3.3.  The 'prefix' operator  . . . . . . . . . . . . . . . .  7
-       3.3.4.  The 'append' operator  . . . . . . . . . . . . . . . .  7
-       3.3.5.  The 'join' operator  . . . . . . . . . . . . . . . . .  7
-       3.3.6.  The 'listjoin' operator  . . . . . . . . . . . . . . .  7
-     3.4.  Examples . . . . . . . . . . . . . . . . . . . . . . . . .  8
-   4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 10
-   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 10
-   6.  Appendix A - Parsing URI Template Expansions . . . . . . . . . 10
-   7.  Normative References . . . . . . . . . . . . . . . . . . . . . 11
-   Appendix A.  Contributors  . . . . . . . . . . . . . . . . . . . . 11
-   Appendix B.  Revision History  . . . . . . . . . . . . . . . . . . 12
-   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 12
-   Intellectual Property and Copyright Statements . . . . . . . . . . 13
-
-
-
-
+   3.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . . .  5
+   4.  URI Template . . . . . . . . . . . . . . . . . . . . . . . . .  5
+     4.1.  Variables  . . . . . . . . . . . . . . . . . . . . . . . .  5
+     4.2.  Template Expansions  . . . . . . . . . . . . . . . . . . .  6
+     4.3.  Error Handling . . . . . . . . . . . . . . . . . . . . . .  6
+     4.4.  URI Template Substitution  . . . . . . . . . . . . . . . .  6
+       4.4.1.  ('var') substitution . . . . . . . . . . . . . . . . .  7
+       4.4.2.  The 'opt' operator . . . . . . . . . . . . . . . . . .  8
+       4.4.3.  The 'neg' operator . . . . . . . . . . . . . . . . . .  8
+       4.4.4.  The 'prefix' operator  . . . . . . . . . . . . . . . .  8
+       4.4.5.  The 'suffix' operator  . . . . . . . . . . . . . . . .  9
+       4.4.6.  The 'join' operator  . . . . . . . . . . . . . . . . .  9
+       4.4.7.  The 'list' operator  . . . . . . . . . . . . . . . . . 10
+     4.5.  Examples . . . . . . . . . . . . . . . . . . . . . . . . . 10
+   5.  Security Considerations  . . . . . . . . . . . . . . . . . . . 11
+   6.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 11
+   7.  Appendix A - Parsing URI Template Expansions . . . . . . . . . 12
+   8.  Normative References . . . . . . . . . . . . . . . . . . . . . 12
+   Appendix A.  Contributors  . . . . . . . . . . . . . . . . . . . . 13
+   Appendix B.  Revision History  . . . . . . . . . . . . . . . . . . 13
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 14
+   Intellectual Property and Copyright Statements . . . . . . . . . . 15
 
 
 
@@ -149,33 +149,8 @@ Internet-Draft                URI Template                      Mar 2008
 
        http://www.example.com/users/fred
 
-   URI Templates can be used as a machine-readable forms language.  By
-   allowing clients to form their own identifiers based on templates
-   given to them by the URI's authority it's possible to construct
-   dynamic systems that use more of the URI than traditional HTML forms.
-   For example:
-
-       http://www.example.org/products/{upc}/buyers?page={page_num}
-
-   URI Templates can also be used to compose URI-centric protocols
-   without impinging on authorities' control of their URI space.  For
-   example, there are many emerging conventions for passing around login
-   information between sites using URIs.  Forcing people to use a well-
-
-
-
-Gregorio, et al.       Expires September 27, 2008               [Page 3]
-
-Internet-Draft                URI Template                      Mar 2008
-
-
-   known query parameter isn't good practice, but using URI Templates
-   allows different sites to specify local ways of conveying the same
-   information:
-
-       http://auth.example.com/userauth;{return-uri}
-
-       http://login.example.org/login?back={return-uri}
+   Obviously the use cases that drove OpenSearch, WADL and WSDL to
+   incorporate URI Templates are also valid here.
 
 1.2.  Design Considerations
 
@@ -186,6 +161,13 @@ Internet-Draft                URI Template                      Mar 2008
    many common templating scenarios.  On the balance, the template
    processing is not Turing complete, thus avoiding a number of security
    issues, ala the billion-laughs attack of XML DTDs.
+
+
+
+Gregorio, et al.       Expires September 27, 2008               [Page 3]
+
+Internet-Draft                URI Template                      Mar 2008
+
 
    Another consideration was to keep the syntax and processing in-line
    with the pre-existing templating schemes present in OpenSearch, WSDL
@@ -200,7 +182,16 @@ Internet-Draft                URI Template                      Mar 2008
    structure, i.e reserved characters, in a URI generated from a URI
    Template is decided by the URI Template author.
 
-1.3.  Notational Conventions
+1.3.  Applicability
+
+   While URI Templates use a notation that is similar to some URI path
+   matching notations in web frameworks, URI Templates were not designed
+   for that use case, nor are they appropriate for that purpose.  URI
+   Templates are not URIs, they do not identify an abstract or physical
+   resource, they are not to be treated like URIs, nor should not be
+   used in places where a URI would be expected.
+
+1.4.  Notational Conventions
 
    This specification uses the Augmented Backus-Naur Form (ABNF)
    notation of [RFC4234], including the following core ABNF syntax rules
@@ -217,14 +208,6 @@ Internet-Draft                URI Template                      Mar 2008
 
    A URI Template is a sequence of characters, and has the same issues
    as URIs with regard to codepoints and character sets.  That is, URI
-
-
-
-Gregorio, et al.       Expires September 27, 2008               [Page 4]
-
-Internet-Draft                URI Template                      Mar 2008
-
-
    Template characters are frequently encoded as octets for transport or
    presentation.  This specification does not mandate any particular
    character encoding for mapping between URI characters and the octets
@@ -234,6 +217,14 @@ Internet-Draft                URI Template                      Mar 2008
    character encoding as the surrounding text.
 
    The ABNF notation defines its terminal values to be non-negative
+
+
+
+Gregorio, et al.       Expires September 27, 2008               [Page 4]
+
+Internet-Draft                URI Template                      Mar 2008
+
+
    integers (codepoints) based on the US-ASCII coded character set
    [ASCII].  Because a URI is a sequence of characters, we must invert
    that relation in order to understand the URI syntax.  Therefore, the
@@ -242,37 +233,46 @@ Internet-Draft                URI Template                      Mar 2008
    rules.
 
 
-3.  URI Template
+3.  Terminology
 
-   A URI Template is a sequence of characters that contains one or more
-   embedded template expansions, see Section 3.2.  Each expansion
+   o  template processor - A program or library that converts a URI
+      Template into a URI.
+   o  template expansion - The text between '{' and '}', including the
+      enclosing brackets.
+
+
+4.  URI Template
+
+   A URI Template is a sequence of characters that contains any number
+   of embedded template expansions, see Section 4.2.  Each expansion
    references one or more variables whose values are used in when
    determining the substition value for an expansion.  A URI Template
-   becomes a URI when the template expansions are substituted with their
-   values (see Section 3.3).  The generated URI will be a URI-reference,
-   i.e. either an absolute URI or a relative reference.
+   becomes a URI when all the template expansions are substituted with
+   their values (see Section 4.4).  The generated URI will be a URI-
+   reference, i.e. either an absolute URI or a relative reference.
 
-3.1.  Variables
+4.1.  Variables
 
-   The value of every non-list variable, and the individual values in
-   list variables, must come from ( unreserved / pct-encoded ).  For
-   variable values that are strings that have characters outside that
-   range, the entire string must be converted into UTF-8 [RFC3629], and
-   then every octet of the UTF-8 string that falls outside of (
-   unreserved / pct-encoded ) MUST be percent-encoded, as per [RFC3986],
-   section 2.1.
+   Every variable is either a Unicode string or a list of Unicode
+   strings.
 
-   This does not imply that every variable value can be decoded into a
-   Unicode string.  For example, a variable value may be a binary blob
-   that has been percent-encoded before being passed into the template
-   processor.
+   A template expansion MAY reference variables that are unknown to the
+   template processor.  Those variables are 'undefined' and template
+   expansion takes into consideration 'undefined' variables.
+   Conversely, every variable that he template processor knows about is
+   considered 'defined'.
 
-   The Unicode Standard [UNIV4] defines various equivalences between
-   sequences of characters for various purposes.  Unicode Standard Annex
-   #15 [UTR15] defines various Normalization Forms for these
-   equivalences, in particular Normalization Form C (NFC, Canonical
-   Decomposition, followed by Canonical Composition) and Normalization
-   Form KC (NFKC, Compatibility Decomposition, followed by Canonical
+   A variable that contains a string of length zero MUST NOT be
+   considered 'undefined' by the template processor.  A list variable
+   that contains no members, that is of zero length, MUST NOT be
+   considered 'undefined' by the template processor.
+
+   Beyond the scope of this specification is the allowable programming
+   constructs that can be used for a list variable.  For example, a
+   Python implementation might allow only built-in list types, or it may
+   allow any iterable to be used as the source for a list variable.
+
+   Some variables may be supplied with default values.  The default
 
 
 
@@ -281,23 +281,14 @@ Gregorio, et al.       Expires September 27, 2008               [Page 5]
 Internet-Draft                URI Template                      Mar 2008
 
 
-   Composition).  Since different Normalized Forms unicode strings will
-   have different UTF-8 represenations it is RECOMMEDED that unicode
-   strings use Normalized Form NFC.
-
-   The meaning of 'defined' for a variable is progamming language and
-   library specific and beyond the scope of this specification.  Also
-   beyond the scope of this specification is the allowable programming
-   constructs that can be used for a list variable used in the
-   'listjoin' operator.  For example, a Python implementation might
-   allow only built-in list types, or it may allow any iterable to be
-   used as the source for a list variable.
+   value must comde from ( unreserved / pct-encoded ).  Note that there
+   is no notation for supplying default values to list variables.
 
    A variable may appear in more than one expansion in a URI Template.
-   The value used for that variable must remain the same for every
+   The value used for that variable MUST remain the same for every
    template expansion when converting a URI Template into a URI.
 
-3.2.  Template Expansions
+4.2.  Template Expansions
 
    Template expansions are the parameterized components of a URI
    Template.  A template expansion MUST match the 'expansion' rule.
@@ -312,23 +303,32 @@ Internet-Draft                URI Template                      Mar 2008
     expansion   = "{" ( var / operator ) "}"
 
 
-3.3.  URI Template Substitution
+4.3.  Error Handling
+
+   During URI Template Substitution error conditions may arise.  The
+   exact circumstances for those errors are described in Section 4.4.
+   When an error occurs the template processor MUST NOT return a URI.
+   It is language specific and beyond the scope of this document how the
+   template processor signals that an error has occured and that a URI
+   will not be generated from the template.
+
+4.4.  URI Template Substitution
 
    Template substitution is the process of turning a URI Template into a
    URI given definitions for the variables used in the template.
-   Substitution replaces each expansion with its calculated value.
+   Substitution replaces each expansion with its calculated value.  A
+   template processor take two inputs, a URI Template and a set of
+   variables, and returns a URI-reference.
 
-   Every expansion consists of either a variable ('var') or an operator
-   expression.  In a variable ('var') expansion, if the variable is
-   defined and non-empty then substitute the value of the variable,
-   otherwise substitute the default value.  If no default value is given
-   then substitute with the empty string.
+   Before substitution the template processor MUST convert every
+   variable value into a sequence of characters in ( unreserved / pct-
+   encoded ).  The template processor does that using the following
+   algorithm: The template processor normalizes the string using NFKC,
+   converts it to UTF-8 [RFC3629], and then every octet of the UTF-8
+   string that falls outside of ( unreserved ) MUST be percent-encoded,
+   as per [RFC3986], section 2.1.  For variables that are lists, the
+   above algorithm is applied to each value in the list.
 
-   If the expansion is an operator then the substitution value is
-   determined by the given operator.  Each operator works only on the
-   variables that are defined within their expansion.
-
-   The result of substitution MUST match the URI-reference rule and
 
 
 
@@ -337,51 +337,51 @@ Gregorio, et al.       Expires September 27, 2008               [Page 6]
 Internet-Draft                URI Template                      Mar 2008
 
 
+   The Unicode Standard [UNIV4] defines various equivalences between
+   sequences of characters for various purposes.  Unicode Standard Annex
+   #15 [UTR15] defines various Normalization Forms for these
+   equivalences, in particular Normalization Form KC (NFKC,
+   Compatibility Decomposition, followed by Canonical Composition).
+   Since different Normalized Forms unicode strings will have different
+   UTF-8 represenations the only way to guarantee that template
+   processors will produce the same URI is to require a common
+   Normalized Form.
+
+   Requiring that all characters outside of ( unreserved ) be percent
+   encoded means that the only characters outside of ( unreserved ) that
+   will appear in the generated URI-reference will come from outside the
+   template expansions in the URI Template or from the argument of a
+   template expansion.  This means that the designer of the URI Template
+   determines the placement of reserved characters in the resulting URI,
+   and thus the structure of the resulting generated URI-reference.
+
+   If the expansion is an operator then the substitution value is
+   determined by the given operator.  Each operator works only on the
+   variables that are defined within their expansion.
+
+   The result of substitution MUST match the URI-reference rule and
    SHOULD also match any known rules for the scheme of the resulting
    URI.
 
-3.3.1.  The 'opt' operator
+   If a template processor encounters an operator that it does not
+   understand then it MUST fail and MUST NOT produce a URI from the URI
+   Template.  The list of operators that a template processor knows is
+   not constrained by this specification, that is, later specifications
+   may add new operators.
 
-   If the one or more of the variables are defined and non-empty then
-   substitute the value of 'arg', otherwise substitute the empty string.
+   Every expansion consists of either a variable ('var') or an operator
+   expression ('operator'), and the rules for how to expand each of
+   these is given below.  For every expansion a template MUST have at
+   least one variable.  It is an error if no variables are supplied.
 
-3.3.2.  The 'neg' operator
+4.4.1.  ('var') substitution
 
-   If all of the variables are un-defined or empty then substitute the
-   value of arg, otherwise substitute the empty string.
-
-3.3.3.  The 'prefix' operator
-
-   The prefix operator MUST only have one variable in its expansion.  If
-   the variable is defined and non-empty then substitute the value of
-   arg followed by the value of the variable, otherwise substitute the
+   In a variable ('var') expansion, if the variable is defined then
+   substitute the value of the variable, otherwise substitute the
+   default value.  If no default value is given then substitute with the
    empty string.
 
-3.3.4.  The 'append' operator
-
-   The append operator MUST only have one variable in its expansion.  If
-   the variable is defined and non-empty then substitute the value of
-   the variable followed by the value of arg, otherwise substitute the
-   empty string.
-
-3.3.5.  The 'join' operator
-
-   For each variable that is defined and non-empty create a keyvalue
-   string that is the concatenation of the variable name, "=", and the
-   variable value.  Concatenate more than one keyvalue string with
-   intervening values of arg to create the substitution value.
-
-3.3.6.  The 'listjoin' operator
-
-   The listjoin operator MUST have only one variable in its expansion
-   and that variable must be a list.  If the list is non-empty then
-   substitute the concatenation of all the list members with intevening
-   values of arg.
-
-
-
-
-
+   Example:
 
 
 
@@ -393,47 +393,47 @@ Gregorio, et al.       Expires September 27, 2008               [Page 7]
 Internet-Draft                URI Template                      Mar 2008
 
 
-3.4.  Examples
+   foo := "fred"
 
-          Given the following template variable names and values:
+   "{foo}"        -> "fred"
+   "{bar=wilma}"  -> "wilma"
+   "{baz}"        -> ""
 
-                     +----------+--------------------+
-                     | Name     | Value              |
-                     +----------+--------------------+
-                     | a        | foo                |
-                     | b        | bar                |
-                     | data     | 10,20,30           |
-                     | points   | ["10","20", "30"]  |
-                     | list0    | []                 |
-                     | str0     |                    |
-                     | reserved | :/?#[]@!$&'()*+,;= |
-                     | u        | \u2654\u2655       |
-                     | a_b      | baz                |
-                     +----------+--------------------+
+4.4.2.  The 'opt' operator
 
-                                  Table 1
+   If each variable is undefined or an empty list then substitute the
+   empty string, otherwise substitute the value of 'arg'.
 
-   The name 'foo' has not been defined, the value of 'str0' is the empty
-   string, and both list0 and points are lists.  The variable 'u' is a
-   string of two unicode characters, the WHITE CHESS KING (0x2654) and
-   the WHITE CHESS QUEEN (0x2655).
+   Example:
 
-   The following URI Templates will be expanded as shown:
+    foo := "fred"
 
-   ----
+    "{-opt|fred@example.org|foo}" -> "fred@example.org"
+    "{-opt|fred@example.org|bar}" -> ""
 
+4.4.3.  The 'neg' operator
 
+   If each variable is undefined or an empty list then substitute the
+   value of arg, otherwise substitute the empty string.
 
+   Example:
 
+    foo := "fred"
 
+    "{-neg|fred@example.org|foo}" -> ""
+    "{-neg|fred@example.org|bar}" -> "fred@example.org"
 
+4.4.4.  The 'prefix' operator
 
+   The prefix operator MUST only have one variable in its expansion.
+   More than one variable is an error condition.  If the variable is
+   undefined or an empty list then substitute the empty string.  If the
+   variable is a defined non-list then substitute the value of arg
+   preceeded by the value of the variable.  If the variable is a defined
+   list then substitute the concatenation of every list value preceeded
+   by the arg.
 
-
-
-
-
-
+   Example:
 
 
 
@@ -449,53 +449,53 @@ Gregorio, et al.       Expires September 27, 2008               [Page 8]
 Internet-Draft                URI Template                      Mar 2008
 
 
-    http://example.org/?q={a}
-    http://example.org/?q=foo
+    foo := "fred"
+    bar := ["fee", "fi", "fo", "fum"]
+    baz := []
 
-    http://example.org/{foo}
-    http://example.org/
+    "{-prefix|/|foo}" -> "/fred"
+    "{-prefix|/|bar}" -> "/fee/fi/fo/fum"
+    "{-prefix|/|baz}" -> ""
+    "{-prefix|/|qux}" -> ""
 
-    relative/{reserved}/
-    relative/%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D/
+4.4.5.  The 'suffix' operator
 
-    http://example.org/{foo=fred}
-    http://example.org/fred
+   The prefix operator MUST only have one variable in its expansion.
+   More than one variable is an error condition.  If the variable is
+   undefined or an empty list then substitute the empty string.  If the
+   variable is a defined non-list then substitute the value of arg
+   followed by the value of the variable.  If the variable is a defined
+   list then substitute the concatenation of every list value followed
+   by the arg.
 
-    http://example.org/{foo=%25}/
-    http://example.org/%25/
+   Example:
 
-    /{-prefix|#|foo}
-    /
+    foo := "fred"
+    bar := ["fee", "fi", "fo", "fum"]
+    baz := []
 
-    ./{-prefix|#|str0}
-    ./
+    "{-suffix|/|foo}" -> "fred/"
+    "{-suffix|/|bar}" -> "fee/fi/fo/fum/"
+    "{-suffix|/|baz}" -> ""
+    "{-suffix|/|qux}" -> ""
 
-    /{-append|/|a}{-opt|data|points}{-neg|@|a}{-prefix|#|b}
-    /foo/data#bar
+4.4.6.  The 'join' operator
 
-    http://example.org/q={u}
-    http://example.org/q=%E2%99%94%E2%99%95
+   Supplying a list variable to the join operator is an error.  For each
+   variable that is defined and non-empty create a keyvalue string that
+   is the concatenation of the variable name, "=", and the variable
+   value.  Concatenate more than one keyvalue string with intervening
+   values of arg to create the substitution value.
 
-    http://example.org/?{-join|&|a,data}
-    http://example.org/?a=foo&data=10%2C20%2C30
+   Example:
 
-    http://example.org/?d={-listjoin|,|points}&{-join|&|a,b}
-    http://example.org/?d=10,20,30&a=foo&b=bar
+    foo := "fred"
+    bar := "barney"
+    baz := ""
 
-    http://example.org/?d={-listjoin|,|list0}&{-join|&|foo}
-    http://example.org/?d=&
-
-    http://example.org/?d={-listjoin|&d=|points}
-    http://example.org/?d=10&d=20&d=30
-
-    http://example.org/{a}{b}/{a_b}
-    http://example.org/foobar/baz
-
-    http://example.org/{a}{-prefix|/-/|a}/
-    http://example.org/foo/-/foo/
-
-
-   ----
+    "{-join|&|foo,bar,baz,qux}" -> "foo=fred&bar=barney&baz="
+    "{-join|&|bar}" -> "bar=barney"
+    "{-join|&|qux}" -> ""
 
 
 
@@ -505,21 +505,122 @@ Gregorio, et al.       Expires September 27, 2008               [Page 9]
 Internet-Draft                URI Template                      Mar 2008
 
 
-4.  Security Considerations
+4.4.7.  The 'list' operator
+
+   The listjoin operator MUST have only one variable in its expansion
+   and that variable must be a list.  More than one variable is an
+   error.  If the list is non-empty then substitute the concatenation of
+   all the list members with intevening values of arg.  If the list is
+   empty or the variable is undefined them substitute the empty string.
+
+   Example:
+
+    foo := ["fred", "barney", "wilma"]
+    bar := ["a", "", "c"]
+    baz := ["betty"]
+    qux := []
+
+    "{-list|/|foo}" -> "fred/barney/wilma"
+    "{-list|/|bar}" -> "a//c"
+    "{-list|/|baz}" -> "betty"
+    "{-list|/|qux}" -> ""
+    "{-list|/|corge}" -> ""
+
+4.5.  Examples
+
+          Given the following template variable names and values:
+
+               +--------+----------------------------------+
+               | Name   | Value                            |
+               +--------+----------------------------------+
+               | foo    | \u03d3                           |
+               | bar    | fred                             |
+               | baz    | 10,20,30                         |
+               | qux    | ["10","20","30"]                 |
+               | corge  | []                               |
+               | grault |                                  |
+               | garply | a/b/c                            |
+               | waldo  | ben & jerrys                     |
+               | fred   | ["fred", "", "wilma"]            |
+               | plugh  | ["\u017F\u0307", "\u0073\u0307"] |
+               +--------+----------------------------------+
+
+                                  Table 1
+
+   The variable 'foo' is the unicode character GREEK UPSILON WITH ACUTE
+   AND HOOK SYMBOL.  This character was chosen because it is one of only
+   three characters that has a different normal form for each of the
+   four normalization forms (NFC, NFD, NFKC, NFKD).  The name 'xyzzy'
+   has not been defined, the value of 'grault' is the empty string.  The
+   variables qux, corge, fred, and plugh are lists.
+
+
+
+Gregorio, et al.       Expires September 27, 2008              [Page 10]
+
+Internet-Draft                URI Template                      Mar 2008
+
+
+   The following URI Templates will be expanded as shown:
+
+   ----
+
+    http://example.org/?q={bar}
+    http://example.org/?q=fred
+
+    /{xyzzy}
+    /
+
+    http://example.org/?{-join|&|foo,bar,xyzzy,baz}
+    http://example.org/?foo=%CE%8E&bar=fred&baz=10%2C20%2C30
+
+    http://example.org/?d={-list|,|qux}
+    http://example.org/?d=10,20,30
+
+    http://example.org/?d={-list|&d=|qux}
+    http://example.org/?d=10&d=20&d=30
+
+    http://example.org/{bar}{bar}/{garply}
+    http://example.org/fredfred/a%2Fb%2Fc
+
+    http://example.org/{bar}{-prefix|/|fred}
+    http://example.org/fred/fred//wilma
+
+    {-neg|:|corge}{-suffix|:|plugh}
+    :%E1%B9%A1:%E1%B9%A1:
+
+    ../{waldo}/
+    ../ben%20%26%20jerrys/
+
+    telnet:192.0.2.16{-opt|:80|grault}
+    telnet:192.0.2.16:80
+
+   ----
+
+
+5.  Security Considerations
 
    A URI Template does not contain active or executable content.  Other
    security considerations are the same as those for URIs, see section 7
    of RFC3986.
 
 
-5.  IANA Considerations
+6.  IANA Considerations
 
    In common with RFC3986, URI scheme names form a registered namespace
    that is managed by IANA according to the procedures defined in
+
+
+
+Gregorio, et al.       Expires September 27, 2008              [Page 11]
+
+Internet-Draft                URI Template                      Mar 2008
+
+
    [RFC4395].  No IANA actions are required by this document.
 
 
-6.  Appendix A - Parsing URI Template Expansions
+7.  Appendix A - Parsing URI Template Expansions
 
    Parsing a valid URI Template expansion does not require building a
    parser from the given ABNF.  Instead, the set of allowed characters
@@ -553,25 +654,24 @@ Internet-Draft                URI Template                      Mar 2008
 
    And here is an example of the parse_expansion() function being used.
 
-
-
-
-Gregorio, et al.       Expires September 27, 2008              [Page 10]
-
-Internet-Draft                URI Template                      Mar 2008
-
-
    >>> parse_expansion("-join|&|a,b,c=1")
    ('join', '&', {'a': None, 'c': '1', 'b': None})
    >>> parse_expansion("c=1")
    (None, None, {'c': '1'})
 
 
-7.  Normative References
+8.  Normative References
 
    [ASCII]    American National Standards Institute, "Coded Character
               Set - 7-bit American Standard Code for Information
               Interchange", ANSI X3.4, 1986.
+
+
+
+Gregorio, et al.       Expires September 27, 2008              [Page 12]
+
+Internet-Draft                URI Template                      Mar 2008
+
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119, March 1997.
@@ -609,21 +709,26 @@ Internet-Draft                URI Template                      Mar 2008
 Appendix A.  Contributors
 
    The following people made significant contributions to this
-
-
-
-Gregorio, et al.       Expires September 27, 2008              [Page 11]
-
-Internet-Draft                URI Template                      Mar 2008
-
-
-   specification: DeWitt Clinton and James Snell.
+   specification: DeWitt Clinton, John Cowan, and James Snell.
 
 
 Appendix B.  Revision History
 
+   03 - Added more examples.  Introduced error conditions and defined
+   their handling.  Changed listjoin to list.  Changed -append to
+   -suffix, and allowed -prefix and -suffix to accept list variables.
+   Clarified the handling of unicode.
+
    02 - Added operators and came up with coherent percent-encoding and
    reserved character story.  Added large examples section which is
+
+
+
+Gregorio, et al.       Expires September 27, 2008              [Page 13]
+
+Internet-Draft                URI Template                      Mar 2008
+
+
    extracted and tested against the implementation.
 
    01
@@ -668,7 +773,14 @@ Authors' Addresses
 
 
 
-Gregorio, et al.       Expires September 27, 2008              [Page 12]
+
+
+
+
+
+
+
+Gregorio, et al.       Expires September 27, 2008              [Page 14]
 
 Internet-Draft                URI Template                      Mar 2008
 
@@ -724,5 +836,5 @@ Intellectual Property
 
 
 
-Gregorio, et al.       Expires September 27, 2008              [Page 13]
+Gregorio, et al.       Expires September 27, 2008              [Page 15]
 

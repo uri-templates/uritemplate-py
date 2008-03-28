@@ -17,18 +17,18 @@ def error(msg):
 
 
 descriptions = {
- "prefix" : "If %(var)s is defined then prefix the value of %(var)s with '%(arg)s'.",
- "append" : "If %(var)s is defined then append the value of %(var)s with '%(arg)s'.",
+ "prefix" : "Prefix the value of %(var)s with '%(arg)s'. Prefix the values in %(var)s with '%(arg)s' if %(var)s is a list.",
+ "suffix" : "Append the value of %(var)s with '%(arg)s'. Append the values in %(var)s with '%(arg)s' if %(var)s is a list.",
  "opt" : "If %(var)s is defined and a string, or a list with one or more members, then insert '%(arg)s' into the URI.",
  "neg" : "If %(var)s is undefined, or a zero length list, then insert '%(arg)s' into the URI.",
  "join" : "Join 'var=value' for each variable in %(var)s with '%(arg)s'.",
- "listjoin" : "Join the members of the list %(var)s together with '%(arg)s'.",
+ "list" : "Join the members of the list %(var)s together with '%(arg)s'.",
  "*" : "Replaced with the value of %(var)s."
 }
 
 def explain(expansion, line, parsed_exp):
     """
-    >>> e = "{-listjoin||q}"
+    >>> e = "{-list||q}"
     >>> explain(e, ' ' * 5, Parser()(e[1:-1]))
           Join the members of the list ['q'] together with ''.
     """

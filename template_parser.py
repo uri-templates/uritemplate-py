@@ -3,47 +3,54 @@
 import tpg
 import re
 import copy
+import unicodedata
 
 # Each sub_XXX function takes the following arguments:
 # variables - A dict of variable names to default values.
 # arg - the template <arg> string
 # values - Values for variables supplied by the caller.
 
-def sub_identity(variables, arg, values):
+def sub_identity(variables, arg, values, varorder):
     key = variables.keys()[0]
     return values.get(key, variables[key] or "")
 
-def sub_prefix(variables, arg, values):
+def sub_prefix(variables, arg, values, varorder):
     key = variables.keys()[0]
     value = values.get(key, variables[key])
-    if None != value and len(value):
-        return arg + value
-    else:
+    if None == value:
         return ""
+    elif type(value) == type([]):
+        return arg + arg.join(value)
+    else:
+        return arg + value                        
 
-def sub_postfix(variables, arg, values):
+
+def sub_postfix(variables, arg, values, varorder):
     key = variables.keys()[0]
     value = values.get(key, variables[key])
-    if None != value:
-        return value + arg
-    else:
+    if None == value:
         return ""
+    elif type(value) == type([]):
+        return arg.join(value) + arg
+    else:
+        return value + arg               
+
 
 # Is order important?
-def sub_join(variables, arg, values):
+def sub_join(variables, arg, values, varorder):
   retval = []
-  for key in sorted(variables.iterkeys()):
+  for key in varorder:
     value = values.get(key, variables[key])
     if None != value:
       retval.append("%s=%s" % (key, value))
   return arg.join(retval)
 
-def sub_listjoin(variables, arg, values):
+def sub_listjoin(variables, arg, values, varorder):
   key = variables.keys()[0]
   value = values.get(key, [])
   return arg.join(value)
 
-def sub_if_non_zero(variables, arg, values):
+def sub_if_non_zero(variables, arg, values, varorder):
   for key in variables.keys():
     value = values.get(key, None)
     if None != value:
@@ -53,8 +60,8 @@ def sub_if_non_zero(variables, arg, values):
         return arg
   return ""
 
-def sub_if_zero(variables, arg, values):
-  if sub_if_non_zero(variables, arg, values):
+def sub_if_zero(variables, arg, values, varorder):
+  if sub_if_non_zero(variables, arg, values, varorder):
     return ""
   else:
     return arg
@@ -72,6 +79,7 @@ def percent_encode_str(s):
   if None == s:
     return None
   if isinstance(s, unicode):
+    s = unicodedata.normalize('NFKC', s)
     s = s.encode("utf-8")
   return "".join([encode_unreserved(c) for c in s])
 
@@ -85,13 +93,14 @@ def percent_encode(values):
   return retval
 
 class ParsedTemplate(object):
-  def __init__(self, vars, substitute, arg):
+  def __init__(self, vars, substitute, arg, varorder):
     self.vars = vars
     self.substitute = substitute
     self.arg = arg
+    self.varorder = varorder
 
   def sub(self, values):
-    return self.substitute(self.vars, self.arg, percent_encode(values))
+    return self.substitute(self.vars, self.arg, percent_encode(values), self.varorder)
 
   def variables(self):
     return self.vars.keys()
@@ -111,24 +120,24 @@ class Parser(tpg.Parser):
        IdentityOperatorTemplate/tpl                       $ t = ParsedTemplate(*tpl)
      | OperatorTemplate/tpl                               $ t = ParsedTemplate(*tpl)
      ;
-  IdentityOperatorTemplate/i -> Var/var                   $ i = (var, sub_identity, "")$ ;
+  IdentityOperatorTemplate/i -> Var/var                   $ i = (var[0], sub_identity, "", var[1])$ ;
   OperatorTemplate/o         ->
-       '-append\|'   arg/arg '\|' Var/var                 $ o = (var, sub_postfix,     arg)
-     | '-prefix\|'   arg/arg '\|' Var/var                 $ o = (var, sub_prefix,      arg)
-     | '-join\|'     arg/arg '\|' Vars/var                $ o = (var, sub_join,       arg)
-     | '-listjoin\|' arg/arg '\|' VarNoDefault/var        $ o = (var, sub_listjoin,    arg)
-     | '-opt\|'      arg/arg '\|' Vars/var                $ o = (var, sub_if_non_zero, arg)
-     | '-neg\|'      arg/arg '\|' Vars/var                $ o = (var, sub_if_zero,     arg)
+       '-suffix\|'   arg/arg '\|' Var/var                 $ o = (var[0], sub_postfix,     arg, var[1])
+     | '-prefix\|'   arg/arg '\|' Var/var                 $ o = (var[0], sub_prefix,      arg, var[1])
+     | '-join\|'     arg/arg '\|' Vars/var                $ o = (var[0], sub_join,        arg, var[1])
+     | '-list\|'     arg/arg '\|' VarNoDefault/var        $ o = (var[0], sub_listjoin,    arg, var[1])
+     | '-opt\|'      arg/arg '\|' Vars/var                $ o = (var[0], sub_if_non_zero, arg, var[1])
+     | '-neg\|'      arg/arg '\|' Vars/var                $ o = (var[0], sub_if_zero,     arg, var[1])
      ;
   Vars/var                     -> Var/var
                                  (
-                                    ',' Var/i             $ var.update(i)
+                                    ',' Var/i             $ var = (dict(var[0].items() + i[0].items()), var[1] + i[1]) $
                                  ) * ;
-  Var/var                      -> varname/name            $ var = {name: None}
+  Var/var                      -> varname/name            $ var = ({name: None}, [name])
                                  (
-                                   '=' vardefault/default $ var[name] = default
+                                   '=' vardefault/default $ var[0][name] = default
                                  ) ? ;
-  VarNoDefault/var             -> varname/name            $ var = {name: None}$ ;
+  VarNoDefault/var             -> varname/name            $ var = ({name: None}, [name])$ ;
   """
 
 
@@ -203,24 +212,26 @@ if __name__ == "__main__":
       ( "-prefix|&|foo=wilma", {},                 "&wilma" ),
       ( "-prefix||foo=wilma", {},                 "wilma" ),
       ( "-prefix|&|foo=wilma", {"foo": "barney"},  "&barney" ),
-
-      ( "-append|/|foo",        {},                 "" ),
-      ( "-append|#|foo=wilma",  {},                 "wilma#" ),
-      ( "-append|&?|foo=wilma", {"foo": "barney"},  "barney&?" ),
+      ( "-prefix|&|foo", {"foo": ["wilma", "barney"]},  "&wilma&barney" ),
+ 
+      ( "-suffix|/|foo",        {},                 "" ),
+      ( "-suffix|#|foo=wilma",  {},                 "wilma#" ),
+      ( "-suffix|&?|foo=wilma", {"foo": "barney"},  "barney&?" ),
+      ( "-suffix|&|foo", {"foo": ["wilma", "barney"]},  "wilma&barney&" ),
 
       ( "-join|/|foo",                  {},                 "" ),
       ( "-join|/|foo,bar",                  {},                 "" ),
       ( "-join|&|q,num",                  {},                 "" ),
       ( "-join|#|foo=wilma",            {},                 "foo=wilma"),
       ( "-join|#|foo=wilma,bar",        {},                 "foo=wilma"),
-      ( "-join|#|foo=wilma,bar=barney", {},                 "bar=barney#foo=wilma"),
+      ( "-join|#|foo=wilma,bar=barney", {},                 "foo=wilma#bar=barney"),
       ( "-join|&?|foo=wilma",           {"foo": "barney"},  "foo=barney" ),
 
-      ( "-listjoin|/|foo",       {},                    "" ),
-      ( "-listjoin|/|foo",       {"foo": ["a", "b"]},   "a/b"),
-      ( "-listjoin||foo",       {"foo": ["a", "b"]},   "ab"),
-      ( "-listjoin|/|foo",       {"foo": ["a"]},        "a"),
-      ( "-listjoin|/|foo",       {"foo": []},           ""),
+      ( "-list|/|foo",       {},                    "" ),
+      ( "-list|/|foo",       {"foo": ["a", "b"]},   "a/b"),
+      ( "-list||foo",       {"foo": ["a", "b"]},   "ab"),
+      ( "-list|/|foo",       {"foo": ["a"]},        "a"),
+      ( "-list|/|foo",       {"foo": []},           ""),
 
       ( "-opt|&|foo",       {},                      ""),
       ( "-opt|&|foo",       {"foo": "fred"},         "&"),
@@ -238,7 +249,7 @@ if __name__ == "__main__":
       ( "-neg|&|foo,bar",   {"bar": []},            "&"),
 
       ( "foo",          {"foo": " "},           "%20" ),
-      ( "-listjoin|&|foo",       {"foo": ["&", "&", "|", "_"]},   "%26&%26&%7C&_" )
+      ( "-list|&|foo",       {"foo": ["&", "&", "|", "_"]},   "%26&%26&%7C&_" )
 
       ]
 
@@ -254,7 +265,7 @@ if __name__ == "__main__":
       self.assertEqual(set(["id"]), t.variables())
       self.assertEqual("http://example.org/news/joe/", t.sub({"id": "joe"}))
 
-      t = URITemplate("http://www.google.com/notebook/feeds/{userID}{-prefix|/notebooks/|notebookID}{-opt|/-/|categories}{-listjoin|/|categories}?{-join|&|updated-min,updated-max,alt,start-index,max-results,entryID,orderby}")
+      t = URITemplate("http://www.google.com/notebook/feeds/{userID}{-prefix|/notebooks/|notebookID}{-opt|/-/|categories}{-list|/|categories}?{-join|&|updated-min,updated-max,alt,start-index,max-results,entryID,orderby}")
       self.assertEqual(set(['max-results', 'orderby', 'notebookID',
         'start-index', 'userID', 'updated-max', 'entryID', 'alt',
         'updated-min', 'categories']), t.variables())

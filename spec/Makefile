@@ -8,9 +8,9 @@ TARGET=$(NAME)-$(REV)
 default: $(TARGET).html $(TARGET).txt diff nits
 
 test: $(TARGET).txt 
-	python test_draft_examples.py
-	python work/template_parser.py
-	python work/explain.cgi --test
+	python ../template_parser.py
+	python ../explain.cgi --test
+	python test_draft_examples.py $(TARGET).txt
 
 $(TARGET).html: $(SOURCE).xml rfc2629.xslt
 	tclsh8.4 xml2rfc.tcl xml2html $(SOURCE).xml  $(TARGET).html
