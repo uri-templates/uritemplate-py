@@ -2,7 +2,7 @@
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
 <!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>
    <!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>
-   <!ENTITY rfc4234 SYSTEM 'bibxml/reference.RFC.4234.xml'>
+   <!ENTITY rfc5234 SYSTEM 'bibxml/reference.RFC.5234.xml'>
    <!ENTITY rfc4395 SYSTEM 'bibxml/reference.RFC.4395.xml'>
 
    <!ENTITY rfc2978 SYSTEM 'bibxml/reference.RFC.2978.xml'>
@@ -135,12 +135,45 @@
 		   <t>And the following variable value</t>
 
                    <figure><artwork>
-    userid := fred</artwork></figure>
+    userid := "fred"</artwork></figure>
 
                    <t>The expansion of the URI Template is:</t>
 
                    <figure><artwork>
     http://www.example.com/users/fred</artwork></figure>
+    
+                   <t>
+		     Here is an example that constructs a query
+		     from multiple variables:
+		   </t>
+
+		   <figure><artwork>
+    http://www.example.com/?{-join|&amp;|query,number}</artwork></figure>
+
+		   <t>And the following variables</t>
+
+                   <figure><artwork>
+    query  := "mycelium"
+    number := 100</artwork></figure>
+
+                   <t>The expansion of the URI Template is:</t>
+
+                   <figure><artwork>
+  http://www.example.com/?query=mycelium&amp;number=100</artwork></figure>
+
+                   <t>
+		     The template expansion describes in a machine
+		     readable manner how the URI is to be constructed.
+		   </t>
+
+		   <figure><artwork>
+  http://www.example.com/?{-join|&amp;|query,number}
+                          \____________________/
+                                   |
+                                   |
+        Join 'var=value' for each variable 
+        in ['query', 'number'] with '&amp;'.
+				 </artwork></figure>
 
                    <t>
 		     Obviously the use cases that drove OpenSearch, WADL and WSDL to
@@ -195,7 +228,7 @@
                <section title="Notational Conventions">
                    <t>
                        This specification uses the Augmented Backus-Naur Form
-                       (ABNF) notation of <xref target="RFC4234"/>, including
+                       (ABNF) notation of <xref target="RFC5234"/>, including
                        the following core ABNF syntax rules defined by that
                        specification: ALPHA (letters) and DIGIT (decimal
                        digits).  See <xref target="RFC3986"/> for the
@@ -727,7 +760,7 @@ foo := "fred"
                &rfc2978;
                &rfc3986;
                &rfc3629;
-               &rfc4234;
+               &rfc5234;
                &rfc4395;
            </references>
 

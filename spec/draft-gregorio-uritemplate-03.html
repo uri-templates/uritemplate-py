@@ -306,10 +306,35 @@ Overview</h3>
     http://www.example.com/users/{userid}</pre></div>
 <p>And the following variable value
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
-    userid := fred</pre></div>
+    userid := "fred"</pre></div>
 <p>The expansion of the URI Template is:
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
     http://www.example.com/users/fred</pre></div>
+<p>
+		     Here is an example that constructs a query
+		     from multiple variables:
+		   
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+    http://www.example.com/?{-join|&amp;|query,number}</pre></div>
+<p>And the following variables
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+    query  := "mycelium"
+    number := 100</pre></div>
+<p>The expansion of the URI Template is:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  http://www.example.com/?query=mycelium&amp;number=100</pre></div>
+<p>
+		     The template expansion describes in a machine
+		     readable manner how the URI is to be constructed.
+		   
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  http://www.example.com/?{-join|&amp;|query,number}
+                          \____________________/
+                                   |
+                                   |
+        Join 'var=value' for each variable
+        in ['query', 'number'] with '&amp;'.
+</pre></div>
 <p>
 		     Obviously the use cases that drove OpenSearch, WADL and WSDL to
 		     incorporate URI Templates are also valid here.
@@ -372,7 +397,7 @@ Notational Conventions</h3>
 
 <p>
                        This specification uses the Augmented Backus-Naur Form
-                       (ABNF) notation of <a class='info' href='#RFC4234'>[RFC4234]<span> (</span><span class='info'>Crocker, D., Ed. and P. Overell, &ldquo;Augmented BNF for Syntax Specifications: ABNF,&rdquo; October&nbsp;2005.</span><span>)</span></a>, including
+                       (ABNF) notation of <a class='info' href='#RFC5234'>[RFC5234]<span> (</span><span class='info'>Crocker, D. and P. Overell, &ldquo;Augmented BNF for Syntax Specifications: ABNF,&rdquo; January&nbsp;2008.</span><span>)</span></a>, including
                        the following core ABNF syntax rules defined by that
                        specification: ALPHA (letters) and DIGIT (decimal
                        digits).  See <a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;Uniform Resource Identifier (URI): Generic Syntax,&rdquo; January&nbsp;2005.</span><span>)</span></a> for the
@@ -485,6 +510,12 @@ Variables</h3>
                        it may allow any iterable to be used as the source for a
                        list variable.
                    
+</p>
+<p>
+		     Some variables may be supplied with default values. The default
+		     value must comde from ( unreserved / pct-encoded ). Note that 
+		     there is no notation for supplying default values to list variables.
+		   
 </p>
 <p>
                        A variable may appear in more than one expansion in a
@@ -824,7 +855,7 @@ Examples</h3>
 <tr><th align="left">Name</th><th align="left">Value</th></tr>
 <tr>
 <td align="left">foo</td>
-<td align="left">\u038e</td>
+<td align="left">\u03d3</td>
 </tr>
 <tr>
 <td align="left">bar</td>
@@ -860,7 +891,7 @@ Examples</h3>
 </tr>
 <tr>
 <td align="left">plugh</td>
-<td align="left">["\u03de", "\u03d4\u1e9b"]</td>
+<td align="left">["\u017F\u0307", "\u0073\u0307"]</td>
 </tr>
 </table>
 <br clear="all" />
@@ -884,21 +915,29 @@ Examples</h3>
  /{xyzzy}
  /
 
- http://example.org/?{-join|�|foo,bar,baz}
- http://example.org/?foo=&amp;bar=fred&amp;baz=10%2C20%2C30
+ http://example.org/?{-join|&amp;|foo,bar,xyzzy,baz}
+ http://example.org/?foo=%CE%8E&amp;bar=fred&amp;baz=10%2C20%2C30
 
- http://example.org/?d={-list|,|points}
+ http://example.org/?d={-list|,|qux}
  http://example.org/?d=10,20,30
 
- http://example.org/?d={-list|&amp;d=|baz}
+ http://example.org/?d={-list|&amp;d=|qux}
  http://example.org/?d=10&amp;d=20&amp;d=30
 
  http://example.org/{bar}{bar}/{garply}
- http://example.org/fredfred/a%2Fb%2Fc%2F
+ http://example.org/fredfred/a%2Fb%2Fc
 
  http://example.org/{bar}{-prefix|/|fred}
  http://example.org/fred/fred//wilma
 
+ {-neg|:|corge}{-suffix|:|plugh}
+ :%E1%B9%A1:%E1%B9%A1:
+
+ ../{waldo}/
+ ../ben%20%26%20jerrys/
+
+ telnet:192.0.2.16{-opt|:80|grault}
+ telnet:192.0.2.16:80
 </pre></div>
 <p>    ----
 </p>
@@ -990,10 +1029,10 @@ Appendix A - Parsing URI Template Expansions</h3>
 <td class="author-text">Yergeau, F., &ldquo;<a href="http://tools.ietf.org/html/rfc3629">UTF-8, a transformation format of ISO 10646</a>,&rdquo; STD&nbsp;63, RFC&nbsp;3629, November&nbsp;2003 (<a href="ftp://ftp.isi.edu/in-notes/rfc3629.txt">TXT</a>).</td></tr>
 <tr><td class="author-text" valign="top"><a name="RFC3986">[RFC3986]</a></td>
 <td class="author-text">Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;<a href="http://tools.ietf.org/html/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a>,&rdquo; STD&nbsp;66, RFC&nbsp;3986, January&nbsp;2005 (<a href="ftp://ftp.isi.edu/in-notes/rfc3986.txt">TXT</a>).</td></tr>
-<tr><td class="author-text" valign="top"><a name="RFC4234">[RFC4234]</a></td>
-<td class="author-text"><a href="mailto:dcrocker@bbiw.net">Crocker, D., Ed.</a> and <a href="mailto:paul.overell@thus.net">P. Overell</a>, &ldquo;<a href="http://tools.ietf.org/html/rfc4234">Augmented BNF for Syntax Specifications: ABNF</a>,&rdquo; RFC&nbsp;4234, October&nbsp;2005 (<a href="ftp://ftp.isi.edu/in-notes/rfc4234.txt">TXT</a>, <a href="http://xml.resource.org/public/rfc/html/rfc4234.html">HTML</a>, <a href="http://xml.resource.org/public/rfc/xml/rfc4234.xml">XML</a>).</td></tr>
 <tr><td class="author-text" valign="top"><a name="RFC4395">[RFC4395]</a></td>
 <td class="author-text">Hansen, T., Hardie, T., and L. Masinter, &ldquo;<a href="http://tools.ietf.org/html/rfc4395">Guidelines and Registration Procedures for New URI Schemes</a>,&rdquo; BCP&nbsp;115, RFC&nbsp;4395, February&nbsp;2006 (<a href="ftp://ftp.isi.edu/in-notes/rfc4395.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC5234">[RFC5234]</a></td>
+<td class="author-text">Crocker, D. and P. Overell, &ldquo;<a href="http://tools.ietf.org/html/rfc5234">Augmented BNF for Syntax Specifications: ABNF</a>,&rdquo; STD&nbsp;68, RFC&nbsp;5234, January&nbsp;2008 (<a href="ftp://ftp.isi.edu/in-notes/rfc5234.txt">TXT</a>).</td></tr>
 <tr><td class="author-text" valign="top"><a name="UNIV4">[UNIV4]</a></td>
 <td class="author-text">The Unicode Consortium, &ldquo;The Unicode Standard, Version
                   4.0.1, defined by: The Unicode Standard, Version 4.0

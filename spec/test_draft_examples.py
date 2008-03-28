@@ -4,7 +4,7 @@ import sys
 lines = file(sys.argv[1], "r").readlines()
 del sys.argv[1]
 
-vars_regex = re.compile(r"^\s*\|")
+vars_regex = re.compile(r"^\s*\| \S")
 vars_txt = [[w.strip() for w in l.strip().split('|')][1:3] for l in lines if vars_regex.search(l)]
 vars = {}
 
