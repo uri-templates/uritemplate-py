@@ -7,6 +7,8 @@ TARGET=$(NAME)-$(REV)
 
 default: $(TARGET).html $(TARGET).txt diff nits
 
+edits: $(NAME).html
+
 test: $(TARGET).txt 
 	python ../template_parser.py
 	python ../explain.cgi --test
@@ -17,6 +19,9 @@ $(TARGET).html: $(SOURCE).xml xml2rfc.tcl
 
 $(TARGET).txt:  $(SOURCE).xml xml2rfc.tcl
 	tclsh8.4 xml2rfc.tcl xml2rfc $(SOURCE).xml $(TARGET).txt
+
+$(NAME).html: $(SOURCE).xml xml2rfc.tcl
+	tclsh8.4 xml2rfc.tcl xml2html $(SOURCE).xml  $(NAME).html
 
 .PHONY: diff
 diff:
