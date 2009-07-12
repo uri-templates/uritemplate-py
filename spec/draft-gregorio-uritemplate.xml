@@ -2,6 +2,7 @@
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
  <!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>
  <!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>
+ <!ENTITY rfc3987 SYSTEM 'bibxml/reference.RFC.3987.xml'>
  <!ENTITY rfc5234 SYSTEM 'bibxml/reference.RFC.5234.xml'>
  <!ENTITY rfc2978 SYSTEM 'bibxml/reference.RFC.2978.xml'>
  <!ENTITY rfc3629 SYSTEM 'bibxml/reference.RFC.3629.xml'>
@@ -415,35 +416,48 @@
 
     <section title="ABNF and Character Encoding">
      <t>
-      This specification uses the Augmented Backus-Naur Form
-      (ABNF) notation of <xref target="RFC5234"/>, including
-      the following core ABNF syntax rules defined by that
-      specification: ALPHA (letters) and DIGIT (decimal
-      digits).  See <xref target="RFC3986"/> for the
-      definitions of the URI-reference, pct-encoded,
-      reserved, and unreserved rules.
+      This specification uses the Augmented Backus-Naur Form (ABNF)
+      notation of <xref target="RFC5234"/>.  The following ABNF rules
+      are imported from the normative references <xref target="RFC5234"/>,
+      <xref target="RFC3986"/>, and <xref target="RFC3987"/>.
      </t>
+     <figure><artwork type="abnf">
+  ALPHA          =  %x41-5A / %x61-7A   ; A-Z / a-z
+  DIGIT          =  %x30-39             ; 0-9
+  
+  unreserved     =  ALPHA / DIGIT / "-" / "." / "_" / "~"
+  pct-encoded    =  "%" HEXDIG HEXDIG
+      
+  ucschar        =  %xA0-D7FF / %xF900-FDCF / %xFDF0-FFEF
+                 /  %x10000-1FFFD / %x20000-2FFFD / %x30000-3FFFD
+                 /  %x40000-4FFFD / %x50000-5FFFD / %x60000-6FFFD
+                 /  %x70000-7FFFD / %x80000-8FFFD / %x90000-9FFFD
+                 /  %xA0000-AFFFD / %xB0000-BFFFD / %xC0000-CFFFD
+                 /  %xD0000-DFFFD / %xE1000-EFFFD
+
+  iprivate       =  %xE000-F8FF / %xF0000-FFFFD / %x100000-10FFFD
+     </artwork></figure>
      <t>
-      A URI Template is a sequence of characters, and has the same
-      issues as URIs with regard to codepoints and character sets.
-      That is, URI Template characters are frequently encoded
-      as octets for transport or presentation.  This specification
-      does not mandate any particular character encoding for
-      mapping between URI characters and the octets used to store
-      or transmit those characters.  When a URI appears in a
-      protocol element, the character encoding is defined by that
-      protocol; without such a definition, a URI is assumed to be
-      in the same character encoding as the surrounding text.
+      A URI Template is defined as a sequence of characters and therefore
+      has the same issues as URIs with regard to codepoints and character sets.
+      That is, URI Template characters are frequently encoded as octets
+      for transport or presentation.  This specification does not mandate
+      any particular character encoding for mapping between URI Template
+      characters and the octets used to store or transmit those characters.
+      When a URI Template appears in a protocol element, the character
+      encoding is defined by that protocol; without such a definition,
+      a URI Template is assumed to be in the same character encoding as
+      the surrounding text.
      </t>
      <t>
       The ABNF notation defines its terminal values to be
-      non-negative integers (codepoints) based on the US-ASCII
-      coded character set <xref target="ASCII"/>.  Because a URI is a sequence of
-      characters, we must invert that relation in order to
-      understand the URI syntax.  Therefore, the integer values
-      used by the ABNF must be mapped back to their corresponding
-      characters via US-ASCII in order to complete the syntax
-      rules.
+      non-negative integers (codepoints) that are a superset of the
+      US-ASCII coded character set <xref target="ASCII"/>.  This
+      specification defines terminal values as codepoints within the
+      Unicode coded character set <xref target="UNIV4"/>.  Thus, a string
+      of characters in a URI Template is assumed to be transformed into
+      its corresponding sequence of Unicode codepoints prior to testing
+      for a match with the URI Template grammar.
      </t>
     </section>
    </section>
@@ -451,47 +465,63 @@
 
   <section title="URI Template Syntax">
    <t>
-    A URI Template is a sequence of characters that contains any number of
-    embedded template expressions, see <xref target="expressions"/>.
-    Each expression references one or
-    more variables whose values are used when determining the
-    substitution value for an expression.  A URI Template becomes a
-    URI when all the template expressions are substituted with their
-    values (see <xref target="evaluating"/>). The generated
-    URI will be a URI-reference, i.e. either an absolute
-    URI or a relative reference.
+    A URI Template is a string of printable Unicode characters 
+    that contains zero or more embedded template expressions.
+    Each expression contains an operator that defines the expansion
+    process and references one or more variables whose values are
+    used by that process to obtain a replacement string.  That string
+    is then substituted for the expression in order to form a
+    URI-reference, as described in <xref target="evaluating"/>.
    </t>
+   <figure><artwork type="abnf">
+  URI-Template  = *( literals / expression )
+   </artwork></figure>
+
+   <section title="Literals" anchor="literals">
+    <t>
+      The characters outside of expressions in a URI Template string
+      are intended to be translated literally to the URI-reference.
+      Characters allowed in the URI-reference grammar are copied to
+      the result string. Characters not allowed in the URI-reference
+      grammar MUST first be encoded using the UTF-8 character encoding,
+      each octet of that encoding MUST then be pct-encoded, and the
+      resulting sequence of pct-encoded octets is copied to the
+      result string.
+    </t>
+    <figure><artwork type="abnf">
+  literals      =  %x21 / %x23-24 / %x26 / %x28-3B / %x3D / %x3F-5B
+                /  %x5D-5F / %x61-7A / %x7E / ucschar / iprivate
+                /  pct-encoded
+                     ; any Unicode character except:
+                     ;  CTL, SP, DQUOTE, "'", "%" (aside from pct-encoded),
+                     ;  "&lt;", "&gt;", "\", "^", "`", "{", "|", "}"
+    </artwork></figure>
+   </section>
 
    <section title="Expressions" anchor="expressions">
     <t>
      Template expressions are the parameterized components of a URI Template.
-     A template expression MUST match the &lt;expression&gt; rule.
+     Each template expression MUST match the &lt;expression&gt; rule.
     </t>
-    <t>
-     The ABNF is something like
-    </t>
-    <figure><artwork>
-  expression    = "{" [ operator ] variable-list "}"
-  operator      = "/" / "+" / ";" / "?" / op-reserve
-  variable-list = varspec *( "," varspec )
-  varspec       = [ vartype ] varname [ modifier ] [ "=" default ]
-  vartype       = "@" / "%"
-  varname       = 1*varchar
-  modifier      = ( substring / remainder ) offset
-  substring     = ":"
-  remainder     = "^"
-  offset        = [ from-right ] 1*DIGIT
-  from-right    = "-"
-  default       = *( unreserved / pct-encoded )
-  op-reserve    = "|" / "!" / "*" / "="
-  locals        = "$" / "(" / ")"
-  braces        = "{" / "}"
-  varchar       = &lt; any character except reserved / braces &gt;
-  
-  reserved    = ":" / "/" / "?" / "#" / "[" / "]" / "@"
-              / "!" / "$" / "&amp;" / "'" / "(" / ")"
-              / "*" / "+" / "," / ";" / "="
-  
+    <figure><artwork type="abnf">
+  expression    =  "{" [ operator ] variable-list "}"
+  operator      =  "/" / "+" / ";" / "?" / op-reserve
+  op-reserve    =  "|" / "!" / "*" / "~"
+                       ; reserved for local use: "$" / "(" / ")"
+
+  variable-list =  varspec *( "," varspec )
+  varspec       =  [ vartype ] varname [ modifier ] [ "=" default ]
+  vartype       =  "@" / "%"
+  varname       =  1*varchar
+  varchar       =  ALPHA / DIGIT /"." / "_" / ucschar / iprivate
+
+  modifier      =  ( substring / remainder ) offset
+  substring     =  ":"
+  remainder     =  "^"
+  offset        =  [ from-right ] 1*DIGIT
+  from-right    =  "-"
+
+  default       =  *( unreserved / pct-encoded )
     </artwork></figure>
    </section>
 
@@ -890,6 +920,7 @@
    &rfc2119;
    &rfc2978;
    &rfc3986;
+   &rfc3987;
    &rfc3629;
    &rfc5234;
   </references>
