@@ -264,7 +264,7 @@
 | Sec | Op  | Description                                         |
 |     |     |    Example Template       Expansion                 |
 |-----+-----+-----------------------------------------------------|
-| X.1 |     | Encoded substitution with comma-separated values    |
+| X.1 |     | Simple substitution with comma-separated values     |
 |     |     |                                                     |
 |     |     |    {var}                  value                     |
 |     |     |    {hello}                Hello%20World%21          |
@@ -272,13 +272,9 @@
 |     |     |    {x,y}                  1024,768                  |
 |     |     |    {var=default}          value                     |
 |     |     |    {undef=default}        default                   |
-|     |     |    {var:3}                val                       |
-|     |     |    {var^3}                ue                        |
-|     |     |    {var:-3}               lue                       |
-|     |     |    {var^-3}               va                        |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| X.2 |  +  | Unencoded substitution with comma-separated values  |
+| X.2 |  +  | Reserved substitution with comma-separated values   |
 |     |     |                                                     |
 |     |     |    {+var}                 value                     |
 |     |     |    {+hello}               Hello%20World!            |
@@ -301,9 +297,9 @@
 |     |     |    {?x,y}                 ?x=1024&amp;y=768             |
 |     |     |    {?x,y,empty}           ?x=1024&amp;y=768&amp;empty=      |
 |     |     |    {?x,y,undef}           ?x=1024&amp;y=768             |
-|     |     |    {?list}                ?list1=val1,val2,val3     |
+|     |     |    {?list}                ?list=val1,val2,val3      |
 |     |     |    {?%keys}               ?key1=val1&amp;key2=val2      |
-|     |     |    {?@list}  ?list1=val1&amp;list2=val2&amp;list3=val3      |
+|     |     |    {?@list}  ?list=val1&amp;list2=val2&amp;list3=val3       |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
 | X.5 |  /  | Encoded path segments, slash-separated              |
@@ -339,7 +335,7 @@
 {/var:3,undef,list,empty} /val/val1/val2/val3/
 {;var,undef,empty,list}   ;var=value;empty;list=val1,val2,val3
 {?var,undef,empty,list}   ?var=value&amp;empty=&amp;list=val1,val2,val3
-{?var,undef,empty,@list}  ?var=value&amp;empty=&amp;list1=val1&amp;list2=val2&amp;list3=val3
+{?var,undef,empty,@list}  ?var=value&amp;empty=&amp;list=val1&amp;list2=val2&amp;list3=val3
 {?var,undef,empty,%keys}  ?var=value&amp;empty=&amp;key1=val1&amp;key2=val2&amp;key3=val3
     </artwork></figure>
     <t>
@@ -467,11 +463,6 @@
    <t>
     A URI Template is a string of printable Unicode characters 
     that contains zero or more embedded template expressions.
-    Each expression contains an operator that defines the expansion
-    process and references one or more variables whose values are
-    used by that process to obtain a replacement string.  That string
-    is then substituted for the expression in order to form a
-    URI-reference, as described in <xref target="evaluating"/>.
    </t>
    <figure><artwork type="abnf">
   URI-Template  = *( literals / expression )
@@ -501,74 +492,218 @@
    <section title="Expressions" anchor="expressions">
     <t>
      Template expressions are the parameterized components of a URI Template.
-     Each template expression MUST match the &lt;expression&gt; rule.
+     Each expression either begins with an operator that defines the expansion
+     process or defaults to simple variable substitution of unreserved values.
     </t>
     <figure><artwork type="abnf">
   expression    =  "{" [ operator ] variable-list "}"
-  operator      =  "/" / "+" / ";" / "?" / op-reserve
+  operator      =  "+" / "/" / ";" / "?" / op-reserve
   op-reserve    =  "|" / "!" / "*" / "~"
                        ; reserved for local use: "$" / "(" / ")"
+    </artwork></figure>
+    <t> 
+     The operator characters have been chosen to reflect each of their roles
+     as reserved characters in the URI generic syntax.  The operators defined
+     by this specification include:
+     plus ("+") for substituting values that may contain reserved characters;
+     slash ("/") for substituting values as a sequence of path segments
+     separated by "/";
+     semicolon (";") for substituting key=value pairs as path parameters
+     prefixed by ";"; and,
+     question-mark ("?") for substituting a query component beginning
+     with "?" and consisting of key=value pairs separated by "&amp;".
+     These operators will be described in detail in <xref target="evaluating"/>.
+    </t>
+    <t>
+     The operator characters pipe ("|"), exclamation ("!"), asterisk ("*"),
+     and tilde ("~") are reserved for future extensions.  A URI Template
+     processor that unexpectedly encounters such an extension operator
+     should flag the expression as an error and include it in the result
+     without expansion.
+    </t>
+    <t>
+     The expression syntax specifically excludes use of the dollar ("$")
+     and parentheses ["(" and ")"] characters so that they remain
+     available for local language extensions outside the scope of this
+     specification.
+    </t>
+   </section>
 
+   <section title="Variables" anchor="variables">
+    <t>
+     After the operator (if any), each expression contains a list of
+     one or more comma-separated variable specifiers (varspec).
+     The variable names serve multiple purposes: documentation for
+     what kinds of values are expected, identifiers for associating
+     values within a URI Template processor, and the string to use
+     for each key on key=value substitutions.
+    </t>
+    <figure><artwork type="abnf">
   variable-list =  varspec *( "," varspec )
   varspec       =  [ vartype ] varname [ modifier ] [ "=" default ]
   vartype       =  "@" / "%"
   varname       =  1*varchar
   varchar       =  ALPHA / DIGIT /"." / "_" / ucschar / iprivate
-
-  modifier      =  ( substring / remainder ) offset
-  substring     =  ":"
-  remainder     =  "^"
-  offset        =  [ from-right ] 1*DIGIT
-  from-right    =  "-"
-
-  default       =  *( unreserved / pct-encoded )
     </artwork></figure>
-   </section>
-
-   <section title="Variables" anchor="variables">
     <t>
-     Each expression contains a list of zero or more variable names.
-     Any of those variables can have a modifier indicating that its
-     value is limited to a prefix, suffix, or the remainder of
-     a prefix or suffix of the variable value.  Any of the variables
-     can also have a specified default value for use when the variable
-     is undefined.
+     An optional variable type indicator MAY be supplied before each
+     variable name to indicate that the variable's value should be
+     processed as a list ("@") or an associative array ("%").  Note
+     that these variable types are instructions to the template
+     processor, not an indication of language or implementation type.
     </t>
     <t>
-     Every variable is a Unicode string.
+     An expression MAY reference variables that are unknown
+     to the template processor or whose value is set to a special
+     "undefined" value, such as undef or null.  Such undefined
+     variables are given special treatment by the expansion process.
     </t>
     <t>
-     A template expression MAY reference variables that are unknown
-     to the template processor. Those variables are 'undefined'
-     and template expansion takes into consideration 'undefined' variables.
-     Conversely, every variable that the template processor knows about
-     is considered 'defined'.
-    </t>
-    <t>
-     A variable that contains a string of length zero MUST NOT be
-     considered 'undefined' by the template processor.
-     A list variable that contains no members, that is of zero length, MUST NOT
-     be considered 'undefined' by the template processor.
-    </t>
-    <t>
-     Beyond the scope of this
-     specification is the allowable programming constructs
-     that can be used for a list variable. For example, a Python
-     implementation might allow only built-in list types, or
-     it may allow any iterable to be used as the source for a
-     list variable.
-    </t>
-    <t>
-     Some variables may be supplied with default values. The default
-     value must come from ( unreserved / pct-encoded ). Note that
-     there is no notation for supplying default values to list variables.
+     A variable value that is a string of length zero is not considered
+     undefined; it has the defined value of an empty string.  Likewise,
+     a list or associative array variable that contains no members is
+     considered defined, though its processing for some operators may
+     be identical to that of an undefined variable.
     </t>
     <t>
      A variable may appear in more than one expression in a
-     URI Template. The value used for that variable MUST
-     remain the same for every template expression when
-     converting a URI Template into a URI.
+     URI Template. The value of that variable MUST remain static
+     throughout the template expansion process: if the same variable
+     appears in more than one expression, then it must have the same
+     value for the purpose of calculating each expansion.
     </t>
+   </section>
+
+   <section title="Value Modifiers" anchor="modifiers">
+    <t>
+     Any of the variables can have a modifier indicating that its
+     value is limited to a prefix, suffix, or the remainder of
+     a prefix or suffix of the variable value.  The primary use of
+     these modifiers is to partition an identifier space hierarchically,
+     as is often found in reference sites and hash-based storage.
+     They can also be used to indicate the maximum length of a given
+     substitution.
+    </t>
+    <figure><artwork type="abnf">
+  modifier      =  ( substring / remainder ) offset
+  substring     =  ":"
+  remainder     =  "^"
+  offset        =  [ from-end ] 1*DIGIT
+  from-end      =  "-"
+    </artwork></figure>
+    <t>
+     If the variable is not typed, then the offset refers to a
+     maximum number of characters from either the beginning (prefix)
+     or end (suffix) of the variable's value as a string.  A substring
+     modifier requires that only the indicated prefix or suffix be
+     used in the expansion.  A remainder modifier requires that only
+     the remainder of the value, excluding the indicated prefix or
+     suffix, be used in the expansion.  If the offset is greater than
+     the length of the variable's value, then the entire string is used
+     for a substring and the empty string is used for a remainder.
+    </t>
+    <t>
+     If the variable is typed as a list, then the offset refers to
+     a maximum number of members from the beginning or end of that list.
+     A substring modifier on a list requires that only the indicated members
+     be used in the expansion.  A remainder modifier on a list requires
+     that only the remaining members, excluding those indicated by the
+     offset from beginning or end, be used in the expansion.
+    </t>
+    <t>
+     If the variable is typed as an associative array, then the offset
+     refers to a maximum number of tuples from the beginning or end of
+     that array. A substring modifier on an array requires that only the
+     indicated tuples be used in the expansion.  A remainder modifier
+     on an array requires that only the remaining tuples, excluding
+     those indicated by the offset from beginning or end, be used in
+     the expansion.
+    </t>
+    <t>
+     The following examples illustrate how modifiers work with the
+     different variable types.  More complex examples are provided
+     in <xref target="examples"/>.
+    </t>
+    <figure><artwork>
+  Given the variable assignments:
+    var   := "value";
+    name  := [ "Fred", "Wilma", "Pebbles" ];
+    favs  := [ "color", "red", "volume", "high" ];
+
+  Example Template     Expansion
+
+    {var}              value
+    {var:20}           value
+    {var:3}            val
+    {var^3}            ue
+    {var:-3}           lue
+    {var^-3}           va
+
+    {?name}            ?name=Fred,Wilma,Pebbles
+    {?name:1}          ?name=F
+    {?@name}           ?name=Fred&amp;name2=Wilma&amp;name3=Pebbles
+    {?@name:1}         ?name=Fred
+    {?@name^1}         ?name2=Wilma&amp;name3=Pebbles
+    
+    {?favs}            ?favs=color,red,volume,high
+    {?%favs}           ?color=red&amp;volume=high
+    {?%favs:1}         ?color=red
+    {?%favs^1}         ?volume=high
+    {?%favs:-1}        ?volume=high
+    {?%favs^-1}        ?color=red
+    </artwork></figure>
+   </section>
+
+   <section title="Value Defaults" anchor="defaults">
+    <t>
+     Any of the variables may also be supplied with a default value
+     to be used when a template processor determines the variable to be
+     undefined. The default value is limited to the unreserved and
+     percent-encoded characters of a URI-reference, since our intention
+     is for the default to be presented in the exact form that it would
+     appear in the resulting URI.  The default is not affected by the
+     variable modifiers; it is assumed that the default string
+     provided in the expression already reflects any necessary
+     substring or remainder processing.
+    </t>
+    <figure><artwork type="abnf">
+  default       =  *( unreserved / pct-encoded )
+    </artwork></figure>
+    <t>
+     The following examples illustrate how default values work with the
+     different variable types.  More complex examples are provided
+     in <xref target="examples"/>.
+    </t>
+    <figure><artwork>
+  Given the variable assignments:
+    var   := "value";
+    empty := "";
+    undef := null;
+    name  := [ "Fred", "Wilma", "Pebbles" ];
+    favs  := [ "color", "red", "volume", "high" ];
+
+  Example Template     Expansion
+
+    {var=default}      value
+    {undef=default}    default
+
+    x{empty}y          xy
+    x{empty=_}y        xy
+    x{undef}y          xy
+    x{undef=_}y        x_y
+
+    x{?@name=none}     x?name=Fred&amp;name2=Wilma&amp;name3=Pebbles
+    x{?@undef}         x
+    x{?@undef=none}    x?undef=none
+    x{?@empty}         x?empty=
+    x{?@empty=none}    x?empty=
+    
+    x{?%favs=none}     x?color=red&amp;volume=high
+    x{?%undef}         x
+    x{?%undef=none}    x?undef=none
+    x{?%empty}         x?empty=
+    x{?%empty=none}    x?empty=
+    </artwork></figure>
    </section>
   </section>
 
