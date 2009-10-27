@@ -103,8 +103,8 @@
     are often delegated using a common pattern, such as
    </t>
    <figure><artwork>
-  http://example.com/users/fred/
-  http://example.com/users/mark/
+  http://example.com/~fred/
+  http://example.com/~mark/
    </artwork></figure>
    <t>
     or a set of dictionary entries might be grouped in a hierarchy
@@ -133,7 +133,7 @@
     following URI templates:
    </t>
    <figure><artwork>
-  http://example.com/users/{username}/
+  http://example.com/~{username}/
   http://example.com/dictionary/{term:1}/{term}
   http://example.com/search{?q,lang}
    </artwork></figure>
