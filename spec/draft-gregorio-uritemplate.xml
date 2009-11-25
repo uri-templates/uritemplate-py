@@ -95,127 +95,116 @@
  </front>
 
  <middle>
-  <section title="Introduction">
-   <t>
-    A Uniform Resource Identifier (URI) <xref target="RFC3986"/>
-    is often used to identify a specific resource within a common
-    space of similar resources. For example, personal web spaces
-    are often delegated using a common pattern, such as
-   </t>
-   <figure><artwork>
+  <section title="Introduction" anchor="intro">
+   <section title="Overview" anchor="overview">
+    <t>
+     A Uniform Resource Identifier (URI) <xref target="RFC3986"/>
+     is often used to identify a specific resource within a common
+     space of similar resources. For example, personal web spaces
+     are often delegated using a common pattern, such as
+    </t>
+    <figure><artwork>
   http://example.com/~fred/
   http://example.com/~mark/
-   </artwork></figure>
-   <t>
-    or a set of dictionary entries might be grouped in a hierarchy
-    by the first letter of the term, as in
-   </t>
-   <figure><artwork>
+    </artwork></figure>
+    <t>
+     or a set of dictionary entries might be grouped in a hierarchy
+     by the first letter of the term, as in
+    </t>
+    <figure><artwork>
   http://example.com/dictionary/c/cat
   http://example.com/dictionary/d/dog
-   </artwork></figure>
-   <t>
-    or a service interface might be invoked with various user input
-    in a common pattern, as in
-   </t>
-   <figure><artwork>
+    </artwork></figure>
+    <t>
+     or a service interface might be invoked with various user input
+     in a common pattern, as in
+    </t>
+    <figure><artwork>
   http://example.com/search?q=cat&amp;lang=en
   http://example.com/search?q=dog&amp;lang=fr
-   </artwork></figure>
-   <t>
-    URI Templates provide a mechanism for abstracting a space of
-    resource identifiers such that the variable parts can be easily
-    identified and described.  URI templates can have many uses,
-    including discovery of available services, configuring resource
-    mappings, defining computed links, specifying interfaces, and
-    other forms of programmatic interaction with resources.
-    For example, the above resources could be described by the
-    following URI templates:
-   </t>
-   <figure><artwork>
+    </artwork></figure>
+    <t>
+     URI Templates provide a mechanism for abstracting a space of
+     resource identifiers such that the variable parts can be easily
+     identified and described.  URI templates can have many uses,
+     including discovery of available services, configuring resource
+     mappings, defining computed links, specifying interfaces, and
+     other forms of programmatic interaction with resources.
+     For example, the above resources could be described by the
+     following URI templates:
+    </t>
+    <figure><artwork>
   http://example.com/~{username}/
   http://example.com/dictionary/{term:1}/{term}
   http://example.com/search{?q,lang}
-   </artwork></figure>
-   <t>
-    A URI Template provides both a structural description of a URI
-    space and, when variable values are provided, a simple instruction
-    on how to construct URIs corresponding to each of those values.
-    A URI Template is transformed into a URI by replacing each
-    delimited expression with its value as defined by the
-    expression type and the values of variables named within the
-    expression.  The expression types range from simple value
-    substitution to multiple key=value lists.  The substitutions
-    are based on the URI generic syntax, allowing an implementation
-    to process any URI Template without knowing the scheme-specific
-    requirements of every possible resulting URI.
-   </t>
-   <t>
-    Since a URI Template describes a superset of the identifiers,
-    there is no implication that every possible substitution for
-    each delimited variable expression corresponds to a URI of an
-    existing resource.  Our expectation is that an application
-    constructing URIs according to the template will be provided
-    with an appropriate set of values for the variables being
-    substituted and will be able to cope with any errors that might
-    occur should the resulting URI be inaccessible.
-   </t>
-   <t>
-    URI Template expressions are not URIs: they do not identify
-    an abstract or physical resource, they are not parsed as URIs,
-    and should not be used in places where a URI would be expected
-    unless the template expressions will be expanded by a template
-    processor prior to use.  Distinct field, element, or attribute
-    names should be used to differentiate protocol elements that
-    carry a URI Template from those that expect a URI.
-   </t>
+    </artwork></figure>
+    <t>
+     We define the following terms:
+     <list style="symbols">
+      <t>expression -
+         The text between '{' and '}', including the enclosing braces,
+         as defined in <xref target="syntax"/>.</t>
+      <t>expansion -
+         The string result obtained from a template expression after
+         processing it according to its expression type, list of variable
+         names, and value modifiers, as defined in <xref target="expansion"/>.</t>
+      <t>template processor -
+         A program or library that, given a URI Template and a set of
+         variables with values, transforms the template string into a
+         URI-reference by parsing the template for expressions and
+         substituting each one with its corresponding expansion.</t>
+      </list>
+     </t>
+    <t>
+     A URI Template provides both a structural description of a URI
+     space and, when variable values are provided, a simple instruction
+     on how to construct URIs corresponding to each of those values.
+     A URI Template is transformed into a URI-reference by replacing each
+     delimited expression with its value as defined by the
+     expression type and the values of variables named within the
+     expression.  The expression types range from simple value
+     substitution to multiple key=value lists.  The substitutions
+     are based on the URI generic syntax, allowing an implementation
+     to process any URI Template without knowing the scheme-specific
+     requirements of every possible resulting URI.
+    </t>
+    <t>
+     Although the URI syntax is used for the result, the template
+     string is allowed to contain the broader set of characters
+     that can be found in IRI references <xref target="RFC3987"/>.
+     A URI Template is therefore also an IRI template, and the result
+     of template processing can be rendered as an IRI by transforming
+     the pct-encoded sequences to their corresponding Unicode
+     character if the character is not in the reserved set.
+    </t>
+   </section>
 
-   <section title="Overview">
+   <section title="Expression Types" anchor="types">
     <t>
-     A URI Template consists of a string of characters with zero or
-     more embedded variable expressions, each expression being
-     delimited by a matching pair of braces ('{', '}').
-     Each expression contains an optional operator that indicates
-     the expression type (defaulting to simple value substitution)
-     and a list of one or more comma-separated variable names with
-     optional modifiers.  The optional modifiers allow splitting the
-     variable value into a substring (prefix or suffix), providing a
-     default value for when the variable is empty, or indicating
-     that the value be processed as a list or associative array
-     of strings instead of a single string value.
-    </t>
-    <t>
-     The process of URI Template expansion is to scan the
-     reference string from left to right and replace each
-     expression with the result of applying the operator to
-     the values of each variable in the list.  The result of
-     expanding all template expressions is a URI-reference,
-     as defined by <xref target="RFC3986"/>.  The process is
-     therefore similar to a macro language with a fixed set
-     of macro definitions. For example, given the following
-     URI Template:
-    </t>
-    <figure><artwork>
-  http://www.example.com/users/{userid}
-    </artwork></figure>
-    <t>
-     If the variable is assigned a value of
-    </t>
-    <figure><artwork>
-  userid := "fred"
-    </artwork></figure>
-    <t>
-     then the expansion of the URI Template will be:
-    </t>
-    <figure><artwork>
-  http://www.example.com/users/fred
-    </artwork></figure>
-    <t>
-     Here is an example that constructs a query
-     from multiple variables:
+     The template expansion process is determined by the expression
+     type.  URI Templates are therefore similar to a macro language
+     with a fixed set of macro definitions. For example, the
+     following URI Template includes a forms-parameter expression:
     </t>
     <figure><artwork>
   http://www.example.com/foo{?query,number}
+    </artwork></figure>
+    <t>
+     Each template expression describes in a machine-readable manner
+     how the URI is to be constructed.  In this example,
+     the expansion process for templates beginning with the
+     question-mark ("?") operator follows the same pattern
+     as form-style interfaces on the World Wide Web.
+    </t>
+    <figure><artwork>
+  http://www.example.com/foo{?query,number}
+                            \_____________/
+                               |
+                               |
+          For each defined variable in [ 'query', 'number' ],
+          substitute "?" if it is the first substitution or "&amp;"
+          thereafter, followed by the variable name, '=', and the
+          variable's value.
     </artwork></figure>
     <t>
      If the variables have the values
@@ -225,22 +214,23 @@
   number := 100
     </artwork></figure>
     <t>
-     then the expansion of the URI Template is:
+     then the expansion of the URI Template is
     </t>
     <figure><artwork>
   http://www.example.com/foo?query=mycelium&amp;number=100
     </artwork></figure>
     <t>
-     Each template expression describes in a machine
-     readable manner how the URI is to be constructed.
+     Alternatively, if 'query' is undefined, then the expansion
+     would be
     </t>
     <figure><artwork>
-  http://www.example.com/foo{?query,number}
-                            \_____________/
-                               |
-                               |
-                      Join 'var=value' for each variable
-                      in ['query', 'number'] with '&amp;'.
+  http://www.example.com/foo?number=100
+    </artwork></figure>
+    <t>
+     or if both variables are undefined, then it would be
+    </t>
+    <figure><artwork>
+  http://www.example.com/foo
     </artwork></figure>
     <t>
      The following table summarizes each type of template
@@ -284,7 +274,7 @@
 |     |     |    {+empty}/here          /here                     |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| X.3 |  ;  | Encoded path segment parameters, semicolon-prefixed |
+| X.3 |  ;  | Path-style parameters, semicolon-prefixed           |
 |     |     |                                                     |
 |     |     |    {;x,y}                 ;x=1024;y=768             |
 |     |     |    {;x,y,empty}           ;x=1024;y=768;empty       |
@@ -292,7 +282,7 @@
 |     |     |    {;%keys}               ;key1=val1;key2=val2      |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| X.4 |  ?  | Encoded query parameters, ampersand-separated       |
+| X.4 |  ?  | Form-style parameters, ampersand-separated          |
 |     |     |                                                     |
 |     |     |    {?x,y}                 ?x=1024&amp;y=768             |
 |     |     |    {?x,y,empty}           ?x=1024&amp;y=768&amp;empty=      |
@@ -302,7 +292,7 @@
 |     |     |    {?@list}  ?list=val1&amp;list2=val2&amp;list3=val3       |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| X.5 |  /  | Encoded path segments, slash-separated              |
+| X.5 |  /  | Hierarchical path segments, slash-separated         |
 |     |     |                                                     |
 |     |     |    {/var}                 /value                    |
 |     |     |    {/list}                /val1/val2/val3           |
@@ -310,53 +300,36 @@
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
     </artwork></figure>
-    <t>
-     I think the above covers all of the common cases without making
-     the uncommon cases impossible.  The common case is that the delimiters
-     (";", "?", and "/") are omitted when none of the listed variables are
-     defined, which matches good URI practice.  Likewise, the substitution
-     handler for ";" (path parameters) will omit the "=" when its value is empty,
-     whereas the handler for "?" (form queries) will not omit the "=".
-     Multiple variables and list values have their values joined with ","
-     if there is no predefined joining mechanism for the operator.
-    </t>
-    <t>
-     I think this mechanism is simple and readable when used with simple
-     examples because the single-character operators match the URI generic
-     syntax delimiters.  Only one operator inserts unencoded values; all
-     of the others encode any characters other than unreserved.
-    </t>
-    <t>
-     The mechanism does become harder to read when we do very unusual
-     things and add all the bells and whistles, like
-    </t>
-    <figure><artwork>
-{var,undef,empty,list}    value,,val1,val2,val3
-{/var:3,undef,list,empty} /val/val1/val2/val3/
-{;var,undef,empty,list}   ;var=value;empty;list=val1,val2,val3
-{?var,undef,empty,list}   ?var=value&amp;empty=&amp;list=val1,val2,val3
-{?var,undef,empty,@list}  ?var=value&amp;empty=&amp;list=val1&amp;list2=val2&amp;list3=val3
-{?var,undef,empty,%keys}  ?var=value&amp;empty=&amp;key1=val1&amp;key2=val2&amp;key3=val3
-    </artwork></figure>
-    <t>
-     but we don't need to care if complex cases are hard to read.
-    </t>
    </section>
 
-   <section title="Design Considerations">
+   <section title="Design Considerations" anchor="design">
     <t>
      The URI Template syntax has been designed to carefully balance
-     the need for a powerful substitution mechanism with ease
-     of implementation and security. The syntax is designed
-     to be easy to parse while at the same time providing
-     enough flexibility to express many common template
-     scenarios.
+     the need for a powerful substitution mechanism with ease of
+     implementation and security. The syntax is designed to be easy
+     to parse while at the same time providing enough flexibility to
+     express many common template scenarios.
+    </t>
+    <t>
+     Templates are simple and readable when used with common
+     examples because the single-character operators match the URI
+     generic syntax delimiters.  The associated operator delimiters
+     (";", "?", and "/") are omitted when none of the listed variables
+     are defined.  Likewise, the substitution process for ";"
+     (path-style parameters) will omit the "=" when the variable value
+     is empty, whereas the process for "?" (form-style parameters)
+     will not omit the "=" when the value is empty.  Multiple variables
+     and list values have their values joined with "," if there is no
+     predefined joining mechanism for the operator.  Only one operator,
+     plus ("+"), can insert unencoded reserved characters; the other
+     operators will pct-encode reserved characters found in the
+     variable values prior to substitution.
     </t>
     <t>
      The most common cases for URI spaces can be described with
      simple URI Template expressions.  If we were only concerned with
      URI generation, then the template syntax could be limited
-     to just simple substitution because the more complex forms could
+     to just simple substitution, since more complex forms could
      be generated by changing the variable definitions.  However, URI
      Templates have the additional goal of describing the layout of
      identifiers in terms of preexisting data values.  The template
@@ -375,49 +348,51 @@
     </t>
    </section>
 
-   <section title="Notational Conventions">
-    <section title="Terminology">
-     <t>
-      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
-      "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",
-      "MAY", and "OPTIONAL" in this document are to be
-      interpreted as described in <xref target="RFC2119"/>.
-     </t>
-     <t>
-      This specification uses the terms "character" and "coded
-      character set" in accordance with the definitions provided
-      in <xref target="RFC2978"/>, and "character encoding" in
-      place of what
-      <xref target="RFC2978"/> refers to as a "charset".
-     </t>
-     <t>
-      In addition, the following terms are defined:
-      <list style="symbols">
-       <t>
-        template expression - The text between '{' and '}', including the
-        enclosing brackets.
-       </t>
-       <t>
-        template expansion - The result of processing a template expression
-        by replacing it with the variable values as defined by the
-        expression type.
-       </t>
-       <t>
-        template processor - A program or library that converts a URI
-        Template into a URI.
-       </t>
-      </list>
-     </t>
-    </section>
+   <section title="Limitations" anchor="limitations">
+    <t>
+     Since a URI Template describes a superset of the identifiers,
+     there is no implication that every possible substitution for
+     each delimited variable expression corresponds to a URI of an
+     existing resource.  Our expectation is that an application
+     constructing URIs according to the template will be provided
+     with an appropriate set of values for the variables being
+     substituted and will be able to cope with any errors that might
+     occur when the resulting URI is used for name resolution or access.
+    </t>
+    <t>
+     URI Template expressions are not URIs: they do not identify
+     an abstract or physical resource, they are not parsed as URIs,
+     and should not be used in places where a URI would be expected
+     unless the template expressions will be expanded by a template
+     processor prior to use.  Distinct field, element, or attribute
+     names should be used to differentiate protocol elements that
+     carry a URI Template from those that expect a URI.
+    </t>
+   </section>
 
-    <section title="ABNF and Character Encoding">
-     <t>
-      This specification uses the Augmented Backus-Naur Form (ABNF)
-      notation of <xref target="RFC5234"/>.  The following ABNF rules
-      are imported from the normative references <xref target="RFC5234"/>,
-      <xref target="RFC3986"/>, and <xref target="RFC3987"/>.
-     </t>
-     <figure><artwork type="abnf">
+   <section title="Notational Conventions" anchor="notation">
+    <t>
+     The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+     "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",
+     "MAY", and "OPTIONAL" in this document are to be
+     interpreted as described in <xref target="RFC2119"/>.
+    </t>
+    <t>
+     This specification uses the terms "character" and "coded
+     character set" in accordance with the definitions provided
+     in <xref target="RFC2978"/>, and "character encoding" in
+     place of what <xref target="RFC2978"/> refers to as a "charset".
+    </t>
+   </section>
+
+   <section title="ABNF and Character Encoding" anchor="abnf-encoding">
+    <t>
+     This specification uses the Augmented Backus-Naur Form (ABNF)
+     notation of <xref target="RFC5234"/>.  The following ABNF rules
+     are imported from the normative references <xref target="RFC5234"/>,
+     <xref target="RFC3986"/>, and <xref target="RFC3987"/>.
+    </t>
+    <figure><artwork type="abnf">
   ALPHA          =  %x41-5A / %x61-7A   ; A-Z / a-z
   DIGIT          =  %x30-39             ; 0-9
   
@@ -432,37 +407,37 @@
                  /  %xD0000-DFFFD / %xE1000-EFFFD
 
   iprivate       =  %xE000-F8FF / %xF0000-FFFFD / %x100000-10FFFD
-     </artwork></figure>
-     <t>
-      A URI Template is defined as a sequence of characters and therefore
-      has the same issues as URIs with regard to codepoints and character sets.
-      That is, URI Template characters are frequently encoded as octets
-      for transport or presentation.  This specification does not mandate
-      any particular character encoding for mapping between URI Template
-      characters and the octets used to store or transmit those characters.
-      When a URI Template appears in a protocol element, the character
-      encoding is defined by that protocol; without such a definition,
-      a URI Template is assumed to be in the same character encoding as
-      the surrounding text.
-     </t>
-     <t>
-      The ABNF notation defines its terminal values to be
-      non-negative integers (codepoints) that are a superset of the
-      US-ASCII coded character set <xref target="ASCII"/>.  This
-      specification defines terminal values as codepoints within the
-      Unicode coded character set <xref target="UNIV4"/>.  Thus, a string
-      of characters in a URI Template is assumed to be transformed into
-      its corresponding sequence of Unicode codepoints prior to testing
-      for a match with the URI Template grammar.
-     </t>
-    </section>
+    </artwork></figure>
+    <t>
+     A URI Template is defined as a sequence of characters and therefore
+     has the same issues as URIs with regard to codepoints and character sets.
+     That is, URI Template characters are frequently encoded as octets
+     for transport or presentation.  This specification does not mandate
+     any particular character encoding for mapping between URI Template
+     characters and the octets used to store or transmit those characters.
+     When a URI Template appears in a protocol element, the character
+     encoding is defined by that protocol; without such a definition,
+     a URI Template is assumed to be in the same character encoding as
+     the surrounding text.
+    </t>
+    <t>
+     The ABNF notation defines its terminal values to be
+     non-negative integers (codepoints) that are a superset of the
+     US-ASCII coded character set <xref target="ASCII"/>.  This
+     specification defines terminal values as codepoints within the
+     Unicode coded character set <xref target="UNIV4"/>.  Thus, a string
+     of characters in a URI Template is assumed to be transformed into
+     its corresponding sequence of Unicode codepoints prior to testing
+     for a match with the URI Template grammar.
+    </t>
    </section>
   </section>
 
-  <section title="URI Template Syntax">
+  <section title="URI Template Syntax" anchor="syntax">
    <t>
-    A URI Template is a string of printable Unicode characters 
-    that contains zero or more embedded template expressions.
+    A URI Template is a string of printable Unicode characters
+    that contains zero or more embedded variable expressions, each
+    expression being delimited by a matching pair of braces ('{', '}').
    </t>
    <figure><artwork type="abnf">
   URI-Template  = *( literals / expression )
@@ -492,8 +467,11 @@
    <section title="Expressions" anchor="expressions">
     <t>
      Template expressions are the parameterized components of a URI Template.
-     Each expression either begins with an operator that defines the expansion
-     process or defaults to simple variable substitution of unreserved values.
+     Each expression contains an optional operator, which defines the
+     expression type and its corresponding expansion process, followed by a
+     comma-separated list of variable specifiers (variable names and
+     optional value modifiers).  If no operator is provided, the expression
+     defaults to simple variable substitution of unreserved values.
     </t>
     <figure><artwork type="abnf">
   expression    =  "{" [ operator ] variable-list "}"
@@ -501,6 +479,8 @@
   op-reserve    =  "|" / "!" / "*" / "~"
                        ; reserved for local use: "$" / "(" / ")"
     </artwork></figure>
+   <t>
+   </t>
     <t> 
      The operator characters have been chosen to reflect each of their roles
      as reserved characters in the URI generic syntax.  The operators defined
@@ -512,7 +492,7 @@
      prefixed by ";"; and,
      question-mark ("?") for substituting a query component beginning
      with "?" and consisting of key=value pairs separated by "&amp;".
-     These operators will be described in detail in <xref target="evaluating"/>.
+     These operators will be described in detail in <xref target="expansion"/>.
     </t>
     <t>
      The operator characters pipe ("|"), exclamation ("!"), asterisk ("*"),
@@ -707,17 +687,15 @@
    </section>
   </section>
 
-  <section title="URI Template Expansion" anchor="evaluating">
+  <section title="URI Template Expansion" anchor="expansion">
    <t>
-    Template expansion is the process of turning
-    a URI Template into a URI given definitions
-    for the variables used in the template. Substitution
-    replaces each expression with its calculated value.
-    A template processor take two inputs, a URI Template and
-    a set of variables, and returns a URI-reference.
+    The process of URI Template expansion is to scan the
+    reference string from left to right and replace each
+    expression with the result of applying the operator to
+    the values of each variable in the list.
    </t>
    <t>
-    Before substitution the template processor MUST convert
+    Before substitution, the template processor MUST convert
     every variable value into a sequence of characters in
     ( unreserved / pct-encoded ).
     The template processor does that using the following algorithm:
@@ -948,7 +926,7 @@
    <t>
     During template substitution error conditions may arise.
     The exact circumstances for those errors are described in
-    <xref target="evaluating"/>. When an error occurs the
+    <xref target="expansion"/>. When an error occurs the
     template processor MUST NOT return a URI. It is language
     specific and beyond the scope of this document how the
     template processor signals that an error has occurred and that
@@ -1112,7 +1090,8 @@
    <t>04 - Changed the operator syntax to a single character that is
       analogous to its reserved role within the URI generic syntax,
       resulting in templates that are far more readable for the common
-      cases. Replaced use of "expansion" with "expression", since expansion
+      cases. Added value modifiers for prefix and suffix substitution.
+      Replaced use of "expansion" with "expression", since expansion
       is traditionally used to refer to the result after expanding
       a macro (not the macro itself). Made applicable to any hypertext
       reference string, such that the process for template expansion
