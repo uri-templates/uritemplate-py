@@ -21,6 +21,7 @@
 <?rfc compact="yes" ?>
 <?rfc comments="yes" ?>
 <?rfc inline="yes" ?>
+<?rfc linkmailto="no" ?>
 <?rfc tocdepth="3" ?>
 <!--
  1. Update the docName
@@ -28,7 +29,7 @@
  3. Update the Revision History.
 -->
 
-<rfc category="std" ipr="full3978" docName="draft-gregorio-uritemplate-03">
+<rfc category="std" ipr="pre5378Trust200902" docName="draft-gregorio-uritemplate-04">
  <front>
   <title>URI Template</title>
 
@@ -184,7 +185,7 @@
      The template expansion process is determined by the expression
      type.  URI Templates are therefore similar to a macro language
      with a fixed set of macro definitions. For example, the
-     following URI Template includes a forms-parameter expression:
+     following URI Template includes a form-style parameter expression:
     </t>
     <figure><artwork>
   http://www.example.com/foo{?query,number}
