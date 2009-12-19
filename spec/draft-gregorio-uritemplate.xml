@@ -170,6 +170,10 @@
      requirements of every possible resulting URI.
     </t>
     <t>
+     A URI Template may be provided in absolute form, as in the examples
+     above, or in relative form if a suitable base URI is defined.
+    </t>
+    <t>
      Although the URI syntax is used for the result, the template
      string is allowed to contain the broader set of characters
      that can be found in IRI references <xref target="RFC3987"/>.
@@ -182,17 +186,18 @@
 
    <section title="Expression Types" anchor="types">
     <t>
-     The template expansion process is determined by the expression
-     type.  URI Templates are therefore similar to a macro language
-     with a fixed set of macro definitions. For example, the
-     following URI Template includes a form-style parameter expression:
+     URI Templates are similar to a macro language with a fixed set of
+     macro definitions: the expression type determines the expansion
+     process.  For example, the following URI Template includes a
+     form-style parameter expression, as indicated by the "?" operator
+     appearing before the variable names.
     </t>
     <figure><artwork>
   http://www.example.com/foo{?query,number}
     </artwork></figure>
     <t>
      Each template expression describes in a machine-readable manner
-     how the URI is to be constructed.  In this example,
+     how a URI is to be constructed.  In this example,
      the expansion process for templates beginning with the
      question-mark ("?") operator follows the same pattern
      as form-style interfaces on the World Wide Web.
@@ -215,7 +220,7 @@
   number := 100
     </artwork></figure>
     <t>
-     then the expansion of the URI Template is
+     then the expansion of the above URI Template is
     </t>
     <figure><artwork>
   http://www.example.com/foo?query=mycelium&amp;number=100
@@ -241,65 +246,66 @@
      based on the following variables and values:
     </t>
     <figure><artwork>
-   var   = "value";
-   hello = "Hello World!";
-   undef = null;
-   empty = "";
-   list  = [ "val1", "val2", "val3" ];
-   keys  = [ "key1", "val1", "key2", "val2" ];
-   path  = "/foo/bar"
-   x     = "1024";
-   y     = "768";
+   var   := "value";
+   hello := "Hello World!";
+   undef := null;
+   empty := "";
+   list  := [ "val1", "val2", "val3" ];
+   keys  := [("key1", "val1"), ("key2", "val2")];
+   path  := "/foo/bar"
+   x     := "1024";
+   y     := "768";
 
 .-----------------------------------------------------------------.
 | Sec | Op  | Description                                         |
-|     |     |    Example Template       Expansion                 |
+|     |     |    Expression      | Expansion                      |
 |-----+-----+-----------------------------------------------------|
-| X.1 |     | Simple substitution with comma-separated values     |
+| 3.1 |     | Simple substitution with comma-separated values     |
 |     |     |                                                     |
-|     |     |    {var}                  value                     |
-|     |     |    {hello}                Hello%20World%21          |
-|     |     |    {path}/here            %2Ffoo%2Fbar/here         |
-|     |     |    {x,y}                  1024,768                  |
-|     |     |    {var=default}          value                     |
-|     |     |    {undef=default}        default                   |
-|     |     |                                                     |
-|-----+-----+-----------------------------------------------------|
-| X.2 |  +  | Reserved substitution with comma-separated values   |
-|     |     |                                                     |
-|     |     |    {+var}                 value                     |
-|     |     |    {+hello}               Hello%20World!            |
-|     |     |    {+path}/here           /foo/bar/here             |
-|     |     |    {+path,x}/here         /foo/bar,1024/here        |
-|     |     |    {+path}{x}/here        /foo/bar1024/here         |
-|     |     |    {+empty}/here          /here                     |
+|     |     |    {var}             value                          |
+|     |     |    {hello}           Hello%20World%21               |
+|     |     |    {path}/here       %2Ffoo%2Fbar/here              |
+|     |     |    {x,y}             1024,768                       |
+|     |     |    {var=default}     value                          |
+|     |     |    {undef=default}   default                        |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| X.3 |  ;  | Path-style parameters, semicolon-prefixed           |
+| 3.2 |  +  | Reserved substitution with comma-separated values   |
 |     |     |                                                     |
-|     |     |    {;x,y}                 ;x=1024;y=768             |
-|     |     |    {;x,y,empty}           ;x=1024;y=768;empty       |
-|     |     |    {;x,y,undef}           ;x=1024;y=768             |
-|     |     |    {;%keys}               ;key1=val1;key2=val2      |
-|     |     |                                                     |
-|-----+-----+-----------------------------------------------------|
-| X.4 |  ?  | Form-style parameters, ampersand-separated          |
-|     |     |                                                     |
-|     |     |    {?x,y}                 ?x=1024&amp;y=768             |
-|     |     |    {?x,y,empty}           ?x=1024&amp;y=768&amp;empty=      |
-|     |     |    {?x,y,undef}           ?x=1024&amp;y=768             |
-|     |     |    {?list}                ?list=val1,val2,val3      |
-|     |     |    {?%keys}               ?key1=val1&amp;key2=val2      |
-|     |     |    {?@list}  ?list=val1&amp;list2=val2&amp;list3=val3       |
+|     |     |    {+var}            value                          |
+|     |     |    {+hello}          Hello%20World!                 |
+|     |     |    {+path}/here      /foo/bar/here                  |
+|     |     |    {+path,x}/here    /foo/bar,1024/here             |
+|     |     |    {+path}{x}/here   /foo/bar1024/here              |
+|     |     |    {+empty}/here     /here                          |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| X.5 |  /  | Hierarchical path segments, slash-separated         |
+| 3.3 |  ;  | Path-style parameters, semicolon-prefixed           |
 |     |     |                                                     |
-|     |     |    {/var}                 /value                    |
-|     |     |    {/list}                /val1/val2/val3           |
-|     |     |    {/list,x}              /val1/val2/val3/1024      |
+|     |     |    {;x,y}            ;x=1024;y=768                  |
+|     |     |    {;x,y,empty}      ;x=1024;y=768;empty            |
+|     |     |    {;x,y,undef}      ;x=1024;y=768                  |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
+| 3.4 |  ?  | Form-style parameters, ampersand-separated          |
+|     |     |                                                     |
+|     |     |    {?x,y}            ?x=1024&amp;y=768                  |
+|     |     |    {?x,y,empty}      ?x=1024&amp;y=768&amp;empty=           |
+|     |     |    {?x,y,undef}      ?x=1024&amp;y=768                  |
+|     |     |    {?list}           ?list=val1,val2,val3           |
+|     |     |    {?keys*}          ?key1=val1&amp;key2=val2           |
+|     |     |    {?keys+}          ?keys.key1=val1&amp;keys.key2=val2 |
+|     |     |                                                     |
+|-----+-----+-----------------------------------------------------|
+| 3.5 |  /  | Hierarchical path segments, slash-separated         |
+|     |     |                                                     |
+|     |     |    {/var}            /value                         |
+|     |     |    {/list}           /val1,val2,val3                |
+|     |     |    {/list*}          /val1/val2/val3                |
+|     |     |    {/list*,x}        /val1/val2/val3/1024           |
+|     |     |    {/list+}          /list/val1/val2/val3           |
+|     |     |                                                     |
+`-----+-----+-----------------------------------------------------'
     </artwork></figure>
    </section>
 
@@ -314,17 +320,17 @@
     <t>
      Templates are simple and readable when used with common
      examples because the single-character operators match the URI
-     generic syntax delimiters.  The associated operator delimiters
-     (";", "?", and "/") are omitted when none of the listed variables
+     generic syntax delimiters.  The operator's associated delimiter
+     (";", "?", and "/") is omitted when none of the listed variables
      are defined.  Likewise, the substitution process for ";"
      (path-style parameters) will omit the "=" when the variable value
      is empty, whereas the process for "?" (form-style parameters)
      will not omit the "=" when the value is empty.  Multiple variables
      and list values have their values joined with "," if there is no
      predefined joining mechanism for the operator.  Only one operator,
-     plus ("+"), can insert unencoded reserved characters; the other
-     operators will pct-encode reserved characters found in the
-     variable values prior to substitution.
+     plus ("+"), will substitute unencoded reserved characters found
+     inside the variable values; the other operators will pct-encode
+     reserved characters found in the variable values prior to substitution.
     </t>
     <t>
      The most common cases for URI spaces can be described with
@@ -367,7 +373,7 @@
      unless the template expressions will be expanded by a template
      processor prior to use.  Distinct field, element, or attribute
      names should be used to differentiate protocol elements that
-     carry a URI Template from those that expect a URI.
+     carry a URI Template from those that expect a URI-reference.
     </t>
    </section>
 
@@ -467,7 +473,7 @@
 
    <section title="Expressions" anchor="expressions">
     <t>
-     Template expressions are the parameterized components of a URI Template.
+     Template expressions are the parameterized parts of a URI Template.
      Each expression contains an optional operator, which defines the
      expression type and its corresponding expansion process, followed by a
      comma-separated list of variable specifiers (variable names and
@@ -477,7 +483,7 @@
     <figure><artwork type="abnf">
   expression    =  "{" [ operator ] variable-list "}"
   operator      =  "+" / "/" / ";" / "?" / op-reserve
-  op-reserve    =  "|" / "!" / "*" / "~"
+  op-reserve    =  "|" / "!" / "@"
                        ; reserved for local use: "$" / "(" / ")"
     </artwork></figure>
    <t>
@@ -496,11 +502,10 @@
      These operators will be described in detail in <xref target="expansion"/>.
     </t>
     <t>
-     The operator characters pipe ("|"), exclamation ("!"), asterisk ("*"),
-     and tilde ("~") are reserved for future extensions.  A URI Template
-     processor that unexpectedly encounters such an extension operator
-     should flag the expression as an error and include it in the result
-     without expansion.
+     The operator characters pipe ("|"), exclamation ("!"), and at-sign ("@")
+     are reserved for future extensions.  A processor that unexpectedly
+     encounters such an extension operator should flag the expression as an
+     error and include it in the result without expansion.
     </t>
     <t>
      The expression syntax specifically excludes use of the dollar ("$")
@@ -521,18 +526,11 @@
     </t>
     <figure><artwork type="abnf">
   variable-list =  varspec *( "," varspec )
-  varspec       =  [ vartype ] varname [ modifier ] [ "=" default ]
-  vartype       =  "@" / "%"
+  varspec       =  varname [ modifier ] [ "=" default ]
   varname       =  1*varchar
-  varchar       =  ALPHA / DIGIT /"." / "_" / ucschar / iprivate
+  varchar       =  ALPHA / DIGIT / "." / "_" / ucschar / iprivate
+                /  pct-encoded
     </artwork></figure>
-    <t>
-     An optional variable type indicator MAY be supplied before each
-     variable name to indicate that the variable's value should be
-     processed as a list ("@") or an associative array ("%").  Note
-     that these variable types are instructions to the template
-     processor, not an indication of language or implementation type.
-    </t>
     <t>
      An expression MAY reference variables that are unknown
      to the template processor or whose value is set to a special
@@ -541,65 +539,126 @@
     </t>
     <t>
      A variable value that is a string of length zero is not considered
-     undefined; it has the defined value of an empty string.  Likewise,
-     a list or associative array variable that contains no members is
-     considered defined, though its processing for some operators may
-     be identical to that of an undefined variable.
+     undefined; it has the defined value of an empty string.
     </t>
     <t>
-     A variable may appear in more than one expression in a
-     URI Template. The value of that variable MUST remain static
-     throughout the template expansion process: if the same variable
-     appears in more than one expression, then it must have the same
-     value for the purpose of calculating each expansion.
+     A variable may have a composite or structured value, such as a
+     list of values, an associative array of (key, value) pairs, or
+     a structure of components defined by some separate schema.
+     Such value types are not directly indicated by the template
+     syntax, but do have an impact on the expansion process.
+    </t>
+    <t>
+     If a variable appears more than once in an expression or
+     within multiple expressions of a URI Template, the value of
+     that variable MUST remain static throughout the expansion
+     process (i.e., the variable must have the same value for the
+     purpose of calculating each expansion).
     </t>
    </section>
 
    <section title="Value Modifiers" anchor="modifiers">
     <t>
      Any of the variables can have a modifier indicating that its
-     value is limited to a prefix, suffix, or the remainder of
-     a prefix or suffix of the variable value.  The primary use of
-     these modifiers is to partition an identifier space hierarchically,
-     as is often found in reference sites and hash-based storage.
-     They can also be used to indicate the maximum length of a given
-     substitution.
+     value is exploded into components or is limited to a prefix,
+     suffix, or the remainder of a prefix or suffix of the variable value.
     </t>
     <figure><artwork type="abnf">
-  modifier      =  ( substring / remainder ) offset
+  modifier      =  explode / partial
+    </artwork></figure>
+
+    <section title="Component Values" anchor="component-values">
+     <t>
+      The explode modifiers ("*" and "+") indicate that the
+      variable represents a composite value that may be substituted
+      in full or partial forms, depending on the variable's type or
+      schema.  Since URI Templates do not contain an indication of
+      type or schema, this is assumed to be determined by context.
+      An example context is a mark-up element or header field that
+      contains one attribute that is a template and one or more other
+      attributes that define the schema applicable to variables found
+      in the template.  Likewise, a typed programming language might
+      differentiate variables as strings, lists, associative arrays,
+      or structures.
+     </t>
+    <figure><artwork type="abnf">
+  explode       =  ( "*" / "+" )
+    </artwork></figure>
+     <t>
+      The primary difference between the two explode modifiers is
+      that an asterisk ("*") indicates that just the component names
+      and values are included in the substitution, whereas the plus
+      ("+") indicates that each component name is prefixed with the
+      given variable name and a period ("."), thereby enabling multiple
+      variables with the same component names to be disambiguated.
+     </t>
+     <t>
+      Component modifiers improve brevity in the URI Template syntax.
+      For example, a resource that provides a geographic map for a
+      given street address might accept a hundred permutations on
+      fields for address input, including partial addresses (e.g.,
+      just the city or postal code).  Such a resource could be
+      described as a template with each and every address component
+      listed in order, or with a far more simple template that makes
+      use of an explode modifier, as in
+     </t>
+     <figure><artwork>
+   /mapper{?address*}
+     </artwork></figure>
+     <t>
+      or
+     </t>
+     <figure><artwork>
+   /directions{?from+,to+} 
+     </artwork></figure>
+     <t>
+      along with some context that defines each variable (address, from,
+      and to) as adhering to a given addressing standard (e.g., UPU S42
+      or AS/NZS 4819:2003).  A recipient aware of the schema can then
+      provide appropriate expansions, such as:
+     </t>
+     <figure><artwork>
+   /mapper?city=Newport%20Beach&amp;state=CA
+   /directions?from.zipcode=92660&amp;to.zipcode=90210
+     </artwork></figure>
+     <t>
+      The substitution process for variables, as defined in
+      <xref target="expansion"/>, is dependent on both the
+      operator being used and, if one of the explode modifiers is
+      used, the type and schema of the variable being substituted.
+     </t>
+    </section>
+    
+    <section title="Prefix and Suffix Values" anchor="partial-values">
+     <t>
+      Prefix and suffix modifiers are often used to partition an identifier
+      space hierarchically, as is common in reference indices and hash-based
+      storage, or to limit the substituted value to a maximum number of
+      characters.
+     </t>
+    <figure><artwork type="abnf">
+  partial       =  ( substring / remainder ) offset
   substring     =  ":"
   remainder     =  "^"
   offset        =  [ from-end ] 1*DIGIT
   from-end      =  "-"
     </artwork></figure>
-    <t>
-     If the variable is not typed, then the offset refers to a
-     maximum number of characters from either the beginning (prefix)
-     or end (suffix) of the variable's value as a string.  A substring
-     modifier requires that only the indicated prefix or suffix be
-     used in the expansion.  A remainder modifier requires that only
-     the remainder of the value, excluding the indicated prefix or
-     suffix, be used in the expansion.  If the offset is greater than
-     the length of the variable's value, then the entire string is used
-     for a substring and the empty string is used for a remainder.
-    </t>
-    <t>
-     If the variable is typed as a list, then the offset refers to
-     a maximum number of members from the beginning or end of that list.
-     A substring modifier on a list requires that only the indicated members
-     be used in the expansion.  A remainder modifier on a list requires
-     that only the remaining members, excluding those indicated by the
-     offset from beginning or end, be used in the expansion.
-    </t>
-    <t>
-     If the variable is typed as an associative array, then the offset
-     refers to a maximum number of tuples from the beginning or end of
-     that array. A substring modifier on an array requires that only the
-     indicated tuples be used in the expansion.  A remainder modifier
-     on an array requires that only the remaining tuples, excluding
-     those indicated by the offset from beginning or end, be used in
-     the expansion.
-    </t>
+     <t>
+      The offset refers to a maximum number of characters from either
+      the beginning (prefix) or end (suffix) of the variable's value as
+      a Unicode string.  Note that this numbering is in characters, not
+      octets, in order to avoid substituting improperly encoded values
+      due to splitting a multi-octet UTF-8 encoded character or a
+      pct-encoded triplet.
+     </t>
+     <t>
+      A substring modifier requires that only the indicated prefix or
+      suffix be used in the expansion.  A remainder modifier requires
+      that only the remainder of the value, excluding the indicated prefix
+      or suffix, be used in the expansion.  If the offset is greater than
+      the length of the variable's value, then the entire string is used
+      for a substring and the empty string is used for a remainder.
+     </t>
     <t>
      The following examples illustrate how modifiers work with the
      different variable types.  More complex examples are provided
@@ -609,7 +668,6 @@
   Given the variable assignments:
     var   := "value";
     name  := [ "Fred", "Wilma", "Pebbles" ];
-    favs  := [ "color", "red", "volume", "high" ];
 
   Example Template     Expansion
 
@@ -622,17 +680,8 @@
 
     {?name}            ?name=Fred,Wilma,Pebbles
     {?name:1}          ?name=F
-    {?@name}           ?name=Fred&amp;name2=Wilma&amp;name3=Pebbles
-    {?@name:1}         ?name=Fred
-    {?@name^1}         ?name2=Wilma&amp;name3=Pebbles
-    
-    {?favs}            ?favs=color,red,volume,high
-    {?%favs}           ?color=red&amp;volume=high
-    {?%favs:1}         ?color=red
-    {?%favs^1}         ?volume=high
-    {?%favs:-1}        ?volume=high
-    {?%favs^-1}        ?color=red
     </artwork></figure>
+    </section>
    </section>
 
    <section title="Value Defaults" anchor="defaults">
@@ -640,7 +689,7 @@
      Any of the variables may also be supplied with a default value
      to be used when a template processor determines the variable to be
      undefined. The default value is limited to the unreserved and
-     percent-encoded characters of a URI-reference, since our intention
+     pct-encoded characters of a URI-reference, since our intention
      is for the default to be presented in the exact form that it would
      appear in the resulting URI.  The default is not affected by the
      variable modifiers; it is assumed that the default string
@@ -651,7 +700,7 @@
   default       =  *( unreserved / pct-encoded )
     </artwork></figure>
     <t>
-     The following examples illustrate how default values work with the
+     The following examples illustrate how default values work with
      different variable types.  More complex examples are provided
      in <xref target="examples"/>.
     </t>
@@ -661,29 +710,68 @@
     empty := "";
     undef := null;
     name  := [ "Fred", "Wilma", "Pebbles" ];
-    favs  := [ "color", "red", "volume", "high" ];
+    favs  := [("color","red"), ("volume","high")];
+    empty_list := [];
 
-  Example Template     Expansion
+  Example Template        Expansion
 
-    {var=default}      value
-    {undef=default}    default
+    {var=default}         value
+    {undef=default}       default
 
-    x{empty}y          xy
-    x{empty=_}y        xy
-    x{undef}y          xy
-    x{undef=_}y        x_y
+    x{empty}y             xy
+    x{empty=_}y           xy
+    x{undef}y             xy
+    x{undef=_}y           x_y
 
-    x{?@name=none}     x?name=Fred&amp;name2=Wilma&amp;name3=Pebbles
-    x{?@undef}         x
-    x{?@undef=none}    x?undef=none
-    x{?@empty}         x?empty=
-    x{?@empty=none}    x?empty=
+    x{?name=none}         x?name=Fred,Wilma,Pebbles
+    x{?favs=none}         x?favs=color,red,volume,high
+    x{?favs*=none}        x?color=red&amp;volume=high
+    x{?favs+=none}        x?favs.color=red&amp;favs.volume=high
     
-    x{?%favs=none}     x?color=red&amp;volume=high
-    x{?%undef}         x
-    x{?%undef=none}    x?undef=none
-    x{?%empty}         x?empty=
-    x{?%empty=none}    x?empty=
+    x{?undef}             x
+    x{?undef=none}        x?undef=none
+    x{?empty}             x?empty=
+    x{?empty=none}        x?empty=
+    x{?empty_list}        x?empty_list=
+    x{?empty_list=none}   x?empty_list=
+    x{?empty_list*}       x
+    x{?empty_list*=none}  x?none
+    x{?empty_list+}       x
+    x{?empty_list+=none}  x?empty_list=none
+    
+    x{;name=none}         x;name=Fred,Wilma,Pebbles
+    x{;favs=none}         x;favs=color,red,volume,high
+    x{;favs*=none}        x;color=red;volume=high
+    x{;favs+=none}        x;favs.color=red;favs.volume=high
+    
+    x{;undef}             x
+    x{;undef=none}        x;undef=none
+    x{;empty}             x;empty
+    x{;empty=none}        x;empty
+    x{;empty_list}        x;empty_list
+    x{;empty_list=none}   x;empty_list
+    x{;empty_list*}       x
+    x{;empty_list*=none}  x;none
+    x{;empty_list+}       x
+    x{;empty_list+=none}  x;empty_list=none
+    
+    x{/name=none}         x/Fred,Wilma,Pebbles
+    x{/name*=none}        x/Fred/Wilma/Pebbles
+    x{/name+=none}        x/name/Fred/Wilma/Pebbles
+    x{/favs=none}         x/color,red,volume,high
+    x{/favs*=none}        x/color,red/volume,high
+    x{/favs+=none}        x/favs.color,red/favs.volume,high
+    
+    x{/undef}             x
+    x{/undef=none}        x/none
+    x{/empty}             x/
+    x{/empty=none}        x/
+    x{/empty_list}        x/
+    x{/empty_list=none}   x/none
+    x{/empty_list*}       x
+    x{/empty_list*=none}  x/none
+    x{/empty_list+}       x
+    x{/empty_list+=none}  x/empty_list,none
     </artwork></figure>
    </section>
   </section>
@@ -693,7 +781,11 @@
     The process of URI Template expansion is to scan the
     reference string from left to right and replace each
     expression with the result of applying the operator to
-    the values of each variable in the list.
+    the values, or a modified form of those values, for each
+    variable in the list.
+   </t>
+   <t>
+    NOTE: ALL TEXT BELOW THIS POINT IS UNFINISHED AND MOSTLY OBSOLETE.
    </t>
    <t>
     Before substitution, the template processor MUST convert
@@ -763,27 +855,68 @@
     parse and perform the substitutions within a single pass loop.
    </t>
 
-   <section title="('var') substitution" anchor="var">
+   <section title='Simple substitution (default)' anchor="op-default">
     <t>
-     In a variable ('var')
-     expansion, if the variable is defined then
-     substitute the value of the variable, otherwise
-     substitute the default value. If no default value is
-     given then substitute with the empty string.
+     The default expression type when no operator is given is
+     simple substitution: the value of each defined variable is
+     substituted in the order given, with each value separated
+     by a comma character (",").  Naturally, the optional presence
+     of value modifiers, defaults, and composite variable types
+     makes even simple substitution a difficult process to
+     describe in prose.
     </t>
-    <t>
-     Example:
-     <figure><artwork>
+    <figure><preamble>For example,</preamble><artwork>
   foo := "fred"
 
-  "{foo}"        -> "fred"
-  "{bar=wilma}"  -> "wilma"
-  "{baz}"        -> ""
-     </artwork></figure>
+  "{foo}"        -&gt; "fred"
+  "{foo,foo}"    -&gt; "fred,fred"
+  "{bar,foo}"    -&gt; "fred"
+  "{bar=wilma}"  -&gt; "wilma"
+    </artwork></figure>
+    <t>
+     A variable defined as a list of values is substituted as a
+     string of comma-separated values when no explode modifier
+     is given.  If the "*" modifier is used, then each value is
+     separated by the default delimiter used by the operator.
+     If the "+" operator is used, then the variable name is
+     prepended to the substitution list as if it were the initial
+     value in the list.
+    </t>
+    <t>
+     A variable defined as an associative array is substituted as
+     a comma-separated list if no explode modifier is given or a
+     sequence of default-delimited tuples if the "*" modifier is
+     used.  If the "+" modifier is used, the values are substituted
+     as in the "*" case, except that each key name is prefixed by
+     the variable name and a ".", as in "name.key,value".
+    </t>
+    <t>
+     When a variable containing component values is given without an
+     explode modifier, the value of each defined component is
+     substituted, separated by a comma (",") character, in the order
+     indicated by the variable's schema or, if the schema is unknown,
+     in the order provided by the variable's value.
+    </t>
+    <t>
+     When an explode modifier is used with an operator that substitutes
+     variables as key=value pairs, the key is determined as follows.
+     If the modifier is an asterisk ("*"), then each "key" is the name
+     of the component.  If the modifier is a plus ("+"), then each key
+     is the variable name followed by a period (".") and the component
+     name. In both cases, if the component names have a hierarchical
+     structure, then the component subnames are also appended to the
+     key, each separated by a period.
+    </t>
+    <t>
+     When an explode modifier is used with the hierarchical ("/")
+     operator, then the slash delimiter is substituted before each
+     defined component's value if the modifier is "*", or before each
+     tuple of component name and value (e.g., "/name,value") if the
+     modifier is "+".
     </t>
    </section>
 
-   <section title="The 'opt' operator" anchor="opt">
+   <section title='Reserved substitution ("+")' anchor="op-plus">
     <t>
      If each variable is undefined or an empty list
      then substitute the empty string, otherwise
@@ -794,13 +927,13 @@
      <figure><artwork>
   foo := "fred"
 
-  "{-opt|fred@example.org|foo}" -> "fred@example.org"
-  "{-opt|fred@example.org|bar}" -> ""
+  "{-opt|fred@example.org|foo}" -&gt; "fred@example.org"
+  "{-opt|fred@example.org|bar}" -&gt; ""
      </artwork></figure>
     </t>
    </section>
 
-   <section title="The 'neg' operator" anchor="neg">
+   <section title='Path-style parameter substitution (";")' anchor="op-semicolon">
     <t>
      If each variable is undefined or an empty list
      then substitute the value of arg, otherwise
@@ -811,13 +944,13 @@
      <figure><artwork>
   foo := "fred"
 
-  "{-neg|fred@example.org|foo}" -> ""
-  "{-neg|fred@example.org|bar}" -> "fred@example.org"
+  "{-neg|fred@example.org|foo}" -&gt; ""
+  "{-neg|fred@example.org|bar}" -&gt; "fred@example.org"
      </artwork></figure>
     </t>
    </section>
 
-   <section title="The 'prefix' operator" anchor="prefix">
+   <section title='Form-style parameter substitution ("?")' anchor="op-question">
     <t>
      The prefix operator MUST only have one variable in
      its expression. More than one variable is an error condition.
@@ -835,15 +968,15 @@
   bar := ["fee", "fi", "fo", "fum"]
   baz := []
 
-  "{-prefix|/|foo}" -> "/fred"
-  "{-prefix|/|bar}" -> "/fee/fi/fo/fum"
-  "{-prefix|/|baz}" -> ""
-  "{-prefix|/|qux}" -> ""
+  "{-prefix|/|foo}" -&gt; "/fred"
+  "{-prefix|/|bar}" -&gt; "/fee/fi/fo/fum"
+  "{-prefix|/|baz}" -&gt; ""
+  "{-prefix|/|qux}" -&gt; ""
      </artwork></figure>
     </t>
    </section>
 
-   <section title="The 'suffix' operator" anchor="append">
+   <section title='Hierarchical path substitution ("/")' anchor="op-slash">
     <t>
      The prefix operator MUST only have one variable in
      its expression. More than one variable is an error condition.
@@ -862,15 +995,15 @@
   bar := ["fee", "fi", "fo", "fum"]
   baz := []
 
-  "{-suffix|/|foo}" -> "fred/"
-  "{-suffix|/|bar}" -> "fee/fi/fo/fum/"
-  "{-suffix|/|baz}" -> ""
-  "{-suffix|/|qux}" -> ""
+  "{-suffix|/|foo}" -&gt; "fred/"
+  "{-suffix|/|bar}" -&gt; "fee/fi/fo/fum/"
+  "{-suffix|/|baz}" -&gt; ""
+  "{-suffix|/|qux}" -&gt; ""
      </artwork></figure>
     </t>
    </section>
 
-   <section title="The 'join' operator" anchor="join">
+   <section title="Obsolete" anchor="join">
     <t>
      Supplying a list variable to the join operator
      is an error. For each variable that is defined and non-empty
@@ -888,14 +1021,14 @@
   bar := "barney"
   baz := ""
 
-  "{-join|&amp;|foo,bar,baz,qux}" -> "foo=fred&amp;bar=barney&amp;baz="
-  "{-join|&amp;|bar}" -> "bar=barney"
-  "{-join|&amp;|qux}" -> ""
+  "{-join|&amp;|foo,bar,baz,qux}" -&gt; "foo=fred&amp;bar=barney&amp;baz="
+  "{-join|&amp;|bar}" -&gt; "bar=barney"
+  "{-join|&amp;|qux}" -&gt; ""
      </artwork></figure>
     </t>
    </section>
 
-   <section title="The 'list' operator" anchor="list">
+   <section title="Obsolete" anchor="list">
     <t>
      The listjoin operator MUST have only one variable
      in its expression and that variable must be a list.
@@ -913,11 +1046,11 @@
   baz := ["betty"]
   qux := []
 
-  "{-list|/|foo}" -> "fred/barney/wilma"
-  "{-list|/|bar}" -> "a//c"
-  "{-list|/|baz}" -> "betty"
-  "{-list|/|qux}" -> ""
-  "{-list|/|corge}" -> ""
+  "{-list|/|foo}" -&gt; "fred/barney/wilma"
+  "{-list|/|bar}" -&gt; "a//c"
+  "{-list|/|baz}" -&gt; "betty"
+  "{-list|/|qux}" -&gt; ""
+  "{-list|/|corge}" -&gt; ""
      </artwork></figure>
     </t>
    </section>
@@ -1092,6 +1225,8 @@
       analogous to its reserved role within the URI generic syntax,
       resulting in templates that are far more readable for the common
       cases. Added value modifiers for prefix and suffix substitution.
+      Added explode modifiers to allow expansion of complex variables
+      and lists according to (external) variable types or schema.
       Replaced use of "expansion" with "expression", since expansion
       is traditionally used to refer to the result after expanding
       a macro (not the macro itself). Made applicable to any hypertext
