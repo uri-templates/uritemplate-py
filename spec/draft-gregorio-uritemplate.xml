@@ -78,7 +78,7 @@
    <t>
     A URI Template is a compact sequence of characters
     for describing a range of Uniform Resource Identifiers
-    through variable substitution.
+    through variable expansion.
     This specification defines the URI Template
     syntax and the process for expanding a URI Template into a
     URI, along with guidelines for the
@@ -164,7 +164,7 @@
      delimited expression with its value as defined by the
      expression type and the values of variables named within the
      expression.  The expression types range from simple value
-     substitution to multiple key=value lists.  The substitutions
+     expansion to multiple key=value lists.  The expansions
      are based on the URI generic syntax, allowing an implementation
      to process any URI Template without knowing the scheme-specific
      requirements of every possible resulting URI.
@@ -260,7 +260,7 @@
 | Sec | Op  | Description                                         |
 |     |     |    Expression      | Expansion                      |
 |-----+-----+-----------------------------------------------------|
-| 3.1 |     | Simple substitution with comma-separated values     |
+| 3.3 |     | Simple expansion with comma-separated values        |
 |     |     |                                                     |
 |     |     |    {var}             value                          |
 |     |     |    {hello}           Hello%20World%21               |
@@ -270,7 +270,7 @@
 |     |     |    {undef=default}   default                        |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| 3.2 |  +  | Reserved substitution with comma-separated values   |
+| 3.4 |  +  | Reserved expansion with comma-separated values      |
 |     |     |                                                     |
 |     |     |    {+var}            value                          |
 |     |     |    {+hello}          Hello%20World!                 |
@@ -280,14 +280,14 @@
 |     |     |    {+empty}/here     /here                          |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| 3.3 |  ;  | Path-style parameters, semicolon-prefixed           |
+| 3.5 |  ;  | Path-style parameters, semicolon-prefixed           |
 |     |     |                                                     |
 |     |     |    {;x,y}            ;x=1024;y=768                  |
 |     |     |    {;x,y,empty}      ;x=1024;y=768;empty            |
 |     |     |    {;x,y,undef}      ;x=1024;y=768                  |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| 3.4 |  ?  | Form-style parameters, ampersand-separated          |
+| 3.6 |  ?  | Form-style parameters, ampersand-separated          |
 |     |     |                                                     |
 |     |     |    {?x,y}            ?x=1024&amp;y=768                  |
 |     |     |    {?x,y,empty}      ?x=1024&amp;y=768&amp;empty=           |
@@ -297,7 +297,7 @@
 |     |     |    {?keys+}          ?keys.key1=val1&amp;keys.key2=val2 |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| 3.5 |  /  | Hierarchical path segments, slash-separated         |
+| 3.7 |  /  | Hierarchical path segments, slash-separated         |
 |     |     |                                                     |
 |     |     |    {/var}            /value                         |
 |     |     |    {/list}           /val1,val2,val3                |
@@ -312,17 +312,18 @@
    <section title="Design Considerations" anchor="design">
     <t>
      The URI Template syntax has been designed to carefully balance
-     the need for a powerful substitution mechanism with ease of
+     the need for a powerful expansion mechanism with ease of
      implementation and security. The syntax is designed to be easy
      to parse while at the same time providing enough flexibility to
-     express many common template scenarios.
+     express many common template scenarios.  Implementations are able
+     to parse the template and perform the expansions in a single pass.
     </t>
     <t>
      Templates are simple and readable when used with common
      examples because the single-character operators match the URI
      generic syntax delimiters.  The operator's associated delimiter
      (";", "?", and "/") is omitted when none of the listed variables
-     are defined.  Likewise, the substitution process for ";"
+     are defined.  Likewise, the expansion process for ";"
      (path-style parameters) will omit the "=" when the variable value
      is empty, whereas the process for "?" (form-style parameters)
      will not omit the "=" when the value is empty.  Multiple variables
@@ -330,13 +331,13 @@
      predefined joining mechanism for the operator.  Only one operator,
      plus ("+"), will substitute unencoded reserved characters found
      inside the variable values; the other operators will pct-encode
-     reserved characters found in the variable values prior to substitution.
+     reserved characters found in the variable values prior to expansion.
     </t>
     <t>
      The most common cases for URI spaces can be described with
      simple URI Template expressions.  If we were only concerned with
-     URI generation, then the template syntax could be limited
-     to just simple substitution, since more complex forms could
+     URI generation, then the template syntax could be limited to
+     just simple variable expansion, since more complex forms could
      be generated by changing the variable definitions.  However, URI
      Templates have the additional goal of describing the layout of
      identifiers in terms of preexisting data values.  The template
@@ -358,7 +359,7 @@
    <section title="Limitations" anchor="limitations">
     <t>
      Since a URI Template describes a superset of the identifiers,
-     there is no implication that every possible substitution for
+     there is no implication that every possible expansion for
      each delimited variable expression corresponds to a URI of an
      existing resource.  Our expectation is that an application
      constructing URIs according to the template will be provided
@@ -402,9 +403,14 @@
     <figure><artwork type="abnf">
   ALPHA          =  %x41-5A / %x61-7A   ; A-Z / a-z
   DIGIT          =  %x30-39             ; 0-9
+  HEXDIG         =  DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
   
-  unreserved     =  ALPHA / DIGIT / "-" / "." / "_" / "~"
   pct-encoded    =  "%" HEXDIG HEXDIG
+  unreserved     =  ALPHA / DIGIT / "-" / "." / "_" / "~"
+  reserved       =  gen-delims / sub-delims
+  gen-delims     =  ":" / "/" / "?" / "#" / "[" / "]" / "@"
+  sub-delims     =  "!" / "$" / "&amp;" / "'" / "(" / ")"
+                 /  "*" / "+" / "," / ";" / "="
       
   ucschar        =  %xA0-D7FF / %xF900-FDCF / %xFDF0-FFEF
                  /  %x10000-1FFFD / %x20000-2FFFD / %x30000-3FFFD
@@ -426,6 +432,11 @@
      encoding is defined by that protocol; without such a definition,
      a URI Template is assumed to be in the same character encoding as
      the surrounding text.
+    </t>
+    <t>
+     A URI Template and its associated variable values are converted
+     to a normal form of UTF-8 <xref target="RFC3629"/> prior to
+     template processing, as defined in <xref target="unicode-normal"/>.
     </t>
     <t>
      The ABNF notation defines its terminal values to be
@@ -478,7 +489,7 @@
      expression type and its corresponding expansion process, followed by a
      comma-separated list of variable specifiers (variable names and
      optional value modifiers).  If no operator is provided, the expression
-     defaults to simple variable substitution of unreserved values.
+     defaults to simple variable expansion of unreserved values.
     </t>
     <figure><artwork type="abnf">
   expression    =  "{" [ operator ] variable-list "}"
@@ -522,7 +533,7 @@
      The variable names serve multiple purposes: documentation for
      what kinds of values are expected, identifiers for associating
      values within a URI Template processor, and the string to use
-     for each key on key=value substitutions.
+     for each key on key=value expansions.
     </t>
     <figure><artwork type="abnf">
   variable-list =  varspec *( "," varspec )
@@ -587,7 +598,7 @@
      <t>
       The primary difference between the two explode modifiers is
       that an asterisk ("*") indicates that just the component names
-      and values are included in the substitution, whereas the plus
+      and values are included in the expansion, whereas the plus
       ("+") indicates that each component name is prefixed with the
       given variable name and a period ("."), thereby enabling multiple
       variables with the same component names to be disambiguated.
@@ -622,7 +633,7 @@
    /directions?from.zipcode=92660&amp;to.zipcode=90210
      </artwork></figure>
      <t>
-      The substitution process for variables, as defined in
+      The expansion process for variables, as defined in
       <xref target="expansion"/>, is dependent on both the
       operator being used and, if one of the explode modifiers is
       used, the type and schema of the variable being substituted.
@@ -778,92 +789,59 @@
 
   <section title="URI Template Expansion" anchor="expansion">
    <t>
-    The process of URI Template expansion is to scan the
-    reference string from left to right and replace each
-    expression with the result of applying the operator to
-    the values, or a modified form of those values, for each
-    variable in the list.
+    The process of URI Template expansion is to scan the template
+    string from beginning to end, copying literal characters as-is
+    and replacing each expression with the result of applying the
+    expression's operator to the value of each variable named in
+    the expression.
    </t>
    <t>
-    NOTE: ALL TEXT BELOW THIS POINT IS UNFINISHED AND MOSTLY OBSOLETE.
-   </t>
-   <t>
-    Before substitution, the template processor MUST convert
-    every variable value into a sequence of characters in
-    ( unreserved / pct-encoded ).
-    The template processor does that using the following algorithm:
-    The template processor normalizes the string using NFKC, converts it to
-    UTF-8 <xref target="RFC3629"/>, and then
-    every octet of the UTF-8 string that falls outside of
-    ( unreserved ) MUST be percent-encoded, as
-    per <xref target="RFC3986"/>, section 2.1.
-    For variables that are lists, the above algorithm is applied
-    to each value in the list.
-   </t>
-   <t>
-    The Unicode Standard <xref target="UNIV4"/> defines various
-    equivalences between sequences of characters for various
-    purposes.  Unicode Standard Annex #15 <xref target="UTR15"/> defines
-    various Normalization Forms for these equivalences, in
-    particular Normalization Form KC (NFKC, Compatibility
-    Decomposition, followed by Canonical Composition). Since
-    different Normalized Forms unicode strings will have
-    different UTF-8 representations the only way to guarantee
-    that template processors will produce the same URI is to
-    require a common Normalized Form.
-   </t>
-   <t>
-    Requiring that all characters outside of ( unreserved ) be
-    percent encoded means that the only characters outside of
-    ( unreserved ) that will appear in the generated URI-reference
-    will come from outside the template expressions in the URI Template or
-    from the argument of a template expression. This means that the
-    designer of the URI Template determines the placement of reserved
-    characters in the resulting URI, and thus the structure of the
-    resulting generated URI-reference.
-   </t>
-   <t>
-    If the expression is an operator then the substitution value
-    is determined by the given operator. Each operator
-    works only on the variables that are defined within
-    their expression.
-   </t>
-   <t>
-    The result of substitution
-    MUST match the URI-reference rule and SHOULD also match
-    any known rules for the scheme of the resulting URI.
-   </t>
-   <t>
-    If a template processor encounters an operator that it does not
-    understand then it MUST fail and MUST NOT produce a URI from
-    the URI Template. The list of operators that a template processor
-    knows is not constrained by this specification, that is, later
-    specifications may add new operators.
-   </t>
-   <t>
-    Every expression consists of either a variable ('var') or
-    an operator expression ('operator'), and the rules for how
-    to expand each of these is given below. For every expression
-    a template MUST have at least one variable name in the
-    template expression. It is an error if no variables are supplied.
-    All of the variables supplied to a template expression MAY be undefined
-    and the expansion rules below specify how to process the template
-    expression in that situation.
-   </t>
-   <t>
-    It is extremely easy to
-    parse and perform the substitutions within a single pass loop.
+    If a template processor encounters an error, such as an operator
+    that it does not understand or a character sequence that does not
+    match the &lt;URI-Template&gt; grammar, then processing of the
+    template SHOULD cease, the URI-reference result SHOULD be undefined,
+    and the location and type of error SHOULD be indicated to the
+    invoking application.
    </t>
 
-   <section title='Simple substitution (default)' anchor="op-default">
+   <section title='Unicode normalization' anchor="unicode-normal">
+    <t>
+     The Unicode Standard <xref target="UNIV4"/> defines various
+     equivalences between sequences of characters for various
+     purposes.  Unicode Standard Annex #15 <xref target="UTR15"/> defines
+     various Normalization Forms for these equivalences, in
+     particular Normalization Form KC (NFKC: Compatibility
+     Decomposition followed by Canonical Composition). Since
+     different Normalized Form unicode strings will have
+     different UTF-8 representations, the only way to guarantee
+     that template processors will produce the same URI is to
+     require a common Normalized Form.
+    </t>
+    <t>
+     The string values for the URI Template and template variables
+     MUST be in NFKC and encoded as UTF-8 <xref target="RFC3629"/>
+     prior to use in the template expansion process (US-ASCII is a
+     proper subset of NFKC UTF-8).  The remaining sections defining
+     the expansion process assume strings are in NFKC UTF-8.
+    </t>
+   </section>
+
+   <section title='Literal expansion' anchor="literal-expansion">
+    <t>
+     The expansion for each literal character in the URI Template is
+     either the character itself, if it is allowed anywhere in the URI
+     syntax (&lt;unreserved&gt; / &lt;reserved&gt;), or the sequence of
+     pct-encoded triplets corresponding to that character's octet(s) in
+     NFKC UTF-8.
+    </t>
+   </section>
+
+   <section title='Simple expansion: {var}' anchor="op-default">
     <t>
      The default expression type when no operator is given is
-     simple substitution: the value of each defined variable is
+     simple expansion: the value of each defined variable is
      substituted in the order given, with each value separated
-     by a comma character (",").  Naturally, the optional presence
-     of value modifiers, defaults, and composite variable types
-     makes even simple substitution a difficult process to
-     describe in prose.
+     by a comma character (",").
     </t>
     <figure><preamble>For example,</preamble><artwork>
   foo := "fred"
@@ -874,12 +852,97 @@
   "{bar=wilma}"  -&gt; "wilma"
     </artwork></figure>
     <t>
+     A variable that is undefined has no value and thus is
+     excluded from the expansion.  If all of the variables are
+     undefined, then the expression's expansion is the empty string.
+    </t>
+    <t>
+     A variable defined as a single value is expanded by converting its
+     value to a NFKC UTF-8 string, replacing any character within
+     the string that is not in the unreserved set with its
+     corresponding sequence of pct-encoded octets, applying any prefix
+     or suffix modifier (<xref target="partial-values"/>), and then
+     appending the result to the URI-reference (prefixed by a comma if
+     this is not the first defined variable in the current expression).
+    </t>
+    <t>
+     A variable defined as a list of values is expanded by converting
+     each value to a NFKC UTF-8 string, replacing any character within
+     each value string that is not in the unreserved set
+     with its corresponding sequence of pct-encoded octets, joining the
+     value strings in order as a single string of comma-separated values,
+     applying any prefix or suffix modifier to the combined string, and
+     then appending the result to the URI-reference (prefixed by a comma
+     if this is not the first defined variable in the current expression).
+    </t>
+    <t>
+     A variable defined as an associative array is expanded as a list
+     of alternating key and value pairs, excluding any keys for which
+     the corresponding value is undefined.
+    </t>
+    <t>
+     A variable defined as a structure of component values is expanded
+     as a list of the component values (excluding the component names)
+     in the order implied by a preorder (depth-first) traversal of that
+     structure, excluding any components that are undefined.
+    </t>
+    <t>
+     The explode modifiers (<xref target="component-values"/>) have
+     no effect on simple variable expansion and MUST be ignored.
+    </t>
+   </section>
+
+   <section title='Reserved expansion: {+var}' anchor="op-plus">
+    <t>
+     Reserved expansion is identical to simple expansion except that the
+     substituted values may contain characters in the reserved set.
+    </t>
+    <figure><preamble>For example,</preamble><artwork>
+  foo  := "That's right!"
+
+  "{foo}"        -&gt; "That%27s%20right%21"
+  "{+foo}"       -&gt; "That%27s%20right!"
+  
+  base := "http://example.com/home/"
+  
+  "{base}index"  -&gt; "http%3A%2F%2Fexample.com%2Fhome%2Findex"
+  "{+base}index" -&gt; "http://example.com/home/index"
+    </artwork></figure>
+    <t>
+     The same expansion process is followed as in <xref target="op-default"/>
+     except that, instead of replacing any character within each value
+     string that is not in the unreserved set with its corresponding
+     sequence of pct-encoded octets, replace any character within each
+     value string that is not in the set of unreserved or reserved
+     characters with its corresponding sequence of pct-encoded octets.
+    </t>
+    <t>
+     NOTE: ALL TEXT BELOW THIS POINT IS UNFINISHED AND MOSTLY OBSOLETE.
+    </t>
+   </section>
+
+   <section title='Path-style parameter expansion: {;var}' anchor="op-semicolon">
+    <t>
+     If each variable is undefined or an empty list
+     then substitute the value of arg, otherwise
+     substitute the empty string.
+    </t>
+    <t>
+     Example:
+     <figure><artwork>
+  foo := "fred"
+
+  "{-neg|fred@example.org|foo}" -&gt; ""
+  "{-neg|fred@example.org|bar}" -&gt; "fred@example.org"
+     </artwork></figure>
+    </t>
+    <t>
      A variable defined as a list of values is substituted as a
      string of comma-separated values when no explode modifier
      is given.  If the "*" modifier is used, then each value is
      separated by the default delimiter used by the operator.
      If the "+" operator is used, then the variable name is
-     prepended to the substitution list as if it were the initial
+     prepended to the expansion list as if it were the initial
      value in the list.
     </t>
     <t>
@@ -916,41 +979,7 @@
     </t>
    </section>
 
-   <section title='Reserved substitution ("+")' anchor="op-plus">
-    <t>
-     If each variable is undefined or an empty list
-     then substitute the empty string, otherwise
-     substitute the value of 'arg'.
-    </t>
-    <t>
-     Example:
-     <figure><artwork>
-  foo := "fred"
-
-  "{-opt|fred@example.org|foo}" -&gt; "fred@example.org"
-  "{-opt|fred@example.org|bar}" -&gt; ""
-     </artwork></figure>
-    </t>
-   </section>
-
-   <section title='Path-style parameter substitution (";")' anchor="op-semicolon">
-    <t>
-     If each variable is undefined or an empty list
-     then substitute the value of arg, otherwise
-     substitute the empty string.
-    </t>
-    <t>
-     Example:
-     <figure><artwork>
-  foo := "fred"
-
-  "{-neg|fred@example.org|foo}" -&gt; ""
-  "{-neg|fred@example.org|bar}" -&gt; "fred@example.org"
-     </artwork></figure>
-    </t>
-   </section>
-
-   <section title='Form-style parameter substitution ("?")' anchor="op-question">
+   <section title='Form-style parameter expansion: {?var}' anchor="op-question">
     <t>
      The prefix operator MUST only have one variable in
      its expression. More than one variable is an error condition.
@@ -974,9 +1003,50 @@
   "{-prefix|/|qux}" -&gt; ""
      </artwork></figure>
     </t>
+    <t>
+     A variable defined as a list of values is substituted as a
+     string of comma-separated values when no explode modifier
+     is given.  If the "*" modifier is used, then each value is
+     separated by the default delimiter used by the operator.
+     If the "+" operator is used, then the variable name is
+     prepended to the expansion list as if it were the initial
+     value in the list.
+    </t>
+    <t>
+     A variable defined as an associative array is substituted as
+     a comma-separated list if no explode modifier is given or a
+     sequence of default-delimited tuples if the "*" modifier is
+     used.  If the "+" modifier is used, the values are substituted
+     as in the "*" case, except that each key name is prefixed by
+     the variable name and a ".", as in "name.key,value".
+    </t>
+    <t>
+     When a variable containing component values is given without an
+     explode modifier, the value of each defined component is
+     substituted, separated by a comma (",") character, in the order
+     indicated by the variable's schema or, if the schema is unknown,
+     in the order provided by the variable's value.
+    </t>
+    <t>
+     When an explode modifier is used with an operator that substitutes
+     variables as key=value pairs, the key is determined as follows.
+     If the modifier is an asterisk ("*"), then each "key" is the name
+     of the component.  If the modifier is a plus ("+"), then each key
+     is the variable name followed by a period (".") and the component
+     name. In both cases, if the component names have a hierarchical
+     structure, then the component subnames are also appended to the
+     key, each separated by a period.
+    </t>
+    <t>
+     When an explode modifier is used with the hierarchical ("/")
+     operator, then the slash delimiter is substituted before each
+     defined component's value if the modifier is "*", or before each
+     tuple of component name and value (e.g., "/name,value") if the
+     modifier is "+".
+    </t>
    </section>
 
-   <section title='Hierarchical path substitution ("/")' anchor="op-slash">
+   <section title='Hierarchical path expansion: {/var}' anchor="op-slash">
     <t>
      The prefix operator MUST only have one variable in
      its expression. More than one variable is an error condition.
@@ -1011,8 +1081,8 @@
      of the variable name, "=", and the
      variable value. Concatenate more than one key=value
      string with intervening values of arg to
-     create the substitution value. The order of variables
-     MUST be preserved during substitution.
+     create the expansion value. The order of variables
+     MUST be preserved during expansion.
     </t>
     <t>
      Example:
@@ -1054,18 +1124,6 @@
      </artwork></figure>
     </t>
    </section>
-  </section>
-
-  <section title="Error Handling" anchor="error">
-   <t>
-    During template substitution error conditions may arise.
-    The exact circumstances for those errors are described in
-    <xref target="expansion"/>. When an error occurs the
-    template processor MUST NOT return a URI. It is language
-    specific and beyond the scope of this document how the
-    template processor signals that an error has occurred and that
-    a URI will not be generated from the template.
-   </t>
   </section>
 
   <section title="Examples" anchor="examples">
@@ -1224,7 +1282,7 @@
    <t>04 - Changed the operator syntax to a single character that is
       analogous to its reserved role within the URI generic syntax,
       resulting in templates that are far more readable for the common
-      cases. Added value modifiers for prefix and suffix substitution.
+      cases. Added value modifiers for prefix and suffix expansion.
       Added explode modifiers to allow expansion of complex variables
       and lists according to (external) variable types or schema.
       Replaced use of "expansion" with "expression", since expansion
