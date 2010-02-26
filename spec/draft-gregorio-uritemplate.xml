@@ -294,6 +294,8 @@
 |     |     |    {?x,y,empty}      ?x=1024&amp;y=768&amp;empty=           |
 |     |     |    {?x,y,undef}      ?x=1024&amp;y=768                  |
 |     |     |    {?list}           ?list=val1,val2,val3           |
+|     |     |    {?list*}          ?list=val1&amp;list=val2&amp;list=val3 |
+|     |     |    {?list+}    ?list.1=val1&amp;list.2=val2&amp;list.3=val3 |
 |     |     |    {?keys*}          ?key1=val1&amp;key2=val2           |
 |     |     |    {?keys+}          ?keys.key1=val1&amp;keys.key2=val2 |
 |     |     |                                                     |
