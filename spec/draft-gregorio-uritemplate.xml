@@ -278,6 +278,7 @@
 |     |     |    {+path,x}/here    /foo/bar,1024/here             |
 |     |     |    {+path}{x}/here   /foo/bar1024/here              |
 |     |     |    {+empty}/here     /here                          |
+|     |     |    {+undef}/here     /here                          |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
 | 3.5 |  ;  | Path-style parameters, semicolon-prefixed           |
@@ -300,10 +301,23 @@
 | 3.7 |  /  | Hierarchical path segments, slash-separated         |
 |     |     |                                                     |
 |     |     |    {/var}            /value                         |
+|     |     |    {/var,empty}      /value/                        |
+|     |     |    {/var,undef}      /value                         |
 |     |     |    {/list}           /val1,val2,val3                |
 |     |     |    {/list*}          /val1/val2/val3                |
 |     |     |    {/list*,x}        /val1/val2/val3/1024           |
 |     |     |    {/list+}          /list/val1/val2/val3           |
+|     |     |                                                     |
+|-----+-----+-----------------------------------------------------|
+| 3.8 |  .  | Label expansion, dot-prefixed                       |
+|     |     |                                                     |
+|     |     |    X{.var}           X.value                        |
+|     |     |    X{.empty}         X.                             |
+|     |     |    X{.undef}         X                              |
+|     |     |    X{.list}          X.val1,val2,val3               |
+|     |     |    X{.list*}         X.val1.val2.val3               |
+|     |     |    X{.list*,x}       X.val1.val2.val3.1024          |
+|     |     |    X{.list+}         X.list.val1.val2.val3          |
 |     |     |                                                     |
 `-----+-----+-----------------------------------------------------'
     </artwork></figure>
@@ -322,7 +336,7 @@
      Templates are simple and readable when used with common
      examples because the single-character operators match the URI
      generic syntax delimiters.  The operator's associated delimiter
-     (";", "?", and "/") is omitted when none of the listed variables
+     (";", "?", "/", and ".") is omitted when none of the listed variables
      are defined.  Likewise, the expansion process for ";"
      (path-style parameters) will omit the "=" when the variable value
      is empty, whereas the process for "?" (form-style parameters)
@@ -493,7 +507,7 @@
     </t>
     <figure><artwork type="abnf">
   expression    =  "{" [ operator ] variable-list "}"
-  operator      =  "+" / "/" / ";" / "?" / op-reserve
+  operator      =  "+" / "." / "/" / ";" / "?" / op-reserve
   op-reserve    =  "|" / "!" / "@"
                        ; reserved for local use: "$" / "(" / ")"
     </artwork></figure>
@@ -504,6 +518,8 @@
      as reserved characters in the URI generic syntax.  The operators defined
      by this specification include:
      plus ("+") for substituting values that may contain reserved characters;
+     dot (".") for substituting values as a sequence of name labels prefixed
+     by ".";
      slash ("/") for substituting values as a sequence of path segments
      separated by "/";
      semicolon (";") for substituting key=value pairs as path parameters
@@ -538,8 +554,8 @@
     <figure><artwork type="abnf">
   variable-list =  varspec *( "," varspec )
   varspec       =  varname [ modifier ] [ "=" default ]
-  varname       =  1*varchar
-  varchar       =  ALPHA / DIGIT / "." / "_" / ucschar / iprivate
+  varname       =  varchar *( varchar / "." )
+  varchar       =  ALPHA / DIGIT / "_" / ucschar / iprivate
                 /  pct-encoded
     </artwork></figure>
     <t>
@@ -1073,32 +1089,7 @@
     </t>
    </section>
 
-   <section title="Obsolete" anchor="join">
-    <t>
-     Supplying a list variable to the join operator
-     is an error. For each variable that is defined and non-empty
-     create a key=value string that is the concatenation
-     of the variable name, "=", and the
-     variable value. Concatenate more than one key=value
-     string with intervening values of arg to
-     create the expansion value. The order of variables
-     MUST be preserved during expansion.
-    </t>
-    <t>
-     Example:
-     <figure><artwork>
-  foo := "fred"
-  bar := "barney"
-  baz := ""
-
-  "{-join|&amp;|foo,bar,baz,qux}" -&gt; "foo=fred&amp;bar=barney&amp;baz="
-  "{-join|&amp;|bar}" -&gt; "bar=barney"
-  "{-join|&amp;|qux}" -&gt; ""
-     </artwork></figure>
-    </t>
-   </section>
-
-   <section title="Obsolete" anchor="list">
+   <section title="Label expansion with dot-prefix: {.var}" anchor="op-dot">
     <t>
      The listjoin operator MUST have only one variable
      in its expression and that variable must be a list.
@@ -1211,8 +1202,8 @@
   <section title="Acknowledgments" anchor="ack">
    <t>
     The following people made significant contributions to this
-    specification: Michaeljohn Clement, DeWitt Clinton, John Cowan,
-    James H. Manger, and James Snell.
+    specification: Mike Burrows, Michaeljohn Clement, DeWitt Clinton,
+    John Cowan, James H. Manger, and James Snell.
    </t>
   </section>
  </middle>
