@@ -558,8 +558,9 @@
     <t>
      The operator characters pipe ("|"), exclamation ("!"), and at-sign ("@")
      are reserved for future extensions.  A processor that unexpectedly
-     encounters such an extension operator should flag the expression as an
-     error and include it in the result without expansion.
+     encounters such an extension operator SHOULD pass the expression
+     through unexpanded and MAY also indicate a warning to the invoking
+     application.
     </t>
     <t>
      The expression syntax specifically excludes use of the dollar ("$")
@@ -886,6 +887,12 @@
     template SHOULD cease, the URI-reference result SHOULD be undefined,
     and the location and type of error SHOULD be indicated to the
     invoking application.
+   </t>
+   <t>
+    If a template processor encounters a warning, such as the use of
+    an operator character reserved for future extension, then the
+    processing of the template SHOULD NOT cease, and the location
+    and type of warning SHOULD be indicated to the invoking application.
    </t>
 
    <section title='Unicode normalization' anchor="unicode-normal">
