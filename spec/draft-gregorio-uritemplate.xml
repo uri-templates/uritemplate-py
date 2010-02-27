@@ -159,7 +159,7 @@
     <t>
      A URI Template provides both a structural description of a URI
      space and, when variable values are provided, a simple instruction
-     on how to construct URIs corresponding to each of those values.
+     on how to construct a URI corresponding to those values.
      A URI Template is transformed into a URI-reference by replacing each
      delimited expression with its value as defined by the
      expression type and the values of variables named within the
@@ -268,6 +268,12 @@
 |     |     |    {x,y}             1024,768                       |
 |     |     |    {var=default}     value                          |
 |     |     |    {undef=default}   default                        |
+|     |     |    {list}            val1,val2,val3                 |
+|     |     |    {list*}           val1,val2,val3                 |
+|     |     |    {list+}           list.val1,list.val2,list.val3  |
+|     |     |    {keys}            key1,val1,key2,val2            |
+|     |     |    {keys*}           key1,val1,key2,val2            |
+|     |     |    {keys+}           keys.key1,val1,keys.key2,val2  |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
 | 3.4 |  +  | Reserved expansion with comma-separated values      |
@@ -279,6 +285,12 @@
 |     |     |    {+path}{x}/here   /foo/bar1024/here              |
 |     |     |    {+empty}/here     /here                          |
 |     |     |    {+undef}/here     /here                          |
+|     |     |    {+list}           val1,val2,val3                 |
+|     |     |    {+list*}          val1,val2,val3                 |
+|     |     |    {+list+}          list.val1,list.val2,list.val3  |
+|     |     |    {+keys}           key1,val1,key2,val2            |
+|     |     |    {+keys*}          key1,val1,key2,val2            |
+|     |     |    {+keys+}          keys.key1,val1,keys.key2,val2  |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
 | 3.5 |  ;  | Path-style parameters, semicolon-prefixed           |
@@ -286,6 +298,12 @@
 |     |     |    {;x,y}            ;x=1024;y=768                  |
 |     |     |    {;x,y,empty}      ;x=1024;y=768;empty            |
 |     |     |    {;x,y,undef}      ;x=1024;y=768                  |
+|     |     |    {;list}           ;val1,val2,val3                |
+|     |     |    {;list*}          ;val1;val2;val3                |
+|     |     |    {;list+}          ;list=val1;list=val2;list=val3 |
+|     |     |    {;keys}           ;key1,val1,key2,val2           |
+|     |     |    {;keys*}          ;key1=val1;key2=val2           |
+|     |     |    {;keys+}          ;keys.key1=val1;keys.key2=val2 |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
 | 3.6 |  ?  | Form-style parameters, ampersand-separated          |
@@ -294,8 +312,9 @@
 |     |     |    {?x,y,empty}      ?x=1024&amp;y=768&amp;empty=           |
 |     |     |    {?x,y,undef}      ?x=1024&amp;y=768                  |
 |     |     |    {?list}           ?list=val1,val2,val3           |
-|     |     |    {?list*}          ?list=val1&amp;list=val2&amp;list=val3 |
-|     |     |    {?list+}    ?list.1=val1&amp;list.2=val2&amp;list.3=val3 |
+|     |     |    {?list*}          ?val1&amp;val2&amp;val3                |
+|     |     |    {?list+}          ?list=val1&amp;list=val2&amp;list=val3 |
+|     |     |    {?keys}           ?keys=key1,val1,key2,val2      |
 |     |     |    {?keys*}          ?key1=val1&amp;key2=val2           |
 |     |     |    {?keys+}          ?keys.key1=val1&amp;keys.key2=val2 |
 |     |     |                                                     |
@@ -308,18 +327,24 @@
 |     |     |    {/list}           /val1,val2,val3                |
 |     |     |    {/list*}          /val1/val2/val3                |
 |     |     |    {/list*,x}        /val1/val2/val3/1024           |
-|     |     |    {/list+}          /list/val1/val2/val3           |
+|     |     |    {/list+}          /list.val1/list.val2/list.val3 |
+|     |     |    {/keys}           /key1,val1,key2,val2           |
+|     |     |    {/keys*}          /key1/val1/key2/val2           |
+|     |     |    {/keys+}          /keys.key1/val1/keys.key2/val2 |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
 | 3.8 |  .  | Label expansion, dot-prefixed                       |
 |     |     |                                                     |
-|     |     |    X{.var}           X.value                        |
-|     |     |    X{.empty}         X.                             |
-|     |     |    X{.undef}         X                              |
-|     |     |    X{.list}          X.val1,val2,val3               |
-|     |     |    X{.list*}         X.val1.val2.val3               |
-|     |     |    X{.list*,x}       X.val1.val2.val3.1024          |
-|     |     |    X{.list+}         X.list.val1.val2.val3          |
+|     |     |    X{.var}          X.value                         |
+|     |     |    X{.empty}        X.                              |
+|     |     |    X{.undef}        X                               |
+|     |     |    X{.list}         X.val1,val2,val3                |
+|     |     |    X{.list*}        X.val1.val2.val3                |
+|     |     |    X{.list*,x}      X.val1.val2.val3.1024           |
+|     |     |    X{.list+}        X.list.val1.list.val2.list.val3 |
+|     |     |    X{.keys}         X.key1,val1,key2,val2           |
+|     |     |    X{.keys*}        X.key1.val1.key2.val2           |
+|     |     |    X{.keys+}        X.keys.key1.val1.keys.key2.val2 |
 |     |     |                                                     |
 `-----+-----+-----------------------------------------------------'
     </artwork></figure>
@@ -786,10 +811,10 @@
     
     x{/name=none}         x/Fred,Wilma,Pebbles
     x{/name*=none}        x/Fred/Wilma/Pebbles
-    x{/name+=none}        x/name/Fred/Wilma/Pebbles
+    x{/name+=none}        x/name.Fred/name.Wilma/name.Pebbles
     x{/favs=none}         x/color,red,volume,high
-    x{/favs*=none}        x/color,red/volume,high
-    x{/favs+=none}        x/favs.color,red/favs.volume,high
+    x{/favs*=none}        x/color/red/volume/high
+    x{/favs+=none}        x/favs.color/red/favs.volume/high
     
     x{/undef}             x
     x{/undef=none}        x/none
@@ -892,6 +917,7 @@
      applying any prefix or suffix modifier to the combined string, and
      then appending the result to the URI-reference (prefixed by a comma
      if this is not the first defined variable in the current expression).
+     [Needs adjusting for plus explode modifier.]
     </t>
     <t>
      A variable defined as an associative array is expanded as a list
@@ -903,10 +929,6 @@
      as a list of the component values (excluding the component names)
      in the order implied by a preorder (depth-first) traversal of that
      structure, excluding any components that are undefined.
-    </t>
-    <t>
-     The explode modifiers (<xref target="component-values"/>) have
-     no effect on simple variable expansion and MUST be ignored.
     </t>
    </section>
 
@@ -934,12 +956,12 @@
      value string that is not in the set of unreserved or reserved
      characters with its corresponding sequence of pct-encoded octets.
     </t>
-    <t>
-     NOTE: ALL TEXT BELOW THIS POINT IS UNFINISHED AND MOSTLY OBSOLETE.
-    </t>
    </section>
 
    <section title='Path-style parameter expansion: {;var}' anchor="op-semicolon">
+     <t>
+      NOTE: ALL TEXT BELOW THIS POINT IS UNFINISHED AND MOSTLY OBSOLETE.
+     </t>
     <t>
      If each variable is undefined or an empty list
      then substitute the value of arg, otherwise
