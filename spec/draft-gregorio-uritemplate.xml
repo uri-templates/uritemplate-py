@@ -600,7 +600,9 @@
      list of values, an associative array of (key, value) pairs, or
      a structure of components defined by some separate schema.
      Such value types are not directly indicated by the template
-     syntax, but do have an impact on the expansion process.
+     syntax, but do have an impact on the expansion process.  A
+     composite or structured value with zero member values is
+     considered undefined.
     </t>
     <t>
      If a variable appears more than once in an expression or
@@ -766,6 +768,7 @@
     name  := [ "Fred", "Wilma", "Pebbles" ];
     favs  := [("color","red"), ("volume","high")];
     empty_list := [];
+    empty_keys := [];
 
   Example Template        Expansion
 
@@ -777,6 +780,20 @@
     x{undef}y             xy
     x{undef=_}y           x_y
 
+    x{empty_list}y        xy
+    x{empty_list=_}y      xy
+    x{empty_list*}y       xy
+    x{empty_list*=_}y     x_y
+    x{empty_list+}y       xy
+    x{empty_list+=_}y     xempty_list._y
+
+    x{empty_keys}y        xy
+    x{empty_keys=_}y      xy
+    x{empty_keys*}y       xy
+    x{empty_keys*=_}y     x_y
+    x{empty_keys+}y       xy
+    x{empty_keys+=_}y     xempty_keys._y
+    
     x{?name=none}         x?name=Fred,Wilma,Pebbles
     x{?favs=none}         x?favs=color,red,volume,high
     x{?favs*=none}        x?color=red&amp;volume=high
@@ -786,12 +803,20 @@
     x{?undef=none}        x?undef=none
     x{?empty}             x?empty=
     x{?empty=none}        x?empty=
-    x{?empty_list}        x?empty_list=
-    x{?empty_list=none}   x?empty_list=
+
+    x{?empty_list}        x
+    x{?empty_list=none}   x?empty_list=none
     x{?empty_list*}       x
     x{?empty_list*=none}  x?none
     x{?empty_list+}       x
-    x{?empty_list+=none}  x?empty_list=none
+    x{?empty_list+=none}  x?empty_list.none
+
+    x{?empty_keys}        x
+    x{?empty_keys=none}   x?empty_keys=none
+    x{?empty_keys*}       x
+    x{?empty_keys*=none}  x?none
+    x{?empty_keys+}       x
+    x{?empty_keys+=none}  x?empty_keys.none
     
     x{;name=none}         x;name=Fred,Wilma,Pebbles
     x{;favs=none}         x;favs=color,red,volume,high
@@ -802,12 +827,20 @@
     x{;undef=none}        x;undef=none
     x{;empty}             x;empty
     x{;empty=none}        x;empty
-    x{;empty_list}        x;empty_list
-    x{;empty_list=none}   x;empty_list
+
+    x{;empty_list}        x
+    x{;empty_list=none}   x;empty_list=none
     x{;empty_list*}       x
     x{;empty_list*=none}  x;none
     x{;empty_list+}       x
-    x{;empty_list+=none}  x;empty_list=none
+    x{;empty_list+=none}  x;empty_list.none
+    
+    x{;empty_keys}        x
+    x{;empty_keys=none}   x;empty_keys=none
+    x{;empty_keys*}       x
+    x{;empty_keys*=none}  x;none
+    x{;empty_keys+}       x
+    x{;empty_keys+=none}  x;empty_keys.none
     
     x{/name=none}         x/Fred,Wilma,Pebbles
     x{/name*=none}        x/Fred/Wilma/Pebbles
@@ -820,12 +853,20 @@
     x{/undef=none}        x/none
     x{/empty}             x/
     x{/empty=none}        x/
-    x{/empty_list}        x/
+    
+    x{/empty_list}        x
     x{/empty_list=none}   x/none
     x{/empty_list*}       x
     x{/empty_list*=none}  x/none
     x{/empty_list+}       x
-    x{/empty_list+=none}  x/empty_list,none
+    x{/empty_list+=none}  x/empty_list.none
+    
+    x{/empty_keys}        x
+    x{/empty_keys=none}   x/none
+    x{/empty_keys*}       x
+    x{/empty_keys*=none}  x/none
+    x{/empty_keys+}       x
+    x{/empty_keys+=none}  x/empty_keys.none
     </artwork></figure>
    </section>
   </section>
