@@ -44,8 +44,8 @@
   <author initials="R." surname="Fielding" fullname="Roy T. Fielding" role="editor">
    <organization abbrev="Day Software">Day Software</organization>
    <address>
-    <email>fielding@gbiv.com</email>
-    <uri>http://roy.gbiv.com/</uri>
+    <email>fielding@day.com</email>
+    <uri>http://www.day.com/</uri>
    </address>
   </author>
 
@@ -66,10 +66,9 @@
   </author>
 
   <author initials='D.O.' surname="Orchard" fullname='David Orchard'>
-   <organization>BEA Systems, Inc.</organization>
+   <organization></organization>
    <address>
-    <email>dorchard@bea.com</email>
-    <uri>http://bea.com/</uri>
+    <uri>http://www.pacificspirit.com/</uri>
    </address>
   </author>
 
