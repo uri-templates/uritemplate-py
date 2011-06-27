@@ -96,6 +96,14 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+      <xs:attribute name="consensus">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="no"/>
+            <xs:enumeration value="yes"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="seriesNo" type="NUMBER"/>
       <xs:attribute name="ipr">
         <xs:simpleType>
@@ -124,6 +132,8 @@
         <xs:simpleType>
           <xs:restriction base="xs:token">
             <xs:enumeration value="IETF"/>
+            <xs:enumeration value="IAB"/>
+            <xs:enumeration value="IRTF"/>
             <xs:enumeration value="independent"/>
           </xs:restriction>
         </xs:simpleType>

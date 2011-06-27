@@ -118,6 +118,14 @@
       </attribute>
     </optional>
     <optional>
+      <attribute name="consensus">
+        <choice>
+          <value>no</value>
+          <value>yes</value>
+        </choice>
+      </attribute>
+    </optional>
+    <optional>
       <attribute name="seriesNo">
         <ref name="NUMBER"/>
       </attribute>
@@ -153,6 +161,8 @@
       <attribute name="submissionType" a:defaultValue="IETF">
         <choice>
           <value>IETF</value>
+          <value>IAB</value>
+          <value>IRTF</value>
           <value>independent</value>
         </choice>
       </attribute>
@@ -215,7 +225,7 @@
     <element name="author">
       <ref name="attlist.author"/>
       <optional>
-      <ref name="organization"/>
+        <ref name="organization"/>
       </optional>
       <optional>
         <ref name="address"/>

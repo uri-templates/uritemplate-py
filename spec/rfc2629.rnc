@@ -66,6 +66,7 @@ attlist.rfc &=
   [ a:defaultValue = "" ] attribute obsoletes { NUMBERS }?,
   [ a:defaultValue = "" ] attribute updates { NUMBERS }?,
   attribute category { "std" | "bcp" | "info" | "exp" | "historic" }?,
+  attribute consensus { "no" | "yes" }?,
   attribute seriesNo { NUMBER }?,
   attribute ipr {
     "full2026"
@@ -87,7 +88,7 @@ attlist.rfc &=
   }?,
   attribute iprExtract { xsd:IDREF }?,
   [ a:defaultValue = "IETF" ]
-  attribute submissionType { "IETF" | "independent" }?,
+  attribute submissionType { "IETF" | "IAB" | "IRTF" | "independent" }?,
   attribute docName { ATEXT }?,
   [ a:defaultValue = "en" ] attribute xml:lang { ATEXT }?
 # Front matter
