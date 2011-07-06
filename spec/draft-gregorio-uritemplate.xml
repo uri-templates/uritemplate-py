@@ -29,7 +29,7 @@
  3. Update the Revision History.
 -->
 
-<rfc category="std" ipr="pre5378Trust200902" docName="draft-gregorio-uritemplate-04">
+<rfc category="std" ipr="pre5378Trust200902" docName="draft-gregorio-uritemplate-05">
  <front>
   <title>URI Template</title>
 
@@ -72,7 +72,7 @@
    </address>
   </author>
 
-  <date day="08" month="Mar" year="2010"/>
+  <date day="05" month="Jul" year="2011"/>
   <abstract>
    <t>
     A URI Template is a compact sequence of characters
@@ -162,32 +162,14 @@
      A URI Template is transformed into a URI-reference by replacing each
      delimited expression with its value as defined by the
      expression type and the values of variables named within the
-     expression.  The expression types range from simple value
+     expression.  The expression types range from simple string
      expansion to multiple key=value lists.  The expansions
      are based on the URI generic syntax, allowing an implementation
      to process any URI Template without knowing the scheme-specific
      requirements of every possible resulting URI.
     </t>
     <t>
-     A URI Template may be provided in absolute form, as in the examples
-     above, or in relative form if a suitable base URI is defined.
-    </t>
-    <t>
-     Although the URI syntax is used for the result, the template
-     string is allowed to contain the broader set of characters
-     that can be found in IRI references <xref target="RFC3987"/>.
-     A URI Template is therefore also an IRI template, and the result
-     of template processing can be rendered as an IRI by transforming
-     the pct-encoded sequences to their corresponding Unicode
-     character if the character is not in the reserved set.
-    </t>
-   </section>
-
-   <section title="Expression Types" anchor="types">
-    <t>
-     URI Templates are similar to a macro language with a fixed set of
-     macro definitions: the expression type determines the expansion
-     process.  For example, the following URI Template includes a
+     For example, the following URI Template includes a
      form-style parameter expression, as indicated by the "?" operator
      appearing before the variable names.
     </t>
@@ -238,113 +220,227 @@
   http://www.example.com/foo
     </artwork></figure>
     <t>
-     The following table summarizes each type of template
-     expression by its associated operator and cross-references
-     the section of this document that defines the operator and
-     its specific expansion process.  The example expansions are
-     based on the following variables and values:
+     A URI Template may be provided in absolute form, as in the examples
+     above, or in relative form if a suitable base URI is defined.
+    </t>
+    <t>
+     Although the URI syntax is used for the result, the template
+     string is allowed to contain the broader set of characters
+     that can be found in IRI references <xref target="RFC3987"/>.
+     A URI Template is therefore also an IRI template, and the result
+     of template processing can be rendered as an IRI by transforming
+     the pct-encoded sequences to their corresponding Unicode
+     character if the character is not in the reserved set.
+    </t>
+   </section>
+
+   <section title="Levels and Expression Types" anchor="types">
+    <t>
+     URI Templates are similar to a macro language with a fixed set of
+     macro definitions: the expression type determines the expansion
+     process.  The default expression type is simple string expansion, wherein
+     a single named variable is replaced by its value as a string after UTF-8
+     encoding the characters and then pct-encoding any octets that are
+     not in the unreserved set.
+    </t>
+    <t>     
+     Since most template processors implemented prior to this specification
+     have only implemented the default expression type, we refer to these as
+     Level 1 implementations.
     </t>
     <figure><artwork>
-   var   := "value";
-   hello := "Hello World!";
-   undef := null;
-   empty := "";
-   list  := [ "val1", "val2", "val3" ];
-   keys  := [("key1", "val1"), ("key2", "val2")];
-   path  := "/foo/bar"
-   x     := "1024";
-   y     := "768";
-
 .-----------------------------------------------------------------.
 | Sec | Op  | Description                                         |
-|     |     |    Expression      | Expansion                      |
+|     |     |    Expression        Expansion                      |
 |-----+-----+-----------------------------------------------------|
-| 3.3 |     | Simple expansion with comma-separated values        |
+| 3.3 |     | Level 1 simple string expansion                     |
 |     |     |                                                     |
 |     |     |    {var}             value                          |
 |     |     |    {hello}           Hello%20World%21               |
-|     |     |    {path}/here       %2Ffoo%2Fbar/here              |
+|     |     |    O{empty}X         OX                             |
+|     |     |    O{undef}X         OX                             |
+|     |     |                                                     |
+|-----------------------------------------------------------------|
+| where:      var   := "value"                                    |
+|             hello := "Hello World!"                             |
+|             empty := ""                                         |
+|             undef := null                                       |
+`-----------------------------------------------------------------'
+    </artwork></figure>
+    <t>     
+     Level 2 templates add the ability to define a default string, to be
+     substituted if the variable is undefined, and the plus ("+") operator
+     for expansion values that might contain reserved characters.  
+    </t>
+    <figure><artwork>
+.-----------------------------------------------------------------.
+| Sec | Op  | Description                                         |
+|     |     |    Expression          Expansion                    |
+|-----+-----+-----------------------------------------------------|
+| 3.3 |     | Level 2 string expansion with defaults              |
+|     |     |                                                     |
+|     |     |    {var|default}       value                        |
+|     |     |    O{empty|default}X   OX                           |
+|     |     |    O{undef|default}X   OdefaultX                    |
+|     |     |                                                     |
+|-----+-----+-----------------------------------------------------|
+| 3.4 |  +  | Level 2 reserved expansion with defaults            |
+|     |     |                                                     |
+|     |     |    {+var}              value                        |
+|     |     |    {+hello}            Hello%20World!               |
+|     |     |    {+path}/here        /foo/bar/here                |
+|     |     |    here?ref={+path}    here?ref=/foo/bar            |
+|     |     |    up{+path}{x}/here   up/foo/bar1024/here          |
+|     |     |    up{+empty|/1}/here  up/here                      |
+|     |     |    up{+undef|/1}/here  up/1/here                    |
+|     |     |                                                     |
+|-----------------------------------------------------------------|
+| where:      var   := "value"                                    |
+|             hello := "Hello World!"                             |
+|             empty := ""                                         |
+|             undef := null                                       |
+|             path  := "/foo/bar"                                 |
+`-----------------------------------------------------------------'
+    </artwork></figure>
+    <t>     
+     Level 3 templates add more complex operators for lists of
+     comma-separated values, dot-prefixed labels, semicolon-prefixed path
+     parameters, slash-prefixed path segments, and the forms-style
+     construction of a query syntax consisting of key=value pairs that are
+     separated by an ampersand character.  
+    </t>
+    <figure><artwork>
+.-----------------------------------------------------------------.
+| Sec | Op  | Description                                         |
+|     |     |    Expression        Expansion                      |
+|-----+-----+-----------------------------------------------------|
+| 3.3 |     | Level 3 string expansion with multiple variables    |
+|     |     |                                                     |
 |     |     |    {x,y}             1024,768                       |
-|     |     |    {var=default}     value                          |
-|     |     |    {undef=default}   default                        |
-|     |     |    {list}            val1,val2,val3                 |
-|     |     |    {list*}           val1,val2,val3                 |
-|     |     |    {list+}           list.val1,list.val2,list.val3  |
-|     |     |    {keys}            key1,val1,key2,val2            |
-|     |     |    {keys*}           key1,val1,key2,val2            |
-|     |     |    {keys+}           keys.key1,val1,keys.key2,val2  |
+|     |     |    {x,hello,y}       1024,Hello%20World%21,768      |
+|     |     |    ?{x,empty}        ?1024,                         |
+|     |     |    ?{x,undef}        ?1024                          |
+|     |     |    ?{undef,y}        ?768                           |
+|     |     |    ?{x,undef|0}      ?1024,0                        |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| 3.4 |  +  | Reserved expansion with comma-separated values      |
+| 3.4 |  +  | Level 3 reserved expansion with multiple variables  |
 |     |     |                                                     |
-|     |     |    {+var}            value                          |
-|     |     |    {+hello}          Hello%20World!                 |
-|     |     |    {+path}/here      /foo/bar/here                  |
-|     |     |    {+path,x}/here    /foo/bar,1024/here             |
-|     |     |    {+path}{x}/here   /foo/bar1024/here              |
-|     |     |    {+empty}/here     /here                          |
-|     |     |    {+undef}/here     /here                          |
-|     |     |    {+list}           val1,val2,val3                 |
-|     |     |    {+list*}          val1,val2,val3                 |
-|     |     |    {+list+}          list.val1,list.val2,list.val3  |
-|     |     |    {+keys}           key1,val1,key2,val2            |
-|     |     |    {+keys*}          key1,val1,key2,val2            |
-|     |     |    {+keys+}          keys.key1,val1,keys.key2,val2  |
+|     |     |    {+x,hello,y}      1024,Hello%20World!,768        |
+|     |     |    {+path,x}/here    /foo/bar/1024/here             |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| 3.5 |  ;  | Path-style parameters, semicolon-prefixed           |
+| 3.5 |  .  | Label expansion, dot-prefixed                       |
+|     |     |                                                     |
+|     |     |    X{.var}           X.value                        |
+|     |     |    X{.empty}         X.                             |
+|     |     |    X{.undef}         X                              |
+|     |     |                                                     |
+|-----+-----+-----------------------------------------------------|
+| 3.6 |  ;  | Path-style parameters, semicolon-prefixed           |
 |     |     |                                                     |
 |     |     |    {;x,y}            ;x=1024;y=768                  |
 |     |     |    {;x,y,empty}      ;x=1024;y=768;empty            |
 |     |     |    {;x,y,undef}      ;x=1024;y=768                  |
-|     |     |    {;list}           ;val1,val2,val3                |
-|     |     |    {;list*}          ;val1;val2;val3                |
-|     |     |    {;list+}          ;list=val1;list=val2;list=val3 |
-|     |     |    {;keys}           ;key1,val1,key2,val2           |
-|     |     |    {;keys*}          ;key1=val1;key2=val2           |
-|     |     |    {;keys+}          ;keys.key1=val1;keys.key2=val2 |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| 3.6 |  ?  | Form-style parameters, ampersand-separated          |
-|     |     |                                                     |
-|     |     |    {?x,y}            ?x=1024&amp;y=768                  |
-|     |     |    {?x,y,empty}      ?x=1024&amp;y=768&amp;empty=           |
-|     |     |    {?x,y,undef}      ?x=1024&amp;y=768                  |
-|     |     |    {?list}           ?list=val1,val2,val3           |
-|     |     |    {?list*}          ?val1&amp;val2&amp;val3                |
-|     |     |    {?list+}          ?list=val1&amp;list=val2&amp;list=val3 |
-|     |     |    {?keys}           ?keys=key1,val1,key2,val2      |
-|     |     |    {?keys*}          ?key1=val1&amp;key2=val2           |
-|     |     |    {?keys+}          ?keys.key1=val1&amp;keys.key2=val2 |
-|     |     |                                                     |
-|-----+-----+-----------------------------------------------------|
-| 3.7 |  /  | Hierarchical path segments, slash-separated         |
+| 3.7 |  /  | Hierarchical path segments, slash-prefixed          |
 |     |     |                                                     |
 |     |     |    {/var}            /value                         |
 |     |     |    {/var,empty}      /value/                        |
 |     |     |    {/var,undef}      /value                         |
-|     |     |    {/list}           /val1,val2,val3                |
-|     |     |    {/list*}          /val1/val2/val3                |
-|     |     |    {/list*,x}        /val1/val2/val3/1024           |
-|     |     |    {/list+}          /list.val1/list.val2/list.val3 |
-|     |     |    {/keys}           /key1,val1,key2,val2           |
-|     |     |    {/keys*}          /key1/val1/key2/val2           |
-|     |     |    {/keys+}          /keys.key1/val1/keys.key2/val2 |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| 3.8 |  .  | Label expansion, dot-prefixed                       |
+| 3.8 |  ?  | Level 3 form-style query, ampersand-separated       |
 |     |     |                                                     |
-|     |     |    X{.var}          X.value                         |
-|     |     |    X{.empty}        X.                              |
-|     |     |    X{.undef}        X                               |
-|     |     |    X{.list}         X.val1,val2,val3                |
-|     |     |    X{.list*}        X.val1.val2.val3                |
-|     |     |    X{.list*,x}      X.val1.val2.val3.1024           |
-|     |     |    X{.list+}        X.list.val1.list.val2.list.val3 |
-|     |     |    X{.keys}         X.key1,val1,key2,val2           |
-|     |     |    X{.keys*}        X.key1.val1.key2.val2           |
-|     |     |    X{.keys+}        X.keys.key1.val1.keys.key2.val2 |
+|     |     |    {?x,y}            ?x=1024&amp;y=768                  |
+|     |     |    {?x,y,empty}      ?x=1024&amp;y=768&amp;empty=           |
+|     |     |    {?x,y,undef}      ?x=1024&amp;y=768                  |
 |     |     |                                                     |
+|-----------------------------------------------------------------|
+| where:      var   := "value"                                    |
+|             hello := "Hello World!"                             |
+|             empty := ""                                         |
+|             undef := null                                       |
+|             path  := "/foo/bar"                                 |
+|             x     := "1024"                                     |
+|             y     := "768"                                      |
+`-----+-----+-----------------------------------------------------'
+    </artwork></figure>
+    <t>     
+     Finally, Level 4 templates add the ability to specify value modifiers
+     as a suffix to the variable name.  The prefix modifier (":") indicates
+     that only a limited number of characters from the beginning of the
+     value are used by the expansion.  The explode ("*") modifier tells
+     the expansion process to treat the value as a multivalued structure ---
+     a list of values or key=value pairs -- rather than as a single string.
+    </t>
+    <figure><artwork>
+.-----------------------------------------------------------------.
+| Sec | Op  | Description                                         |
+|     |     |    Expression        Expansion                      |
+|-----+-----+-----------------------------------------------------|
+| 3.3 |     | Level 4 string expansion with value modifiers       |
+|     |     |                                                     |
+|     |     |    {var:3}           val                            |
+|     |     |    {var:30}          value                          |
+|     |     |    {list}            red,green,blue                 |
+|     |     |    {list*}           red,green,blue                 |
+|     |     |    {keys}            semi,%3B,dot,.,comma,%2C       |
+|     |     |    {keys*}           semi=%3B,dot=.,comma=%2C       |
+|     |     |                                                     |
+|-----+-----+-----------------------------------------------------|
+| 3.4 |  +  | Level 4 reserved expansion with value modifiers     |
+|     |     |                                                     |
+|     |     |    {+path:6}/here    /foo/b/here                    |
+|     |     |    {+list}           red,green,blue                 |
+|     |     |    {+list*}          red,green,blue                 |
+|     |     |    {+keys}           semi,;,dot,.,comma,,           |
+|     |     |    {+keys*}          semi=;,dot=.,comma=,           |
+|     |     |                                                     |
+|-----+-----+-----------------------------------------------------|
+| 3.5 |  .  | Level 4 label expansion, dot-prefixed               |
+|     |     |                                                     |
+|     |     |    X{.var:3}         X.val                          |
+|     |     |    X{.list}          X.red,green,blue               |
+|     |     |    X{.list*}         X.red.green.blue               |
+|     |     |    X{.keys}          X.semi,%3B,dot,%2E,comma,%2C   |
+|     |     |    X{.keys*}         X.semi=%3B.dot=%2E.comma=%2C   |
+|     |     |                                                     |
+|-----+-----+-----------------------------------------------------|
+| 3.6 |  ;  | Level 4 path-style parameters, semicolon-prefixed   |
+|     |     |                                                     |
+|     |     |    {;hello:5}        ;hello=Hello                   |
+|     |     |    {;list}           ;red,green,blue                |
+|     |     |    {;list*}          ;red;green;blue                |
+|     |     |    {;keys}           ;semi,%3B,dot,.,comma,%2C      |
+|     |     |    {;keys*}          ;semi=%3B;dot=.;comma=%2C      |
+|     |     |                                                     |
+|-----+-----+-----------------------------------------------------|
+| 3.7 |  /  | Level 4 path segments, slash-prefixed               |
+|     |     |                                                     |
+|     |     |    {/var:1,var}      /v/value                       |
+|     |     |    {/list}           /red,green,blue                |
+|     |     |    {/list*}          /red/green/blue                |
+|     |     |    {/list*,path:4}   /red/green/blue/%2Ffoo         |
+|     |     |    {/keys}           /semi,%3B,dot,.,comma,%2C      |
+|     |     |    {/keys*}          /semi=%3B/dot=./comma=%2C      |
+|     |     |                                                     |
+|-----+-----+-----------------------------------------------------|
+| 3.8 |  ?  | Level 4 form-style query, ampersand-separated       |
+|     |     |                                                     |
+|     |     |    {?var:3}          ?var=val                       |
+|     |     |    {?list}           ?list=red,green,blue           |
+|     |     |    {?list*}          ?list=red&amp;list=green&amp;list=blue |
+|     |     |    {?keys}           ?keys=semi,%3B,dot,.,comma,%2C |
+|     |     |    {?keys*}          ?semi=%3B&amp;dot=.&amp;comma=%2C     |
+|     |     |                                                     |
+|-----------------------------------------------------------------|
+| where:      var   := "value"                                    |
+|             hello := "Hello World!"                             |
+|             path  := "/foo/bar"                                 |
+|             list  := [ "red", "green", "blue" ]                 |
+|             keys  := [("semi", ";"), ("dot", ".")]              |
 `-----+-----+-----------------------------------------------------'
     </artwork></figure>
    </section>
@@ -375,7 +471,7 @@
     </t>
     <t>
      The most common cases for URI spaces can be described with
-     simple URI Template expressions.  If we were only concerned with
+     Level 1 template expressions.  If we were only concerned with
      URI generation, then the template syntax could be limited to
      just simple variable expansion, since more complex forms could
      be generated by changing the variable values.  However, URI
