@@ -433,7 +433,7 @@
 |     |     |    {?list}           ?list=red,green,blue           |
 |     |     |    {?list*}          ?list=red&amp;list=green&amp;list=blue |
 |     |     |    {?keys}           ?keys=semi,%3B,dot,.,comma,%2C |
-|     |     |    {?keys*}          ?semi=%3B&amp;dot=.&amp;comma=%2C     |
+|     |     |    {?keys*}          ?semi=%3B&amp;dot=.&amp;comma=%2C      |
 |     |     |                                                     |
 |-----------------------------------------------------------------|
 | where:      var   := "value"                                    |
