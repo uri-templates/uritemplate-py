@@ -72,7 +72,7 @@
    </address>
   </author>
 
-  <date day="05" month="Jul" year="2011"/>
+  <date day="11" month="Jul" year="2011"/>
   <abstract>
    <t>
     A URI Template is a compact sequence of characters
@@ -80,7 +80,7 @@
     through variable expansion.
     This specification defines the URI Template
     syntax and the process for expanding a URI Template into a
-    URI, along with guidelines for the
+    URI reference, along with guidelines for the
     use of URI Templates on the Internet.
    </t>
   </abstract>
@@ -221,7 +221,8 @@
     </artwork></figure>
     <t>
      A URI Template may be provided in absolute form, as in the examples
-     above, or in relative form if a suitable base URI is defined.
+     above, or in relative form.  A template MUST be expanded before the
+     resulting reference can be resolved from relative to absolute form.
     </t>
     <t>
      Although the URI syntax is used for the result, the template
@@ -229,8 +230,8 @@
      that can be found in IRI references <xref target="RFC3987"/>.
      A URI Template is therefore also an IRI template, and the result
      of template processing can be rendered as an IRI by transforming
-     the pct-encoded sequences to their corresponding Unicode
-     character if the character is not in the reserved set.
+     each of the pct-encoded sequences to their corresponding Unicode
+     character if that character is not in the reserved set.
     </t>
    </section>
 
@@ -246,7 +247,7 @@
     <t>     
      Since most template processors implemented prior to this specification
      have only implemented the default expression type, we refer to these as
-     Level 1 implementations.
+     Level 1 templates.
     </t>
     <figure><artwork>
 .-----------------------------------------------------------------.
@@ -268,7 +269,7 @@
 `-----------------------------------------------------------------'
     </artwork></figure>
     <t>     
-     Level 2 templates add the ability to define a default string, to be
+     Level 2 templates add the ability to define a default string, which is
      substituted if the variable is undefined, and the plus ("+") operator
      for expansion values that might contain reserved characters.  
     </t>
@@ -330,21 +331,21 @@
 |     |     |    {+path,x}/here    /foo/bar/1024/here             |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| 3.5 |  .  | Label expansion, dot-prefixed                       |
+| 3.5 |  .  | Level 3 label expansion, dot-prefixed               |
 |     |     |                                                     |
 |     |     |    X{.var}           X.value                        |
 |     |     |    X{.empty}         X.                             |
 |     |     |    X{.undef}         X                              |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| 3.6 |  ;  | Path-style parameters, semicolon-prefixed           |
+| 3.6 |  ;  | Level 3 path-style parameters, semicolon-prefixed   |
 |     |     |                                                     |
 |     |     |    {;x,y}            ;x=1024;y=768                  |
 |     |     |    {;x,y,empty}      ;x=1024;y=768;empty            |
 |     |     |    {;x,y,undef}      ;x=1024;y=768                  |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
-| 3.7 |  /  | Hierarchical path segments, slash-prefixed          |
+| 3.7 |  /  | Level 3 path segments, slash-prefixed               |
 |     |     |                                                     |
 |     |     |    {/var}            /value                         |
 |     |     |    {/var,empty}      /value/                        |
@@ -365,7 +366,7 @@
 |             path  := "/foo/bar"                                 |
 |             x     := "1024"                                     |
 |             y     := "768"                                      |
-`-----+-----+-----------------------------------------------------'
+`-----------------------------------------------------------------'
     </artwork></figure>
     <t>     
      Finally, Level 4 templates add the ability to specify value modifiers
@@ -404,8 +405,8 @@
 |     |     |    X{.var:3}         X.val                          |
 |     |     |    X{.list}          X.red,green,blue               |
 |     |     |    X{.list*}         X.red.green.blue               |
-|     |     |    X{.keys}          X.semi,%3B,dot,%2E,comma,%2C   |
-|     |     |    X{.keys*}         X.semi=%3B.dot=%2E.comma=%2C   |
+|     |     |    X{.keys}          X.semi,%3B,dot,.,comma,%2C     |
+|     |     |    X{.keys*}         X.semi=%3B.dot=..comma=%2C     |
 |     |     |                                                     |
 |-----+-----+-----------------------------------------------------|
 | 3.6 |  ;  | Level 4 path-style parameters, semicolon-prefixed   |
@@ -441,11 +442,20 @@
 |             path  := "/foo/bar"                                 |
 |             list  := [ "red", "green", "blue" ]                 |
 |             keys  := [("semi", ";"), ("dot", ".")]              |
-`-----+-----+-----------------------------------------------------'
+`-----------------------------------------------------------------'
     </artwork></figure>
    </section>
 
    <section title="Design Considerations" anchor="design">
+    <t>
+     Mechanisms similar to URI Templates have been defined within
+     several specifications, including WSDL, WADL and OpenSearch.
+     This specification extends and formally defines the syntax so
+     that URI Templates can be used consistently across multiple
+     Internet applications and within Internet message fields,
+     while at the same time retaining compatibility with those
+     earlier definitions.
+    </t>
     <t>
      The URI Template syntax has been designed to carefully balance
      the need for a powerful expansion mechanism with the need for
@@ -479,16 +489,10 @@
      identifiers in terms of preexisting data values.  The template
      syntax therefore includes operators that reflect how
      resource identifiers are commonly allocated.  Likewise, since
-     prefix and suffix substrings are often used to partition large
-     spaces of resources, modifiers on variable values provide a way
-     to specify those substrings.
-    </t>
-    <t>
-     Mechanisms similar to URI Templates have been defined within
-     several specifications, including WSDL, WADL and OpenSearch.
-     This specification extends and formally defines the syntax so
-     that URI Templates can be used consistently across multiple
-     Internet applications and within Internet message fields.
+     prefix substrings are often used to partition large spaces of
+     resources, modifiers on variable values provide a way
+     to specify both the substring and the full value string
+     with a single variable name.
     </t>
    </section>
 
@@ -504,13 +508,13 @@
      occur when the resulting URI is used for name resolution or access.
     </t>
     <t>
-     URI Template expressions are not URIs: they do not identify
+     URI Templates are not URIs: they do not identify
      an abstract or physical resource, they are not parsed as URIs,
      and should not be used in places where a URI would be expected
      unless the template expressions will be expanded by a template
      processor prior to use.  Distinct field, element, or attribute
      names should be used to differentiate protocol elements that
-     carry a URI Template from those that expect a URI-reference.
+     carry a URI Template from those that expect a URI reference.
     </t>
    </section>
 
@@ -548,6 +552,10 @@
 
   iprivate       =  %xE000-F8FF / %xF0000-FFFFD / %x100000-10FFFD
     </artwork></figure>
+   </section>
+
+   <section title='Character Encoding and Unicode Normalization'
+            anchor="unicode-normal">
     <t>
      This specification uses the terms "character" and "coded
      character set" in accordance with the definitions provided
@@ -555,36 +563,59 @@
      place of what <xref target="RFC2978"/> refers to as a "charset".
     </t>
     <t>
-     A URI Template is defined as a sequence of characters and therefore
-     has the same issues as URIs with regard to codepoints and character sets.
-     That is, URI Template characters are frequently encoded as octets
-     for transport or presentation.  This specification does not mandate
-     any particular character encoding for mapping between URI Template
-     characters and the octets used to store or transmit those characters.
-     When a URI Template appears in a protocol element, the character
-     encoding is defined by that protocol; without such a definition,
-     a URI Template is assumed to be in the same character encoding as
-     the surrounding text.
-    </t>
-    <t>
-     A URI Template and its associated variable values are converted
-     to a normal form of UTF-8 <xref target="RFC3629"/> prior to
-     template processing, as defined in <xref target="unicode-normal"/>.
-    </t>
-    <t>
      The ABNF notation defines its terminal values to be
      non-negative integers (codepoints) that are a superset of the
      US-ASCII coded character set <xref target="ASCII"/>.  This
      specification defines terminal values as codepoints within the
-     Unicode coded character set <xref target="UNIV4"/>.  Thus, a string
-     of characters in a URI Template is assumed to be transformed into
-     its corresponding sequence of Unicode codepoints prior to testing
-     for a match with the URI Template grammar.
+     Unicode coded character set <xref target="UNIV4"/>.
+    </t>
+    <t>
+     In spite of the syntax and template expansion process being defined
+     in terms of Unicode codepoints, it should be understood that
+     templates occur in practice as a sequence of characters in
+     whatever form or encoding is suitable for the context in which
+     they occur, whether that be octets embedded in a network protocol
+     element or paint applied to the side of a bus.
+     This specification does not mandate any particular character encoding
+     for mapping between URI Template characters and the octets used to
+     store or transmit those characters.
+     When a URI Template appears in a protocol element, the character
+     encoding is defined by that protocol; without such a definition,
+     a URI Template is assumed to be in the same character encoding as
+     the surrounding text.  It is only during the process of template
+     expansion that a string of characters in a URI Template MUST be
+     transformed into its corresponding sequence of normalized
+     Unicode codepoints.
+    </t>
+    <t>
+     The Unicode Standard <xref target="UNIV4"/> defines various
+     equivalences between sequences of characters for various purposes.
+     Unicode Standard Annex #15 <xref target="UTR15"/> defines various
+     Normalization Forms for these equivalences, in particular
+     Normalization Form KC (NFKC: Compatibility Decomposition followed
+     by Canonical Composition).  The normalization form determines how
+     to consistently encode the equivalent strings.
+    </t>
+    <t>
+     In theory, all URI processing implementations, including template
+     processors, should use the same normalization form for generating
+     or handling a URI reference.  In practice, they do not.  However,
+     template processors transform the template literals and variable
+     values from characters to codepoints, expand the expressions, and
+     then transform the resulting codepoints back to characters again.
+     In order to promote consistent generation of URI references from
+     templates, template processors MUST ensure that the template and
+     each variable value is in NFKC when they are transformed to
+     a sequence of Unicode codepoints.  The final step of template
+     processing will encode the expanded sequence of Unicode
+     codepoints, which should still be in NFKC, as UTF-8
+     <xref target="RFC3629"/> and then further pct-encode any octets
+     within the UTF-8 string that are not allowed in a URI.
     </t>
    </section>
   </section>
 
-  <section title="URI Template Syntax" anchor="syntax">
+  <section title="Syntax" anchor="syntax">
    <t>
     A URI Template is a string of printable Unicode characters
     that contains zero or more embedded variable expressions, each
@@ -593,11 +624,30 @@
    <figure><artwork type="abnf">
   URI-Template  = *( literals / expression )
    </artwork></figure>
+   <t>
+    Although templates (and template processor implementations) are
+    described above in terms of four gradual levels, we define the
+    URI-Template syntax in terms of the ABNF for Level 4.  A template
+    processor limited to lower level templates MAY exclude the ABNF
+    rules applicable only to higher levels.  However, it is RECOMMENDED
+    that all parsers implement the full syntax such that unsupported
+    levels can be properly identified as such to the end user.
+   </t>
+   <t>
+    Each character in a URI Template MUST be transcoded to an NFKC
+    Unicode codepoint prior to evaluation.  If a character sequence
+    in the template consists of pct-encoded triplets corresponding
+    to a valid sequence of octets in UTF-8 that represent a character
+    not in the reserved set, then the triplets MUST be replaced with
+    their corresponding Unicode codepoint.  In other words, pct-encoded
+    UTF-8 found within the template is decoded prior to further processing
+    unless the corresponding character is in the reserved set.
+   </t>
 
    <section title="Literals" anchor="literals">
     <t>
-      The characters outside of expressions in a URI Template string
-      are intended to be translated literally to the URI-reference.
+     The characters outside of expressions in a URI Template string
+     are intended to be translated literally to the URI-reference.
     </t>
     <figure><artwork type="abnf">
   literals      =  %x21 / %x23-24 / %x26 / %x28-3B / %x3D / %x3F-5B
@@ -607,6 +657,15 @@
                      ;  DQUOTE, "'", "%" (aside from pct-encoded),
                      ;  "&lt;", "&gt;", "\", "^", "`", "{", "|", "}"
     </artwork></figure>
+    <t>
+     A sequence of pct-encoded literals that corresponds to a UTF-8
+     encoded character that is not within the reserved set will be
+     transcoded during template processing, as describe above.  If
+     such a character is not in the unreserved set, it will be
+     re-pct-encoded during the final step of template processing.
+     Unreserved characters will therefore be normalized to their
+     unencoded form as a side-effect of template processing.
+    </t>
    </section>
 
    <section title="Expressions" anchor="expressions">
@@ -621,7 +680,7 @@
     <figure><artwork type="abnf">
   expression    =  "{" [ operator ] variable-list "}"
   operator      =  "+" / "." / "/" / ";" / "?" / op-reserve
-  op-reserve    =  "|" / "!" / "@"
+  op-reserve    =  "," / "!" / "@"
                        ; reserved for local use: "$" / "(" / ")"
     </artwork></figure>
    <t>
@@ -642,7 +701,7 @@
      These operators will be described in detail in <xref target="expansion"/>.
     </t>
     <t>
-     The operator characters pipe ("|"), exclamation ("!"), and at-sign ("@")
+     The operator characters comma (","), exclamation ("!"), and at-sign ("@")
      are reserved for future extensions.  A processor that unexpectedly
      encounters such an extension operator SHOULD pass the expression
      through unexpanded and MAY also indicate a warning to the invoking
@@ -662,12 +721,12 @@
      one or more comma-separated variable specifiers (varspec).
      The variable names serve multiple purposes: documentation for
      what kinds of values are expected, identifiers for associating
-     values within a URI Template processor, and the string to use
+     values within a template processor, and the string to use
      for each key on key=value expansions.
     </t>
     <figure><artwork type="abnf">
   variable-list =  varspec *( "," varspec )
-  varspec       =  varname [ modifier ] [ "=" default ]
+  varspec       =  varname [ modifier ] [ "|" default ]
   varname       =  varchar *( varchar / "." )
   varchar       =  ALPHA / DIGIT / "_" / ucschar / iprivate
                 /  pct-encoded
@@ -702,17 +761,60 @@
 
    <section title="Value Modifiers" anchor="modifiers">
     <t>
-     Any of the variables can have a modifier indicating that its
-     value is exploded into components or is limited to a prefix,
-     suffix, or the remainder of a prefix or suffix of the variable value.
+     Each of the variables in a Level 4 template expression can have
+     a modifier indicating either that its expansion is limited to a
+     prefix of the variable's value string or that its expansion is
+     exploded into components based on an external type or schema
+     associated with that variable.
     </t>
     <figure><artwork type="abnf">
-  modifier      =  explode / partial
+  modifier      =  prefix / explode
     </artwork></figure>
+
+    <section title="Prefix Values" anchor="prefix-values">
+     <t>
+      A prefix modifier indicates that the variable expansion is limited
+      to a prefix of the variable's value string.  Prefix modifiers are
+      often used to partition an identifier space hierarchically, as is
+      common in reference indices and hash-based storage.  It also serves
+      to limit the expanded value to a maximum number of characters.
+     </t>
+     <figure><artwork type="abnf">
+  prefix        =  ":" offset
+  max-length    =  %x31-39 *DIGIT   ; positive integer
+     </artwork></figure>
+     <t>
+      The max-length is a positive integer that refers to a maximum number
+      of characters from the beginning of the variable's value as a
+      Unicode string.
+      Note that this numbering is in characters, not octets, in order to
+      avoid splitting between the octets of a multi-octet UTF-8 encoded
+      character or within a pct-encoded triplet.
+      If the max-length is greater than the length of the variable's
+      value, then the entire value string is used.
+     </t>
+     <t>
+      For example,
+     </t>
+     <figure><artwork>
+  Given the variable assignments
+   
+    var   := "value"
+    semi  := ";"
+
+  Example Template     Expansion
+
+    {var}              value
+    {var:20}           value
+    {var:3}            val
+    {semi}             %3B
+    {semi:2}           %3B
+    </artwork></figure>
+    </section>
 
     <section title="Component Values" anchor="component-values">
      <t>
-      The explode modifiers ("*" and "+") indicate that the
+      An explode modifier ("*") indicates that the
       variable represents a composite value that may be substituted
       in full or partial forms, depending on the variable's type or
       schema.  Since URI Templates do not contain an indication of
@@ -724,19 +826,11 @@
       differentiate variables as strings, lists, associative arrays,
       or structures.
      </t>
-    <figure><artwork type="abnf">
-  explode       =  ( "*" / "+" )
-    </artwork></figure>
+     <figure><artwork type="abnf">
+  explode       =  "*"
+     </artwork></figure>
      <t>
-      The primary difference between the two explode modifiers is
-      that an asterisk ("*") indicates that just the component names
-      and values are included in the expansion, whereas the plus
-      ("+") indicates that each component name is prefixed with the
-      given variable name and a period ("."), thereby enabling multiple
-      variables with the same component names to be disambiguated.
-     </t>
-     <t>
-      Component modifiers improve brevity in the URI Template syntax.
+      Explode modifiers improve brevity in the URI Template syntax.
       For example, a resource that provides a geographic map for a
       given street address might accept a hundred permutations on
       fields for address input, including partial addresses (e.g.,
@@ -749,98 +843,39 @@
    /mapper{?address*}
      </artwork></figure>
      <t>
-      or
-     </t>
-     <figure><artwork>
-   /directions{?from+,to+} 
-     </artwork></figure>
-     <t>
-      along with some context that defines each variable (address, from,
-      and to) as adhering to a given addressing standard (e.g., UPU S42
-      or AS/NZS 4819:2003).  A recipient aware of the schema can then
-      provide appropriate expansions, such as:
+      along with some context that defines what the variable named
+      "address" can include, such as by reference to some other
+      standard for addressing (e.g., UPU S42 or AS/NZS 4819:2003).
+      A recipient aware of the schema can then provide appropriate
+      expansions, such as:
      </t>
      <figure><artwork>
    /mapper?city=Newport%20Beach&amp;state=CA
-   /directions?from.zipcode=92660&amp;to.zipcode=90210
      </artwork></figure>
      <t>
-      The expansion process for variables, as defined in
-      <xref target="expansion"/>, is dependent on both the
-      operator being used and, if one of the explode modifiers is
-      used, the type and schema of the variable being substituted.
+      If an explode modifier is present, the expansion process for that
+      variable, as defined in <xref target="expansion"/>, is dependent on
+      both the operator being used and the type or schema of the value
+      being substituted.
      </t>
     </section>
     
-    <section title="Prefix and Suffix Values" anchor="partial-values">
-     <t>
-      Prefix and suffix modifiers are often used to partition an identifier
-      space hierarchically, as is common in reference indices and hash-based
-      storage, or to limit the substituted value to a maximum number of
-      characters.
-     </t>
-    <figure><artwork type="abnf">
-  partial       =  ( substring / remainder ) offset
-  substring     =  ":"
-  remainder     =  "^"
-  offset        =  [ from-end ] 1*DIGIT
-  from-end      =  "-"
-    </artwork></figure>
-     <t>
-      The offset refers to a maximum number of characters from either
-      the beginning (prefix) or end (suffix) of the variable's value as
-      a Unicode string.  Note that this numbering is in characters, not
-      octets, in order to avoid substituting improperly encoded values
-      due to splitting a multi-octet UTF-8 encoded character or a
-      pct-encoded triplet.
-     </t>
-     <t>
-      A substring modifier requires that only the indicated prefix or
-      suffix be used in the expansion.  A remainder modifier requires
-      that only the remainder of the value, excluding the indicated prefix
-      or suffix, be used in the expansion.  If the offset is greater than
-      the length of the variable's value, then the entire string is used
-      for a substring and the empty string is used for a remainder.
-     </t>
-    <t>
-     The following examples illustrate how modifiers work with the
-     different variable types.  More complex examples are provided
-     in <xref target="examples"/>.
-    </t>
-    <figure><artwork>
-  Given the variable assignments:
-    var   := "value";
-    name  := [ "Fred", "Wilma", "Pebbles" ];
-
-  Example Template     Expansion
-
-    {var}              value
-    {var:20}           value
-    {var:3}            val
-    {var^3}            ue
-    {var:-3}           lue
-    {var^-3}           va
-
-    {?name}            ?name=Fred,Wilma,Pebbles
-    {?name:1}          ?name=F
-    </artwork></figure>
-    </section>
    </section>
 
    <section title="Value Defaults" anchor="defaults">
     <t>
-     Any of the variables may also be supplied with a default value
-     to be used when a template processor determines the variable to be
-     undefined. The default value is limited to the unreserved and
-     pct-encoded characters of a URI-reference, since our intention
-     is for the default to be presented in the exact form that it would
-     appear in the resulting URI.  The default is not affected by the
-     variable modifiers; it is assumed that the default string
-     provided in the expression already reflects any necessary
-     substring or remainder processing.
+     Each of the variables in Level 2 (and above) templates may also
+     be supplied with a default value to be used when a template processor
+     determines that variable to be undefined. The default value is
+     limited to unreserved characters, the equal sign ("="), and
+     pct-encoded triplets, since the default is provided in the exact
+     form that it would appear in the expanded URI reference.
+     The default is not affected by any variable modifiers, since we
+     assume that the default string provided in the expression already
+     reflects the desired value.
     </t>
     <figure><artwork type="abnf">
-  default       =  *( unreserved / pct-encoded )
+  default       =  *( unreserved / "=" / pct-encoded )
     </artwork></figure>
     <t>
      The following examples illustrate how default values work with
@@ -849,116 +884,69 @@
     </t>
     <figure><artwork>
   Given the variable assignments:
-    var   := "value";
-    empty := "";
-    undef := null;
-    name  := [ "Fred", "Wilma", "Pebbles" ];
-    favs  := [("color","red"), ("volume","high")];
-    empty_list := [];
-    empty_keys := [];
+
+    var   := "value"
+    name  := [ "Fred", "Wilma", "Pebbles" ]
+    favs  := [("color","red"), ("volume","high")]
+    empty_keys := []
+    empty := ""
+    undef := null
 
   Example Template        Expansion
 
-    {var=default}         value
-    {undef=default}       default
+    {var|default}         value
+    {undef|default}       default
+    {undef:3|default}     default
 
     x{empty}y             xy
-    x{empty=_}y           xy
+    x{empty|_}y           xy
     x{undef}y             xy
-    x{undef=_}y           x_y
+    x{undef|_}y           x_y
 
-    x{empty_list}y        xy
-    x{empty_list=_}y      xy
-    x{empty_list*}y       xy
-    x{empty_list*=_}y     x_y
-    x{empty_list+}y       xy
-    x{empty_list+=_}y     xempty_list._y
-
-    x{empty_keys}y        xy
-    x{empty_keys=_}y      xy
-    x{empty_keys*}y       xy
-    x{empty_keys*=_}y     x_y
-    x{empty_keys+}y       xy
-    x{empty_keys+=_}y     xempty_keys._y
+    x{.name|none}         x.Fred,Wilma,Pebbles
+    x{.name*|none}        x.Fred.Wilma.Pebbles
+    x{.empty}             x.
+    x{.empty|none}        x.
+    x{.undef}             x
+    x{.undef|none}        x.none
     
-    x{?name=none}         x?name=Fred,Wilma,Pebbles
-    x{?favs=none}         x?favs=color,red,volume,high
-    x{?favs*=none}        x?color=red&amp;volume=high
-    x{?favs+=none}        x?favs.color=red&amp;favs.volume=high
-    
-    x{?undef}             x
-    x{?undef=none}        x?undef=none
-    x{?empty}             x?empty=
-    x{?empty=none}        x?empty=
-
-    x{?empty_list}        x
-    x{?empty_list=none}   x?empty_list=none
-    x{?empty_list*}       x
-    x{?empty_list*=none}  x?none
-    x{?empty_list+}       x
-    x{?empty_list+=none}  x?empty_list.none
-
-    x{?empty_keys}        x
-    x{?empty_keys=none}   x?empty_keys=none
-    x{?empty_keys*}       x
-    x{?empty_keys*=none}  x?none
-    x{?empty_keys+}       x
-    x{?empty_keys+=none}  x?empty_keys.none
-    
-    x{;name=none}         x;name=Fred,Wilma,Pebbles
-    x{;favs=none}         x;favs=color,red,volume,high
-    x{;favs*=none}        x;color=red;volume=high
-    x{;favs+=none}        x;favs.color=red;favs.volume=high
-    
-    x{;undef}             x
-    x{;undef=none}        x;undef=none
+    x{;name|none}         x;name=Fred,Wilma,Pebbles
+    x{;favs|none}         x;favs=color,red,volume,high
+    x{;favs*|none}        x;color=red;volume=high
     x{;empty}             x;empty
-    x{;empty=none}        x;empty
+    x{;empty|none}        x;empty
+    x{;undef}             x
+    x{;undef|none}        x;none
+    x{;undef|foo=y}       x;foo=y
 
-    x{;empty_list}        x
-    x{;empty_list=none}   x;empty_list=none
-    x{;empty_list*}       x
-    x{;empty_list*=none}  x;none
-    x{;empty_list+}       x
-    x{;empty_list+=none}  x;empty_list.none
-    
-    x{;empty_keys}        x
-    x{;empty_keys=none}   x;empty_keys=none
-    x{;empty_keys*}       x
-    x{;empty_keys*=none}  x;none
-    x{;empty_keys+}       x
-    x{;empty_keys+=none}  x;empty_keys.none
-    
-    x{/name=none}         x/Fred,Wilma,Pebbles
-    x{/name*=none}        x/Fred/Wilma/Pebbles
-    x{/name+=none}        x/name.Fred/name.Wilma/name.Pebbles
-    x{/favs=none}         x/color,red,volume,high
-    x{/favs*=none}        x/color/red/volume/high
-    x{/favs+=none}        x/favs.color/red/favs.volume/high
-    
+    x{/name|none}         x/Fred,Wilma,Pebbles
+    x{/name*|none}        x/Fred/Wilma/Pebbles
     x{/undef}             x
-    x{/undef=none}        x/none
+    x{/undef|none}        x/none
     x{/empty}             x/
-    x{/empty=none}        x/
-    
-    x{/empty_list}        x
-    x{/empty_list=none}   x/none
-    x{/empty_list*}       x
-    x{/empty_list*=none}  x/none
-    x{/empty_list+}       x
-    x{/empty_list+=none}  x/empty_list.none
-    
+    x{/empty|none}        x/
     x{/empty_keys}        x
-    x{/empty_keys=none}   x/none
+    x{/empty_keys|none}   x/none
     x{/empty_keys*}       x
-    x{/empty_keys*=none}  x/none
-    x{/empty_keys+}       x
-    x{/empty_keys+=none}  x/empty_keys.none
+    x{/empty_keys*|none}  x/none
+
+    x{?var|none}          x?var=value
+    x{?favs|none}         x?favs=color,red,volume,high
+    x{?favs*|none}        x?color=red&amp;volume=high
+    x{?empty}             x?empty=
+    x{?empty|foo=none}    x?empty=
+    x{?undef}             x
+    x{?undef|foo=none}    x?foo=none
+    x{?empty_keys}        x
+    x{?empty_keys|none}   x?none
+    x{?empty_keys|y=z}    x?y=z
+    x{?empty_keys*|y=z}   x?y=z
+    
     </artwork></figure>
    </section>
   </section>
 
-  <section title="URI Template Expansion" anchor="expansion">
+  <section title="Expansion" anchor="expansion">
    <t>
     The process of URI Template expansion is to scan the template
     string from beginning to end, copying literal characters as-is
@@ -967,43 +955,25 @@
     the expression.
    </t>
    <t>
-    If a template processor encounters an error, such as an operator
-    that it does not understand or a character sequence that does not
-    match the &lt;URI-Template&gt; grammar, then processing of the
-    template SHOULD cease, the URI-reference result SHOULD be undefined,
-    and the location and type of error SHOULD be indicated to the
-    invoking application.
+    Each variable value MUST be formed as a sequence of NFKC Unicode
+    codepoints prior to template expansion.  A value is assumed to be
+    raw data that might need to be encoded by the template processor
+    during expansion, depending on the expression type.
    </t>
    <t>
-    If a template processor encounters a warning, such as the use of
-    an operator character reserved for future extension, then the
-    processing of the template SHOULD NOT cease, and the location
-    and type of warning SHOULD be indicated to the invoking application.
+    If a template processor encounters an error outside of an expression,
+    such as a character sequence that does not match the &lt;URI-Template&gt;
+    grammar, then processing of the template SHOULD cease, the URI-reference
+    result SHOULD be undefined, and the location and type of error SHOULD be
+    indicated to the invoking application.  If an error is encountered inside
+    an expression, such as an operator or value modifier that it does not
+    recognize or cannot support, then the expression SHOULD be copied to
+    the result unexpanded, processing of the remainder of the template SHOULD
+    continue, and the location and type of error SHOULD be indicated to
+    the invoking application.
    </t>
 
-   <section title='Unicode normalization' anchor="unicode-normal">
-    <t>
-     The Unicode Standard <xref target="UNIV4"/> defines various
-     equivalences between sequences of characters for various
-     purposes.  Unicode Standard Annex #15 <xref target="UTR15"/> defines
-     various Normalization Forms for these equivalences, in
-     particular Normalization Form KC (NFKC: Compatibility
-     Decomposition followed by Canonical Composition). Since
-     different Normalized Form unicode strings will have
-     different UTF-8 representations, the only way to guarantee
-     that template processors will produce the same URI is to
-     require a common Normalized Form.
-    </t>
-    <t>
-     The string values for the URI Template and template variables
-     MUST be in NFKC and encoded as UTF-8 <xref target="RFC3629"/>
-     prior to use in the template expansion process (US-ASCII is a
-     proper subset of NFKC UTF-8).  The remaining sections defining
-     the expansion process assume strings are in NFKC UTF-8.
-    </t>
-   </section>
-
-   <section title='Literal expansion' anchor="literal-expansion">
+   <section title='Literal Expansion' anchor="literal-expansion">
     <t>
      If the literal character is allowed anywhere in the URI
      syntax (unreserved / reserved), then it is copied directly
@@ -1014,13 +984,16 @@
     </t>
    </section>
 
-   <section title='Expression expansion' anchor="expression-expansion">
+   <section title='Expression Expansion' anchor="expression-expansion">
     <t>
      Each expression is indicated by an opening brace ("{") character
      and continues until the next closing brace ("}").  The expression
      is expanded by determining the expression type and then following
      that type's expansion process for each comma-separated varspec
-     in the expression.
+     in the expression.  Level 1 templates are limited to the default
+     operator (simple string value expansion) and a single variable
+     per expression.  Level 2 templates are limited to a single
+     varspec per expression.
     </t>
     <t>
      The expression type is determined by looking at the first
@@ -1032,114 +1005,85 @@
      expansion and the first character is the beginning of the
      varspec list.
     </t>
-    <t>
-     If the expression does not contain any varspec, as in
-     "{}" or "{,}", then a template processor SHOULD copy that
-     invalid expression to the result string, continue processing
-     the remainder of the template, and indicate that an error
-     occurred to the caller.
-    </t>
-    <t>
-     If the template contains an opening brace without a corresponding
-     closing brace (the template ends in mid-expression), then a
-     processor SHOULD attempt to process the template as if it ended
-     in a closing brace and indicate that an error occurred to the caller.
-    </t>
-   </section>
 
-   <section title='Variable and modifier expansion' anchor="variable-expansion">
-    <t>
-     A variable that is undefined has no value and thus is
-     excluded from the expansion.  A variable defined as composite
-     or component values is undefined if it contains zero members or
-     all of its components are undefined.  If all of the variables are
-     undefined, then the expression's expansion is the empty string.
-    </t>
-    <t>
-     A variable defined as a single value is expanded by converting its
-     value to a NFKC UTF-8 string, replacing any character within
-     the string that is not in the unreserved set with its
-     corresponding sequence of pct-encoded octets, applying any prefix
-     or suffix modifier (<xref target="partial-values"/>), and then
-     appending the result to the URI-reference.
-    </t>
-    <t>
-     A variable defined as a list of values is substituted as a
-     string of comma-separated single values when no explode modifier
-     is given.  If the "*" modifier is used, then each value is
-     separated by the default delimiter for the expression type.
-     If the "+" operator is used, then the variable name is
-     prepended to the expansion list as if it were the initial
-     value in the list.  If a partial modifier is indicated,
-     the modifier is applied to the combined string of values.
-     The list expansion is then appended to the result string.
-    </t>
-    <t>
-     A variable defined as an associative array is expanded as a list
-     of alternating key and value pairs, excluding any keys for which
-     the corresponding value is undefined.  If no explode modifier is
-     used, then the list is substituted as comma-separated single
-     values.  If the "*" modifier is given, then the list is delimited
-     as key=value pairs according to the default delimiters defined
-     by the expression type.  If the "+" modifier is used, the values
-     are substituted as in the "*" case, except that each key name is
-     prefixed by the variable name and a ".", as in "name.key=value".
-    </t>
-    <t>
-     When a variable containing component values is given without an
-     explode modifier, the value of each defined component is
-     substituted, separated by a comma (",") character, in the order
-     indicated by the variable's schema or, if the schema is unknown,
-     in the order provided by the variable's value.  A structure of
-     component values is expanded as a list of the component values
-     in the order implied by a preorder (depth-first) traversal of that
-     structure, excluding any components that are undefined.
-    </t>
-    <t>
-     When an explode modifier is used with an operator that substitutes
-     variables as key=value pairs, the key is determined as follows.
-     If the modifier is an asterisk ("*"), then each "key" is the name
-     of the component.  If the modifier is a plus ("+"), then each key
-     is the variable name followed by a period (".") and the component
-     name. In both cases, if the component names have a hierarchical
-     structure, then the component subnames are also appended to the
-     key, each separated by a period.
-    </t>
-    <t>
-     When an explode modifier is used with the hierarchical ("/")
-     operator, the slash delimiter is substituted before each
-     defined component's value if the modifier is "*", or before each
-     conjunction of component name and value (e.g., "name.value") if
-     the modifier is "+".
-    </t>
-   </section>
+    <section title='Undefined Variable Expansion' anchor="undef-expansion">
+     <t>
+      Regardless of the expression type, a variable that is undefined has
+      no value.  A variable defined as a list or structure of component
+      values is considered undefined if the list contains zero members or
+      all of the structure's components are undefined.
+     </t>
+     <t>
+      If a default value is provided for an undefined variable, as described
+      for Level 2 (and above) templates in <xref target="defaults"/>, then 
+      the default string is substituted in its place as the entire expansion
+      for that varspec.  If all of the variables in an expression are 
+      undefined and no defaults are given, then the expression's expansion
+      is the empty string.
+     </t>
+    </section>
 
-   <section title='Simple expansion: {var}' anchor="op-default">
-    <t>
-     The default expression type when no operator is given is
-     simple expansion: the value of each defined variable is
-     substituted in the order given, modified as indicated by the
-     optional modifiers, with each value separated by a comma
-     character (",").  A variable that is undefined has no value
-     and thus is excluded from the expansion.  If all of the
-     variables are undefined, then the expansion is the empty string.
-    </t>
-    <figure><preamble>For example,</preamble><artwork>
+    <section title='Simple String Expansion: {var}' anchor="op-simple">
+     <t>
+      The default expression type when no operator is given is
+      simple string expansion.  For each defined variable in the
+      variable-list, modify its value as indicated by the optional
+      modifiers (if any), encode the value as UTF-8, pct-encode any
+      octets that are not in the unreserved set, and then append
+      the encoded value to the result string.  If more than one
+      value is appended, separate each value with a comma (",").
+     </t>
+     <figure><preamble>For example,</preamble><artwork>
   foo := "fred"
 
   "{foo}"        -&gt; "fred"
   "{foo,foo}"    -&gt; "fred,fred"
   "{bar,foo}"    -&gt; "fred"
-  "{bar=wilma}"  -&gt; "wilma"
-    </artwork></figure>
-   </section>
+  "{bar|wilma}"  -&gt; "wilma"
+     </artwork></figure>
+     <t>
+      Level 1 templates are limited to single variable expressions
+      with no modifiers, defaults, or value structures.
+      Simple string expansion in Level 2 templates adds variable
+      defaulting, as defined in <xref target="defaults"/>.
+      Level 3 templates allow a list of variables.
+      Level 4 templates add compound variable types and value modifiers,
+      as follows:
+     </t>
+     <t>
+      For a variable defined as a single value string, the explode
+      modifier has no effect.  The prefix modifier limits the
+      expansion to the first max-length characters of that single
+      value.   If the value contains pct-encoded triplets,
+      multibyte UTF-8, or both, care must be taken to avoid
+      splitting the value in mid-character: count each Unicode
+      codepoint as one character.
+     </t>
+     <t>
+      For a variable defined as a list of values, when no value
+      modifier is present or the explode modifier is given, the
+      variable's string expansion consists of a concatenation
+      of the individual values with each value separated by a
+      comma (",").  A prefix modifier has no effect.
+     </t>
+     <t>
+      A variable defined as an associative array is expanded as a list
+      of alternating key and value pairs, excluding any keys for which
+      the corresponding value is undefined, when no value modifier is
+      present.  If the explode modifier is given, then the keys with
+      defined values are expanded as "key=value" pairs instead of
+      "key,value".  A prefix modifier has no effect.
+     </t>
+    </section>
 
-   <section title='Reserved expansion: {+var}' anchor="op-plus">
-    <t>
-     Reserved expansion is identical to simple expansion except that the
-     substituted values may contain characters in the reserved set.
-    </t>
-    <figure><preamble>For example,</preamble><artwork>
+    <section title='Reserved expansion: {+var}' anchor="op-plus">
+     <t>
+      Reserved expansion is identical to simple expansion except that the
+      substituted values may contain characters in the reserved set.
+      The reserved expansion operator "+" is defined for Level 2
+      templates (and above).
+     </t>
+     <figure><preamble>For example,</preamble><artwork>
   foo  := "That's right!"
 
   "{foo}"        -&gt; "That%27s%20right%21"
@@ -1149,39 +1093,50 @@
   
   "{base}index"  -&gt; "http%3A%2F%2Fexample.com%2Fhome%2Findex"
   "{+base}index" -&gt; "http://example.com/home/index"
-    </artwork></figure>
-    <t>
-     The same expansion process is followed as in <xref target="op-default"/>
-     except that, instead of replacing any character within each value
-     string that is not in the unreserved set with its corresponding
-     sequence of pct-encoded octets, replace any character within each
-     value string that is not in the set of unreserved or reserved
-     characters with its corresponding sequence of pct-encoded octets.
-    </t>
-   </section>
+     </artwork></figure>
+     <t>
+      The same expansion process is followed as in <xref target="op-simple"/>
+      except that, instead of "pct-encode any octets that are not in
+      the unreserved set", we pct-encode any octets that are not in
+      either the reserved or unreserved sets.
+     </t>
+    </section>
 
-   <section title='Path-style parameter expansion: {;var}' anchor="op-semicolon">
-    <t>
-     TBD.
-    </t>
-   </section>
+    <section title="Label expansion with dot-prefix: {.var}" anchor="op-dot">
+     <t>
+      TBD.
+     </t>
+    </section>
 
-   <section title='Form-style parameter expansion: {?var}' anchor="op-question">
-    <t>
-     TBD.
-    </t>
-   </section>
+    <section title='Path-style parameter expansion: {;var}' anchor="op-semicolon">
+     <t>
+      TBD.
+     </t>
+     <t>
+      When an explode modifier is used with an operator that substitutes
+      variables as key=value pairs, the key is determined as follows.
+      If the modifier is an asterisk ("*"), then each "key" is the name
+      of the component.
+     </t>
+    </section>
 
-   <section title='Hierarchical path expansion: {/var}' anchor="op-slash">
-    <t>
-     TBD.
-    </t>
-   </section>
+    <section title='Path segment expansion: {/var}' anchor="op-slash">
+     <t>
+      TBD.
+     </t>
+     <t>
+      When an explode modifier is used with the hierarchical ("/")
+      operator, the slash delimiter is substituted before each
+      defined component's value if the modifier is "*".
+     </t>
+    </section>
 
-   <section title="Label expansion with dot-prefix: {.var}" anchor="op-dot">
-    <t>
-     TBD.
-    </t>
+    <section title='Form-style query expansion: {?var}' anchor="op-question">
+     <t>
+      TBD.
+     </t>
+    </section>
+
    </section>
   </section>
 
@@ -1190,12 +1145,12 @@
      TBD.
     </t>
   </section>
-
+ 
   <section title="Security Considerations">
    <t>
     A URI Template does not contain active or executable content. Other
-    security considerations are the same as those for URIs, see section 7
-    of <xref target="RFC3986"/>.
+    security considerations are the same as those for URIs, as described
+    in section 7 of <xref target="RFC3986"/>.
    </t>
   </section>
 
@@ -1250,6 +1205,18 @@
   </section>
 
   <section title="Revision History (to be removed by RFC Editor)" anchor="revisions">
+   <t>05 - Introduced levels to differentiate between legacy, partial,
+      and full implementations of URI Templates.
+      Changed the default indicator to pipe ("|") to allow the defaults
+      to contain the equals character and thus remove the need for complex
+      defaulting for the different variable types.
+      Removed suffix, remainder, and labelled value expansion because
+      there didn't seem much interest in them.
+      Clarified that templates and values are processed as sequences of
+      Unicode codepoints rather than prematurely encoded as UTF-8, since
+      that is easier to explain and more consistent with common language
+      routines for processing Unicode strings.
+      </t>
    <t>04 - Changed the operator syntax to a single character that is
       analogous to its reserved role within the URI generic syntax,
       resulting in templates that are far more readable for the common
