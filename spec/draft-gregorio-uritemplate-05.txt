@@ -1,0 +1,1568 @@
+
+
+
+Network Working Group                                        J. Gregorio
+Internet-Draft                                                    Google
+Intended status: Standards Track                        R. Fielding, Ed.
+Expires: January 12, 2012                                          Adobe
+                                                               M. Hadley
+                                                                  Oracle
+                                                           M. Nottingham
+                                                              D. Orchard
+                                                            Jul 11, 2011
+
+
+                              URI Template
+                     draft-gregorio-uritemplate-05
+
+Abstract
+
+   A URI Template is a compact sequence of characters for describing a
+   range of Uniform Resource Identifiers through variable expansion.
+   This specification defines the URI Template syntax and the process
+   for expanding a URI Template into a URI reference, along with
+   guidelines for the use of URI Templates on the Internet.
+
+Editorial Note (to be removed by RFC Editor)
+
+   To provide feedback on this Internet-Draft, join the W3C URI mailing
+   list (http://lists.w3.org/Archives/Public/uri/) [1].
+
+Status of this Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on January 12, 2012.
+
+Copyright Notice
+
+   Copyright (c) 2011 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+
+
+Gregorio, et al.        Expires January 12, 2012                [Page 1]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+   This document may contain material from IETF Documents or IETF
+   Contributions published or made publicly available before November
+   10, 2008.  The person(s) controlling the copyright in some of this
+   material may not have granted the IETF Trust the right to allow
+   modifications of such material outside the IETF Standards Process.
+   Without obtaining an adequate license from the person(s) controlling
+   the copyright in such materials, this document may not be modified
+   outside the IETF Standards Process, and derivative works of it may
+   not be created outside the IETF Standards Process, except to format
+   it for publication as an RFC or to translate it into languages other
+   than English.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gregorio, et al.        Expires January 12, 2012                [Page 2]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+Table of Contents
+
+   1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  4
+     1.1.  Overview . . . . . . . . . . . . . . . . . . . . . . . . .  4
+     1.2.  Levels and Expression Types  . . . . . . . . . . . . . . .  6
+     1.3.  Design Considerations  . . . . . . . . . . . . . . . . . . 10
+     1.4.  Limitations  . . . . . . . . . . . . . . . . . . . . . . . 11
+     1.5.  Notational Conventions . . . . . . . . . . . . . . . . . . 11
+     1.6.  Character Encoding and Unicode Normalization . . . . . . . 12
+   2.  Syntax . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+     2.1.  Literals . . . . . . . . . . . . . . . . . . . . . . . . . 14
+     2.2.  Expressions  . . . . . . . . . . . . . . . . . . . . . . . 14
+     2.3.  Variables  . . . . . . . . . . . . . . . . . . . . . . . . 15
+     2.4.  Value Modifiers  . . . . . . . . . . . . . . . . . . . . . 16
+       2.4.1.  Prefix Values  . . . . . . . . . . . . . . . . . . . . 16
+       2.4.2.  Component Values . . . . . . . . . . . . . . . . . . . 17
+     2.5.  Value Defaults . . . . . . . . . . . . . . . . . . . . . . 17
+   3.  Expansion  . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+     3.1.  Literal Expansion  . . . . . . . . . . . . . . . . . . . . 19
+     3.2.  Expression Expansion . . . . . . . . . . . . . . . . . . . 20
+       3.2.1.  Undefined Variable Expansion . . . . . . . . . . . . . 20
+       3.2.2.  Simple String Expansion: {var} . . . . . . . . . . . . 20
+       3.2.3.  Reserved expansion: {+var} . . . . . . . . . . . . . . 21
+       3.2.4.  Label expansion with dot-prefix: {.var}  . . . . . . . 22
+       3.2.5.  Path segment expansion: {/var} . . . . . . . . . . . . 23
+       3.2.6.  Path-style parameter expansion: {;var} . . . . . . . . 25
+       3.2.7.  Form-style query expansion: {?var} . . . . . . . . . . 25
+   4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 25
+   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 25
+   6.  Acknowledgments  . . . . . . . . . . . . . . . . . . . . . . . 25
+   7.  Normative References . . . . . . . . . . . . . . . . . . . . . 25
+   Appendix A.  Example URI Template Parser . . . . . . . . . . . . . 26
+   Appendix B.  Revision History (to be removed by RFC Editor)  . . . 27
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 27
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gregorio, et al.        Expires January 12, 2012                [Page 3]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+1.  Introduction
+
+1.1.  Overview
+
+   A Uniform Resource Identifier (URI) [RFC3986] is often used to
+   identify a specific resource within a common space of similar
+   resources.  For example, personal web spaces are often delegated
+   using a common pattern, such as
+
+     http://example.com/~fred/
+     http://example.com/~mark/
+
+   or a set of dictionary entries might be grouped in a hierarchy by the
+   first letter of the term, as in
+
+     http://example.com/dictionary/c/cat
+     http://example.com/dictionary/d/dog
+
+   or a service interface might be invoked with various user input in a
+   common pattern, as in
+
+     http://example.com/search?q=cat&lang=en
+     http://example.com/search?q=dog&lang=fr
+
+   URI Templates provide a mechanism for abstracting a space of resource
+   identifiers such that the variable parts can be easily identified and
+   described.  URI templates can have many uses, including discovery of
+   available services, configuring resource mappings, defining computed
+   links, specifying interfaces, and other forms of programmatic
+   interaction with resources.  For example, the above resources could
+   be described by the following URI templates:
+
+     http://example.com/~{username}/
+     http://example.com/dictionary/{term:1}/{term}
+     http://example.com/search{?q,lang}
+
+   We define the following terms:
+   o  expression - The text between '{' and '}', including the enclosing
+      braces, as defined in Section 2.
+   o  expansion - The string result obtained from a template expression
+      after processing it according to its expression type, list of
+      variable names, and value modifiers, as defined in Section 3.
+   o  template processor - A program or library that, given a URI
+      Template and a set of variables with values, transforms the
+      template string into a URI-reference by parsing the template for
+      expressions and substituting each one with its corresponding
+      expansion.
+
+
+
+
+Gregorio, et al.        Expires January 12, 2012                [Page 4]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   A URI Template provides both a structural description of a URI space
+   and, when variable values are provided, a simple instruction on how
+   to construct a URI corresponding to those values.  A URI Template is
+   transformed into a URI-reference by replacing each delimited
+   expression with its value as defined by the expression type and the
+   values of variables named within the expression.  The expression
+   types range from simple string expansion to multiple key=value lists.
+   The expansions are based on the URI generic syntax, allowing an
+   implementation to process any URI Template without knowing the
+   scheme-specific requirements of every possible resulting URI.
+
+   For example, the following URI Template includes a form-style
+   parameter expression, as indicated by the "?" operator appearing
+   before the variable names.
+
+     http://www.example.com/foo{?query,number}
+
+   Each template expression describes, in a machine-readable manner, how
+   a URI is to be constructed.  In this example, the expansion process
+   for templates beginning with the question-mark ("?") operator follows
+   the same pattern as form-style interfaces on the World Wide Web.
+
+     http://www.example.com/foo{?query,number}
+                               \_____________/
+                                  |
+                                  |
+             For each defined variable in [ 'query', 'number' ],
+             substitute "?" if it is the first substitution or "&"
+             thereafter, followed by the variable name, '=', and the
+             variable's value.
+
+   If the variables have the values
+
+     query  := "mycelium"
+     number := 100
+
+   then the expansion of the above URI Template is
+
+     http://www.example.com/foo?query=mycelium&number=100
+
+   Alternatively, if 'query' is undefined, then the expansion would be
+
+     http://www.example.com/foo?number=100
+
+   or if both variables are undefined, then it would be
+
+     http://www.example.com/foo
+
+
+
+
+Gregorio, et al.        Expires January 12, 2012                [Page 5]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   A URI Template may be provided in absolute form, as in the examples
+   above, or in relative form.  A template MUST be expanded before the
+   resulting reference can be resolved from relative to absolute form.
+
+   Although the URI syntax is used for the result, the template string
+   is allowed to contain the broader set of characters that can be found
+   in IRI references [RFC3987].  A URI Template is therefore also an IRI
+   template, and the result of template processing can be rendered as an
+   IRI by transforming each of the pct-encoded sequences to their
+   corresponding Unicode character if that character is not in the
+   reserved set.
+
+1.2.  Levels and Expression Types
+
+   URI Templates are similar to a macro language with a fixed set of
+   macro definitions: the expression type determines the expansion
+   process.  The default expression type is simple string expansion,
+   wherein a single named variable is replaced by its value as a string
+   after UTF-8 encoding the characters and then pct-encoding any octets
+   that are not in the unreserved set.
+
+   Since most template processors implemented prior to this
+   specification have only implemented the default expression type, we
+   refer to these as Level 1 templates.
+
+   .-----------------------------------------------------------------.
+   | Level 1 examples, with variables having values of               |
+   |                                                                 |
+   |             var   := "value"                                    |
+   |             hello := "Hello World!"                             |
+   |             empty := ""                                         |
+   |             undef := null                                       |
+   |                                                                 |
+   |-----------------------------------------------------------------|
+   | Op       Expression            Expansion                        |
+   |-----------------------------------------------------------------|
+   |     | Simple string expansion                       (Sec 3.2.2) |
+   |     |                                                           |
+   |     |    {var}                 value                            |
+   |     |    {hello}               Hello%20World%21                 |
+   |     |    O{empty}X             OX                               |
+   |     |    O{undef}X             OX                               |
+   `-----------------------------------------------------------------'
+
+   Level 2 templates add the ability to define a default string, which
+   is substituted if the variable is undefined, and the plus ("+")
+   operator for expansion values that are allowed to include reserved
+   characters.
+
+
+
+Gregorio, et al.        Expires January 12, 2012                [Page 6]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   .-----------------------------------------------------------------.
+   | Level 2 examples, with variables having values of               |
+   |                                                                 |
+   |             var   := "value"                                    |
+   |             hello := "Hello World!"                             |
+   |             empty := ""                                         |
+   |             undef := null                                       |
+   |             path  := "/foo/bar"                                 |
+   |                                                                 |
+   |-----------------------------------------------------------------|
+   | Op       Expression            Expansion                        |
+   |-----------------------------------------------------------------|
+   |     | String expansion with defaults                (Sec 3.2.2) |
+   |     |                                                           |
+   |     |    {var|default}         value                            |
+   |     |    O{empty|default}X     OX                               |
+   |     |    O{undef|default}X     OdefaultX                        |
+   |     |                                                           |
+   |-----+-----------------------------------------------------------|
+   |  +  | Reserved expansion with defaults              (Sec 3.2.3) |
+   |     |                                                           |
+   |     |    {+var}                value                            |
+   |     |    {+hello}              Hello%20World!                   |
+   |     |    {+path}/here          /foo/bar/here                    |
+   |     |    here?ref={+path}      here?ref=/foo/bar                |
+   |     |    up{+path}{x}/here     up/foo/bar1024/here              |
+   |     |    up{+empty|/1}/here    up/here                          |
+   |     |    up{+undef|/1}/here    up/1/here                        |
+   |     |                                                           |
+   `-----------------------------------------------------------------'
+
+   Level 3 templates add more complex operators for lists of comma-
+   separated values, dot-prefixed labels, slash-prefixed path segments,
+   semicolon-prefixed path parameters, and the forms-style construction
+   of a query syntax consisting of key=value pairs that are separated by
+   an ampersand character.
+
+   .-----------------------------------------------------------------.
+   | Level 3 examples, with variables having values of               |
+   |                                                                 |
+   |             var   := "value"                                    |
+   |             hello := "Hello World!"                             |
+   |             empty := ""                                         |
+   |             undef := null                                       |
+   |             path  := "/foo/bar"                                 |
+   |             x     := "1024"                                     |
+   |             y     := "768"                                      |
+   |                                                                 |
+
+
+
+Gregorio, et al.        Expires January 12, 2012                [Page 7]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   |-----------------------------------------------------------------|
+   | Op       Expression            Expansion                        |
+   |-----------------------------------------------------------------|
+   |     | String expansion with multiple variables      (Sec 3.2.2) |
+   |     |                                                           |
+   |     |    {x,y}                 1024,768                         |
+   |     |    {x,hello,y}           1024,Hello%20World%21,768        |
+   |     |    ?{x,empty}            ?1024,                           |
+   |     |    ?{x,undef}            ?1024                            |
+   |     |    ?{undef,y}            ?768                             |
+   |     |    ?{x,undef|0}          ?1024,0                          |
+   |     |                                                           |
+   |-----+-----------------------------------------------------------|
+   |  +  | Reserved expansion with multiple variables    (Sec 3.2.3) |
+   |     |                                                           |
+   |     |    {+x,hello,y}          1024,Hello%20World!,768          |
+   |     |    {+path,x}/here        /foo/bar/1024/here               |
+   |     |                                                           |
+   |-----+-----------------------------------------------------------|
+   |  .  | Label expansion, dot-prefixed                 (Sec 3.2.4) |
+   |     |                                                           |
+   |     |    X{.var}               X.value                          |
+   |     |    X{.empty}             X.                               |
+   |     |    X{.undef}             X                                |
+   |     |                                                           |
+   |-----+-----------------------------------------------------------|
+   |  /  | Path segments, slash-prefixed                 (Sec 3.2.5) |
+   |     |                                                           |
+   |     |    {/var}                /value                           |
+   |     |    {/var,empty}          /value/                          |
+   |     |    {/var,undef}          /value                           |
+   |     |                                                           |
+   |-----+-----------------------------------------------------------|
+   |  ;  | Path-style parameters, semicolon-prefixed     (Sec 3.2.6) |
+   |     |                                                           |
+   |     |    {;x,y}                ;x=1024;y=768                    |
+   |     |    {;x,y,empty}          ;x=1024;y=768;empty              |
+   |     |    {;x,y,undef}          ;x=1024;y=768                    |
+   |     |                                                           |
+   |-----+-----------------------------------------------------------|
+   |  ?  | Form-style query, ampersand-separated         (Sec 3.2.7) |
+   |     |                                                           |
+   |     |    {?x,y}                ?x=1024&y=768                    |
+   |     |    {?x,y,empty}          ?x=1024&y=768&empty=             |
+   |     |    {?x,y,undef}          ?x=1024&y=768                    |
+   |     |                                                           |
+   `-----------------------------------------------------------------'
+
+
+
+
+Gregorio, et al.        Expires January 12, 2012                [Page 8]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   Finally, Level 4 templates add the ability to specify value modifiers
+   as a suffix to the variable name.  The prefix modifier (":")
+   indicates that only a limited number of characters from the beginning
+   of the value are used by the expansion.  The explode ("*") modifier
+   tells the expansion process to treat the value as a multivalued
+   structure --- a list of values or key=value pairs -- rather than as a
+   single string.
+
+   .-----------------------------------------------------------------.
+   | Level 4 examples, with variables having values of               |
+   |                                                                 |
+   |             var   := "value"                                    |
+   |             hello := "Hello World!"                             |
+   |             path  := "/foo/bar"                                 |
+   |             list  := [ "red", "green", "blue" ]                 |
+   |             keys  := [("semi", ";"), ("dot", ".")]              |
+   |                                                                 |
+   | Op       Expression            Expansion                        |
+   |-----------------------------------------------------------------|
+   |     | String expansion with value modifiers         (Sec 3.2.2) |
+   |     |                                                           |
+   |     |    {var:3}               val                              |
+   |     |    {var:30}              value                            |
+   |     |    {list}                red,green,blue                   |
+   |     |    {list*}               red,green,blue                   |
+   |     |    {keys}                semi,%3B,dot,.,comma,%2C         |
+   |     |    {keys*}               semi=%3B,dot=.,comma=%2C         |
+   |     |                                                           |
+   |-----+-----------------------------------------------------------|
+   |  +  | Reserved expansion with value modifiers       (Sec 3.2.3) |
+   |     |                                                           |
+   |     |    {+path:6}/here        /foo/b/here                      |
+   |     |    {+list}               red,green,blue                   |
+   |     |    {+list*}              red,green,blue                   |
+   |     |    {+keys}               semi,;,dot,.,comma,,             |
+   |     |    {+keys*}              semi=;,dot=.,comma=,             |
+   |     |                                                           |
+   |-----+-----------------------------------------------------------|
+   |  .  | Label expansion, dot-prefixed                 (Sec 3.2.4) |
+   |     |                                                           |
+   |     |    X{.var:3}             X.val                            |
+   |     |    X{.list}              X.red,green,blue                 |
+   |     |    X{.list*}             X.red.green.blue                 |
+   |     |    X{.keys}              X.semi,%3B,dot,.,comma,%2C       |
+   |     |    X{.keys*}             X.semi=%3B.dot=..comma=%2C       |
+   |     |                                                           |
+   |-----+-----------------------------------------------------------|
+   |  /  | Path segments, slash-prefixed                 (Sec 3.2.5) |
+
+
+
+Gregorio, et al.        Expires January 12, 2012                [Page 9]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   |     |                                                           |
+   |     |    {/var:1,var}          /v/value                         |
+   |     |    {/list}               /red,green,blue                  |
+   |     |    {/list*}              /red/green/blue                  |
+   |     |    {/list*,path:4}       /red/green/blue/%2Ffoo           |
+   |     |    {/keys}               /semi,%3B,dot,.,comma,%2C        |
+   |     |    {/keys*}              /semi=%3B/dot=./comma=%2C        |
+   |     |                                                           |
+   |-----+-----------------------------------------------------------|
+   |  ;  | Path-style parameters, semicolon-prefixed     (Sec 3.2.6) |
+   |     |                                                           |
+   |     |    {;hello:5}            ;hello=Hello                     |
+   |     |    {;list}               ;red,green,blue                  |
+   |     |    {;list*}              ;red;green;blue                  |
+   |     |    {;keys}               ;semi,%3B,dot,.,comma,%2C        |
+   |     |    {;keys*}              ;semi=%3B;dot=.;comma=%2C        |
+   |     |                                                           |
+   |-----+-----------------------------------------------------------|
+   |  ?  | Form-style query, ampersand-separated         (Sec 3.2.7) |
+   |     |                                                           |
+   |     |    {?var:3}              ?var=val                         |
+   |     |    {?list}               ?list=red,green,blue             |
+   |     |    {?list*}              ?list=red&list=green&list=blue   |
+   |     |    {?keys}               ?keys=semi,%3B,dot,.,comma,%2C   |
+   |     |    {?keys*}              ?semi=%3B&dot=.&comma=%2C        |
+   |     |                                                           |
+   `-----------------------------------------------------------------'
+
+1.3.  Design Considerations
+
+   Mechanisms similar to URI Templates have been defined within several
+   specifications, including WSDL, WADL and OpenSearch.  This
+   specification extends and formally defines the syntax so that URI
+   Templates can be used consistently across multiple Internet
+   applications and within Internet message fields, while at the same
+   time retaining compatibility with those earlier definitions.
+
+   The URI Template syntax has been designed to carefully balance the
+   need for a powerful expansion mechanism with the need for ease of
+   implementation.  The syntax is designed to be trivial to parse while
+   at the same time providing enough flexibility to express many common
+   template scenarios.  Implementations are able to parse the template
+   and perform the expansions in a single pass.
+
+   Templates are simple and readable when used with common examples
+   because the single-character operators match the URI generic syntax
+   delimiters.  The operator's associated delimiter (";", "?", "/", and
+   ".") is omitted when none of the listed variables are defined.
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 10]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   Likewise, the expansion process for ";" (path-style parameters) will
+   omit the "=" when the variable value is empty, whereas the process
+   for "?" (form-style parameters) will not omit the "=" when the value
+   is empty.  Multiple variables and list values have their values
+   joined with "," if there is no predefined joining mechanism for the
+   operator.  Only one operator, plus ("+"), will substitute unencoded
+   reserved characters found inside the variable values; the other
+   operators will pct-encode reserved characters found in the variable
+   values prior to expansion.
+
+   The most common cases for URI spaces can be described with Level 1
+   template expressions.  If we were only concerned with URI generation,
+   then the template syntax could be limited to just simple variable
+   expansion, since more complex forms could be generated by changing
+   the variable values.  However, URI Templates have the additional goal
+   of describing the layout of identifiers in terms of preexisting data
+   values.  The template syntax therefore includes operators that
+   reflect how resource identifiers are commonly allocated.  Likewise,
+   since prefix substrings are often used to partition large spaces of
+   resources, modifiers on variable values provide a way to specify both
+   the substring and the full value string with a single variable name.
+
+1.4.  Limitations
+
+   Since a URI Template describes a superset of the identifiers, there
+   is no implication that every possible expansion for each delimited
+   variable expression corresponds to a URI of an existing resource.
+   Our expectation is that an application constructing URIs according to
+   the template will be provided with an appropriate set of values for
+   the variables being substituted and will be able to cope with any
+   errors that might occur when the resulting URI is used for name
+   resolution or access.
+
+   URI Templates are not URIs: they do not identify an abstract or
+   physical resource, they are not parsed as URIs, and should not be
+   used in places where a URI would be expected unless the template
+   expressions will be expanded by a template processor prior to use.
+   Distinct field, element, or attribute names should be used to
+   differentiate protocol elements that carry a URI Template from those
+   that expect a URI reference.
+
+1.5.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+   This specification uses the Augmented Backus-Naur Form (ABNF)
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 11]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   notation of [RFC5234].  The following ABNF rules are imported from
+   the normative references [RFC5234], [RFC3986], and [RFC3987].
+
+     ALPHA          =  %x41-5A / %x61-7A   ; A-Z / a-z
+     DIGIT          =  %x30-39             ; 0-9
+     HEXDIG         =  DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
+
+     pct-encoded    =  "%" HEXDIG HEXDIG
+     unreserved     =  ALPHA / DIGIT / "-" / "." / "_" / "~"
+     reserved       =  gen-delims / sub-delims
+     gen-delims     =  ":" / "/" / "?" / "#" / "[" / "]" / "@"
+     sub-delims     =  "!" / "$" / "&" / "'" / "(" / ")"
+                    /  "*" / "+" / "," / ";" / "="
+
+     ucschar        =  %xA0-D7FF / %xF900-FDCF / %xFDF0-FFEF
+                    /  %x10000-1FFFD / %x20000-2FFFD / %x30000-3FFFD
+                    /  %x40000-4FFFD / %x50000-5FFFD / %x60000-6FFFD
+                    /  %x70000-7FFFD / %x80000-8FFFD / %x90000-9FFFD
+                    /  %xA0000-AFFFD / %xB0000-BFFFD / %xC0000-CFFFD
+                    /  %xD0000-DFFFD / %xE1000-EFFFD
+
+     iprivate       =  %xE000-F8FF / %xF0000-FFFFD / %x100000-10FFFD
+
+1.6.  Character Encoding and Unicode Normalization
+
+   This specification uses the terms "character" and "coded character
+   set" in accordance with the definitions provided in [RFC2978], and
+   "character encoding" in place of what [RFC2978] refers to as a
+   "charset".
+
+   The ABNF notation defines its terminal values to be non-negative
+   integers (codepoints) that are a superset of the US-ASCII coded
+   character set [ASCII].  This specification defines terminal values as
+   codepoints within the Unicode coded character set [UNIV4].
+
+   In spite of the syntax and template expansion process being defined
+   in terms of Unicode codepoints, it should be understood that
+   templates occur in practice as a sequence of characters in whatever
+   form or encoding is suitable for the context in which they occur,
+   whether that be octets embedded in a network protocol element or
+   paint applied to the side of a bus.  This specification does not
+   mandate any particular character encoding for mapping between URI
+   Template characters and the octets used to store or transmit those
+   characters.  When a URI Template appears in a protocol element, the
+   character encoding is defined by that protocol; without such a
+   definition, a URI Template is assumed to be in the same character
+   encoding as the surrounding text.  It is only during the process of
+   template expansion that a string of characters in a URI Template MUST
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 12]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   be transformed into its corresponding sequence of normalized Unicode
+   codepoints.
+
+   The Unicode Standard [UNIV4] defines various equivalences between
+   sequences of characters for various purposes.  Unicode Standard Annex
+   #15 [UTR15] defines various Normalization Forms for these
+   equivalences, in particular Normalization Form KC (NFKC:
+   Compatibility Decomposition followed by Canonical Composition).  The
+   normalization form determines how to consistently encode the
+   equivalent strings.
+
+   In theory, all URI processing implementations, including template
+   processors, should use the same normalization form for generating or
+   handling a URI reference.  In practice, they do not.  However,
+   template processors transform the template literals and variable
+   values from characters to codepoints, expand the expressions, and
+   then transform the resulting codepoints back to characters again.  In
+   order to promote consistent generation of URI references from
+   templates, template processors MUST ensure that the template and each
+   variable value is in NFKC when they are transformed to a sequence of
+   Unicode codepoints.  The final step of template processing will
+   encode the expanded sequence of Unicode codepoints, which should
+   still be in NFKC, as UTF-8 [RFC3629] and then further pct-encode any
+   octets within the UTF-8 string that are not allowed in a URI.
+
+
+2.  Syntax
+
+   A URI Template is a string of printable Unicode characters that
+   contains zero or more embedded variable expressions, each expression
+   being delimited by a matching pair of braces ('{', '}').
+
+     URI-Template  = *( literals / expression )
+
+   Although templates (and template processor implementations) are
+   described above in terms of four gradual levels, we define the URI-
+   Template syntax in terms of the ABNF for Level 4.  A template
+   processor limited to lower level templates MAY exclude the ABNF rules
+   applicable only to higher levels.  However, it is RECOMMENDED that
+   all parsers implement the full syntax such that unsupported levels
+   can be properly identified as such to the end user.
+
+   Each character in a URI Template MUST be transcoded to an NFKC
+   Unicode codepoint prior to evaluation.  If a character sequence in
+   the template consists of pct-encoded triplets corresponding to a
+   valid sequence of octets in UTF-8 that represent a character not in
+   the reserved set, then the triplets MUST be replaced with their
+   corresponding Unicode codepoint.  In other words, pct-encoded UTF-8
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 13]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   found within the template is decoded prior to further processing
+   unless the corresponding character is in the reserved set.
+
+2.1.  Literals
+
+   The characters outside of expressions in a URI Template string are
+   intended to be translated literally to the URI-reference.
+
+     literals      =  %x21 / %x23-24 / %x26 / %x28-3B / %x3D / %x3F-5B
+                   /  %x5D-5F / %x61-7A / %x7E / ucschar / iprivate
+                   /  pct-encoded
+                        ; any Unicode character except: CTL, SP,
+                        ;  DQUOTE, "'", "%" (aside from pct-encoded),
+                        ;  "<", ">", "\", "^", "`", "{", "|", "}"
+
+   A sequence of pct-encoded literals that corresponds to a UTF-8
+   encoded character that is not within the reserved set will be
+   transcoded during template processing, as describe above.  If such a
+   character is not in the unreserved set, it will be re-pct-encoded
+   during the final step of template processing.  Unreserved characters
+   will therefore be normalized to their unencoded form as a side-effect
+   of template processing.
+
+2.2.  Expressions
+
+   Template expressions are the parameterized parts of a URI Template.
+   Each expression contains an optional operator, which defines the
+   expression type and its corresponding expansion process, followed by
+   a comma-separated list of variable specifiers (variable names and
+   optional value modifiers).  If no operator is provided, the
+   expression defaults to simple variable expansion of unreserved
+   values.
+
+     expression    =  "{" [ operator ] variable-list "}"
+     operator      =  "+" / "." / "/" / ";" / "?" / op-reserve
+     op-reserve    =  "," / "!" / "@"
+                          ; reserved for local use: "$" / "(" / ")"
+
+   The operator characters have been chosen to reflect each of their
+   roles as reserved characters in the URI generic syntax.  The
+   operators defined by this specification include: plus ("+") for
+   substituting values that may contain reserved characters; dot (".")
+   for substituting values as a sequence of name labels prefixed by ".";
+   slash ("/") for substituting values as a sequence of path segments
+   separated by "/"; semicolon (";") for substituting key=value pairs as
+   path parameters prefixed by ";"; and, question-mark ("?") for
+   substituting a query component beginning with "?" and consisting of
+   key=value pairs separated by "&".  These operators will be described
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 14]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   in detail in Section 3.
+
+   The operator characters comma (","), exclamation ("!"), and at-sign
+   ("@") are reserved for future extensions.  A processor that
+   unexpectedly encounters such an extension operator SHOULD pass the
+   expression through unexpanded and MAY also indicate a warning to the
+   invoking application.
+
+   The expression syntax specifically excludes use of the dollar ("$")
+   and parentheses ["(" and ")"] characters so that they remain
+   available for local language extensions outside the scope of this
+   specification.
+
+2.3.  Variables
+
+   After the operator (if any), each expression contains a list of one
+   or more comma-separated variable specifiers (varspec).  The variable
+   names serve multiple purposes: documentation for what kinds of values
+   are expected, identifiers for associating values within a template
+   processor, and the string to use for each key on key=value
+   expansions.
+
+     variable-list =  varspec *( "," varspec )
+     varspec       =  varname [ modifier ] [ "|" default ]
+     varname       =  varchar *( varchar / "." )
+     varchar       =  ALPHA / DIGIT / "_" / ucschar / iprivate
+                   /  pct-encoded
+
+   An expression MAY reference variables that are unknown to the
+   template processor or whose value is set to a special "undefined"
+   value, such as undef or null.  Such undefined variables are given
+   special treatment by the expansion process.
+
+   A variable value that is a string of length zero is not considered
+   undefined; it has the defined value of an empty string.
+
+   A variable may have a composite or structured value, such as a list
+   of values, an associative array of (key, value) pairs, or a structure
+   of components defined by some separate schema.  Such value types are
+   not directly indicated by the template syntax, but do have an impact
+   on the expansion process.  A composite or structured value with zero
+   member values is considered undefined.
+
+   If a variable appears more than once in an expression or within
+   multiple expressions of a URI Template, the value of that variable
+   MUST remain static throughout the expansion process (i.e., the
+   variable must have the same value for the purpose of calculating each
+   expansion).
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 15]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+2.4.  Value Modifiers
+
+   Each of the variables in a Level 4 template expression can have a
+   modifier indicating either that its expansion is limited to a prefix
+   of the variable's value string or that its expansion is exploded into
+   components based on an external type or schema associated with that
+   variable.
+
+     modifier      =  prefix / explode
+
+2.4.1.  Prefix Values
+
+   A prefix modifier indicates that the variable expansion is limited to
+   a prefix of the variable's value string.  Prefix modifiers are often
+   used to partition an identifier space hierarchically, as is common in
+   reference indices and hash-based storage.  It also serves to limit
+   the expanded value to a maximum number of characters.
+
+     prefix        =  ":" offset
+     max-length    =  %x31-39 *DIGIT   ; positive integer
+
+   The max-length is a positive integer that refers to a maximum number
+   of characters from the beginning of the variable's value as a Unicode
+   string.  Note that this numbering is in characters, not octets, in
+   order to avoid splitting between the octets of a multi-octet UTF-8
+   encoded character or within a pct-encoded triplet.  If the max-length
+   is greater than the length of the variable's value, then the entire
+   value string is used.
+
+   For example,
+
+     Given the variable assignments
+
+       var   := "value"
+       semi  := ";"
+
+     Example Template     Expansion
+
+       {var}              value
+       {var:20}           value
+       {var:3}            val
+       {semi}             %3B
+       {semi:2}           %3B
+
+
+
+
+
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 16]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+2.4.2.  Component Values
+
+   An explode modifier ("*") indicates that the variable represents a
+   composite value that may be substituted in full or partial forms,
+   depending on the variable's type or schema.  Since URI Templates do
+   not contain an indication of type or schema, this is assumed to be
+   determined by context.  An example context is a mark-up element or
+   header field that contains one attribute that is a template and one
+   or more other attributes that define the schema applicable to
+   variables found in the template.  Likewise, a typed programming
+   language might differentiate variables as strings, lists, associative
+   arrays, or structures.
+
+     explode       =  "*"
+
+   Explode modifiers improve brevity in the URI Template syntax.  For
+   example, a resource that provides a geographic map for a given street
+   address might accept a hundred permutations on fields for address
+   input, including partial addresses (e.g., just the city or postal
+   code).  Such a resource could be described as a template with each
+   and every address component listed in order, or with a far more
+   simple template that makes use of an explode modifier, as in
+
+      /mapper{?address*}
+
+   along with some context that defines what the variable named
+   "address" can include, such as by reference to some other standard
+   for addressing (e.g., UPU S42 or AS/NZS 4819:2003).  A recipient
+   aware of the schema can then provide appropriate expansions, such as:
+
+      /mapper?city=Newport%20Beach&state=CA
+
+   If an explode modifier is present, the expansion process for that
+   variable, as defined in Section 3, is dependent on both the operator
+   being used and the type or schema of the value being substituted.
+
+2.5.  Value Defaults
+
+   Each of the variables in Level 2 (and above) templates may also be
+   supplied with a default value to be used when a template processor
+   determines that variable to be undefined.  The default value is
+   limited to unreserved characters, the equal sign ("="), and pct-
+   encoded triplets, since the default is provided in the exact form
+   that it would appear in the expanded URI reference.  The default is
+   not affected by any variable modifiers, since we assume that the
+   default string provided in the expression already reflects the
+   desired value.
+
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 17]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+     default       =  *( unreserved / "=" / pct-encoded )
+
+   The following examples illustrate how default values work with
+   different variable types.
+
+     Given the variable assignments:
+
+       var   := "value"
+       name  := [ "Fred", "Wilma", "Pebbles" ]
+       favs  := [("color","red"), ("volume","high")]
+       empty_keys := []
+       empty := ""
+       undef := null
+
+     Example Template        Expansion
+
+       {var|default}         value
+       {undef|default}       default
+       {undef:3|default}     default
+
+       x{empty}y             xy
+       x{empty|_}y           xy
+       x{undef}y             xy
+       x{undef|_}y           x_y
+
+       x{.name|none}         x.Fred,Wilma,Pebbles
+       x{.name*|none}        x.Fred.Wilma.Pebbles
+       x{.empty}             x.
+       x{.empty|none}        x.
+       x{.undef}             x
+       x{.undef|none}        x.none
+
+       x{/name|none}         x/Fred,Wilma,Pebbles
+       x{/name*|none}        x/Fred/Wilma/Pebbles
+       x{/undef}             x
+       x{/undef|none}        x/none
+       x{/empty}             x/
+       x{/empty|none}        x/
+       x{/empty_keys}        x
+       x{/empty_keys|none}   x/none
+       x{/empty_keys*}       x
+       x{/empty_keys*|none}  x/none
+
+       x{;name|none}         x;name=Fred,Wilma,Pebbles
+       x{;favs|none}         x;favs=color,red,volume,high
+       x{;favs*|none}        x;color=red;volume=high
+       x{;empty}             x;empty
+       x{;empty|none}        x;empty
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 18]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+       x{;undef}             x
+       x{;undef|none}        x;none
+       x{;undef|foo=y}       x;foo=y
+
+       x{?var|none}          x?var=value
+       x{?favs|none}         x?favs=color,red,volume,high
+       x{?favs*|none}        x?color=red&volume=high
+       x{?empty}             x?empty=
+       x{?empty|foo=none}    x?empty=
+       x{?undef}             x
+       x{?undef|foo=none}    x?foo=none
+       x{?empty_keys}        x
+       x{?empty_keys|none}   x?none
+       x{?empty_keys|y=z}    x?y=z
+       x{?empty_keys*|y=z}   x?y=z
+
+
+
+3.  Expansion
+
+   The process of URI Template expansion is to scan the template string
+   from beginning to end, copying literal characters as-is and replacing
+   each expression with the result of applying the expression's operator
+   to the value of each variable named in the expression.
+
+   Each variable value MUST be formed as a sequence of NFKC Unicode
+   codepoints prior to template expansion.  A value is assumed to be raw
+   data that might need to be encoded by the template processor during
+   expansion, depending on the expression type.
+
+   If a template processor encounters an error outside of an expression,
+   such as a character sequence that does not match the <URI-Template>
+   grammar, then processing of the template SHOULD cease, the URI-
+   reference result SHOULD be undefined, and the location and type of
+   error SHOULD be indicated to the invoking application.  If an error
+   is encountered inside an expression, such as an operator or value
+   modifier that it does not recognize or cannot support, then the
+   expression SHOULD be copied to the result unexpanded, processing of
+   the remainder of the template SHOULD continue, and the location and
+   type of error SHOULD be indicated to the invoking application.
+
+3.1.  Literal Expansion
+
+   If the literal character is allowed anywhere in the URI syntax
+   (unreserved / reserved), then it is copied directly to the result
+   string.  Otherwise, the pct-encoded equivalent of the literal
+   character is copied to the result string by encoding the character in
+   UTF-8 (a sequence of octets) and then encoding each octet as a pct-
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 19]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   encoded triplet.
+
+3.2.  Expression Expansion
+
+   Each expression is indicated by an opening brace ("{") character and
+   continues until the next closing brace ("}").  The expression is
+   expanded by determining the expression type and then following that
+   type's expansion process for each comma-separated varspec in the
+   expression.  Level 1 templates are limited to the default operator
+   (simple string value expansion) and a single variable per expression.
+   Level 2 templates are limited to a single varspec per expression.
+
+   The expression type is determined by looking at the first character
+   after the opening brace.  If the character is an operator, then
+   remember the expression type associated with that operator for later
+   expansion decisions and skip to the next character for the varspec
+   list.  If the first character is not an operator, then the expression
+   type is simple expansion and the first character is the beginning of
+   the varspec list.
+
+3.2.1.  Undefined Variable Expansion
+
+   Regardless of the expression type, a variable that is undefined has
+   no value.  A variable defined as a list or structure of component
+   values is considered undefined if the list contains zero members or
+   all of the structure's components are undefined.
+
+   If a default value is provided for an undefined variable, as
+   described for Level 2 (and above) templates in Section 2.5, then the
+   default string is substituted in its place as the entire expansion
+   for that varspec.  If all of the variables in an expression are
+   undefined and no defaults are given, then the expression's expansion
+   is the empty string.
+
+3.2.2.  Simple String Expansion: {var}
+
+   The default expression type when no operator is given is simple
+   string expansion.  For each defined variable in the variable-list,
+   modify its value as indicated by the optional modifiers (if any),
+   encode the value as UTF-8, pct-encode any octets that are not in the
+   unreserved set, and then append the encoded value to the result
+   string.  If more than one value is appended, separate each value with
+   a comma (",").
+
+
+
+
+
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 20]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   For example,
+
+     foo := "fred"
+
+     "{foo}"        -> "fred"
+     "{foo,foo}"    -> "fred,fred"
+     "{bar,foo}"    -> "fred"
+     "{bar|wilma}"  -> "wilma"
+
+   Level 1 templates are limited to single variable expressions with no
+   modifiers, defaults, or value structures.  Simple string expansion in
+   Level 2 templates adds variable defaulting, as defined in
+   Section 2.5.  Level 3 templates allow a list of variables.  Level 4
+   templates add compound variable types and value modifiers, as
+   follows:
+
+   For a variable defined as a single value string, the explode modifier
+   has no effect.  The prefix modifier limits the expansion to the first
+   max-length characters of that single value.  If the value contains
+   pct-encoded triplets, multibyte UTF-8, or both, care must be taken to
+   avoid splitting the value in mid-character: count each Unicode
+   codepoint as one character.
+
+   For a variable defined as a list of values, when no value modifier is
+   present or the explode modifier is given, the variable's string
+   expansion consists of a concatenation of the individual values with
+   each value separated by a comma (",").  A prefix modifier has no
+   effect.
+
+   A variable defined as an associative array is expanded as a list of
+   alternating key and value pairs, excluding any keys for which the
+   corresponding value is undefined, when no value modifier is present.
+   If the explode modifier is given, then the keys with defined values
+   are expanded as "key=value" pairs instead of "key,value".  A prefix
+   modifier has no effect.
+
+3.2.3.  Reserved expansion: {+var}
+
+   Reserved expansion is identical to simple expansion except that the
+   substituted values may contain characters in the reserved set.  The
+   reserved expansion operator "+" is defined for Level 2 templates (and
+   above).
+
+
+
+
+
+
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 21]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   For example,
+
+     foo  := "That's right!"
+
+     "{foo}"        -> "That%27s%20right%21"
+     "{+foo}"       -> "That%27s%20right!"
+
+     base := "http://example.com/home/"
+
+     "{base}index"  -> "http%3A%2F%2Fexample.com%2Fhome%2Findex"
+     "{+base}index" -> "http://example.com/home/index"
+
+   The same expansion process is followed as in Section 3.2.2 except
+   that, instead of "pct-encode any octets that are not in the
+   unreserved set", we pct-encode any octets that are not in either the
+   reserved or unreserved sets.
+
+3.2.4.  Label expansion with dot-prefix: {.var}
+
+   The dot (".") operator indicates that the expression type is label
+   expansion, which can be useful for describing URI spaces with varying
+   domain names or path selectors (e.g., filename extensions).
+
+     For each variable in the variable-list, do one of
+
+       a) if the variable has a defined value
+
+           1) modify its value as indicated by the optional
+              modifiers (if any);
+
+           2) encode the value as UTF-8;
+
+           3) pct-encode any octets that are not in the
+              unreserved set;
+
+           4) append "." to the result string; and,
+
+           5) append the encoded value to the result string.
+
+       b) if the variable is undefined and a default is given,
+
+           1) encode the default string as UTF-8;
+
+           2) append "." to the result string; and,
+
+           3) append the default to the result string.
+
+       c) the variable is undefined and has no default,
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 22]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+          so ignore this variable.
+
+   Since "." is not in the reserved set, a value that contains a "." has
+   the effect of adding multiple labels.
+
+   For example,
+
+     foo := "fred"
+
+     "{foo}"        -> ".fred"
+     "{foo,foo}"    -> ".fred.fred"
+     "{bar,foo}"    -> ".fred"
+     "{bar|wilma}"  -> ".wilma"
+
+   Label expansion only applies to Level 3 and Level 4 templates.  Level
+   4 templates add compound variable types and value modifiers, as
+   follows:
+
+   For a variable defined as a single value string, the explode modifier
+   has no effect.  The prefix modifier limits the expansion to the first
+   max-length characters of that single value.  If the value contains
+   pct-encoded triplets, multibyte UTF-8, or both, care must be taken to
+   avoid splitting the value in mid-character: count each Unicode
+   codepoint as one character.
+
+   For a variable defined as a list of values, when no value modifier is
+   present or the explode modifier is given, the variable's string
+   expansion consists of a concatenation of the individual defined
+   values with each value prepended by a dot (".").  A prefix modifier
+   has no effect.
+
+   When no value modifier is present, a variable defined as an
+   associative array is expanded by appending the (key, value) pairs as
+   alternating labels (i.e., ".key.value"), but excluding any keys for
+   which the corresponding value is undefined.  If the explode modifier
+   is given, then the keys with defined values are expanded as
+   ".key=value" instead of ".key.value".  A prefix modifier has no
+   effect.
+
+3.2.5.  Path segment expansion: {/var}
+
+   The slash ("/") operator indicates that the expression type is
+   hierarchical path segment expansion, which can be useful for
+   describing URI path hierarchies.
+
+
+
+
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 23]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+     For each variable in the variable-list, do one of
+
+       a) if the variable has a defined value
+
+           1) modify its value as indicated by the optional
+              modifiers (if any);
+
+           2) encode the value as UTF-8;
+
+           3) pct-encode any octets that are not in the
+              unreserved set;
+
+           4) append "/" to the result string; and,
+
+           5) append the encoded value to the result string.
+
+       b) if the variable is undefined and a default is given,
+
+           1) encode the default string as UTF-8;
+
+           2) append "/" to the result string; and,
+
+           3) append the default to the result string.
+
+       c) the variable is undefined and has no default,
+          so ignore this variable.
+
+   Note that the expansion process for path segment expansion is
+   identical to that of label expansion aside from the substitution of
+   "/" instead of ".".
+
+   For example,
+
+     foo := "fred"
+
+     "{foo}"        -> "/fred"
+     "{foo,foo}"    -> "/fred/fred"
+     "{bar,foo}"    -> "/fred"
+     "{bar|wilma}"  -> "/wilma"
+
+   Label expansion only applies to Level 3 and Level 4 templates.  Level
+   4 templates add compound variable types and value modifiers, as
+   follows:
+
+   For a variable defined as a single value string, the explode modifier
+   has no effect.  The prefix modifier limits the expansion to the first
+   max-length characters of that single value.  If the value contains
+   pct-encoded triplets, multibyte UTF-8, or both, care must be taken to
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 24]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   avoid splitting the value in mid-character: count each Unicode
+   codepoint as one character.
+
+   For a variable defined as a list of values, when no value modifier is
+   present or the explode modifier is given, the variable's string
+   expansion consists of a concatenation of the individual defined
+   values with each value prepended by a slash ("/").  A prefix modifier
+   has no effect.
+
+   When no value modifier is present, a variable defined as an
+   associative array is expanded by appending the (key, value) pairs as
+   alternating segments (i.e., "/key/value"), but excluding any keys for
+   which the corresponding value is undefined.  If the explode modifier
+   is given, then the keys with defined values are expanded as
+   "/key=value" instead of "/key/value".  A prefix modifier has no
+   effect.
+
+3.2.6.  Path-style parameter expansion: {;var}
+
+   TBD.
+
+3.2.7.  Form-style query expansion: {?var}
+
+   TBD.
+
+
+4.  Security Considerations
+
+   A URI Template does not contain active or executable content.  Other
+   security considerations are the same as those for URIs, as described
+   in section 7 of [RFC3986].
+
+
+5.  IANA Considerations
+
+   No IANA actions are required by this document.
+
+
+6.  Acknowledgments
+
+   The following people made significant contributions to this
+   specification: Mike Burrows, Michaeljohn Clement, DeWitt Clinton,
+   John Cowan, James H. Manger, and James Snell.
+
+
+7.  Normative References
+
+   [ASCII]    American National Standards Institute, "Coded Character
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 25]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+              Set - 7-bit American Standard Code for Information
+              Interchange", ANSI X3.4, 1986.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC2978]  Freed, N. and J. Postel, "IANA Charset Registration
+              Procedures", BCP 19, RFC 2978, October 2000.
+
+   [RFC3629]  Yergeau, F., "UTF-8, a transformation format of ISO
+              10646", STD 63, RFC 3629, November 2003.
+
+   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
+              Resource Identifier (URI): Generic Syntax", STD 66,
+              RFC 3986, January 2005.
+
+   [RFC3987]  Duerst, M. and M. Suignard, "Internationalized Resource
+              Identifiers (IRIs)", RFC 3987, January 2005.
+
+   [RFC5234]  Crocker, D. and P. Overell, "Augmented BNF for Syntax
+              Specifications: ABNF", STD 68, RFC 5234, January 2008.
+
+   [UNIV4]    The Unicode Consortium, "The Unicode Standard, Version
+              4.0.1, defined by: The Unicode Standard, Version 4.0
+              (Reading, MA, Addison-Wesley, 2003. ISBN 0-321-18578-1),
+              as amended by Unicode 4.0.1
+              (http://www.unicode.org/versions/Unicode4.0.1/)",
+              March 2004.
+
+   [UTR15]    Davis, M. and M. Duerst, "Unicode Normalization Forms",
+              Unicode Standard Annex # 15, April 2003.
+
+   [1]  <http://lists.w3.org/Archives/Public/uri/>
+
+
+Appendix A.  Example URI Template Parser
+
+   Parsing a valid URI Template expression does not require building a
+   parser from the given ABNF.  Instead, the set of allowed characters
+   in each part of URI Template expression has been chosen to avoid
+   complex parsing, and breaking an expression into its component parts
+   can be achieved by a series of splits of the character string.
+
+   Here is example Python code that parses a URI Template expression and
+   returns the operator, argument, and variables as a tuple.  The
+   variables are returned as a dictionary of variable names mapped to
+   their default values.  If no default is given then the name maps to
+   None.
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 26]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+   TBD.
+
+
+Appendix B.  Revision History (to be removed by RFC Editor)
+
+   05 - Introduced levels to differentiate between legacy, partial, and
+   full implementations of URI Templates.  Changed the default indicator
+   to pipe ("|") to allow the defaults to contain the equals character
+   and thus remove the need for complex defaulting for the different
+   variable types.  Removed suffix, remainder, and labelled value
+   expansion because there didn't seem much interest in them.  Clarified
+   that templates and values are processed as sequences of Unicode
+   codepoints rather than prematurely encoded as UTF-8, since that is
+   easier to explain and more consistent with common language routines
+   for processing Unicode strings.
+
+   04 - Changed the operator syntax to a single character that is
+   analogous to its reserved role within the URI generic syntax,
+   resulting in templates that are far more readable for the common
+   cases.  Added value modifiers for prefix and suffix expansion.  Added
+   explode modifiers to allow expansion of complex variables and lists
+   according to (external) variable types or schema.  Replaced use of
+   "expansion" with "expression", since expansion is traditionally used
+   to refer to the result after expanding a macro (not the macro
+   itself).  Made applicable to any hypertext reference string, such
+   that the process for template expansion also includes transforming
+   the surrounding string into a proper URI-reference rather than
+   assuming it is already in absolute URI form.  Rewrote the text
+   accordingly.
+
+   03 - Added more examples.  Introduced error conditions and defined
+   their handling.  Changed listjoin to list.  Changed -append to
+   -suffix, and allowed -prefix and -suffix to accept list variables.
+   Clarified the handling of unicode.
+
+   02 - Added operators and came up with coherent percent-encoding and
+   reserved character story.  Added large examples section which is
+   extracted and tested against the implementation.
+
+   01
+
+   00 - Initial Revision.
+
+
+
+
+
+
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 27]
+
+Internet-Draft                URI Template                      Jul 2011
+
+
+Authors' Addresses
+
+   Joe Gregorio
+   Google
+
+   Email: joe@bitworking.org
+   URI:   http://bitworking.org/
+
+
+   Roy T. Fielding (editor)
+   Adobe Systems Incorporated
+
+   Email: fielding@gbiv.com
+   URI:   http://roy.gbiv.com/
+
+
+   Marc Hadley
+   Oracle
+
+   Email: Marc.Hadley@oracle.com
+   URI:   http://oracle.com/
+
+
+   Mark Nottingham
+
+   Email: mnot@pobox.com
+   URI:   http://mnot.net/
+
+
+   David Orchard
+
+   URI:   http://www.pacificspirit.com/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gregorio, et al.        Expires January 12, 2012               [Page 28]
+

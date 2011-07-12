@@ -1,80 +1,161 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
- <!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>
- <!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>
- <!ENTITY rfc3987 SYSTEM 'bibxml/reference.RFC.3987.xml'>
- <!ENTITY rfc5234 SYSTEM 'bibxml/reference.RFC.5234.xml'>
- <!ENTITY rfc2978 SYSTEM 'bibxml/reference.RFC.2978.xml'>
- <!ENTITY rfc3629 SYSTEM 'bibxml/reference.RFC.3629.xml'>
- <!ENTITY ASCII   SYSTEM 'bibxml/_reference.ANSI.X3-4.1986.xml'>
- <!ENTITY UNIV4   SYSTEM 'bibxml/univ4.xml'>
- <!ENTITY UTR15   SYSTEM 'bibxml/utr15.xml'>
- ]>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en"><head><title>URI Template</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="description" content="URI Template">
+<meta name="generator" content="xml2rfc v1.36 (http://xml.resource.org/)">
+<style type='text/css'><!--
+        body {
+                font-family: verdana, charcoal, helvetica, arial, sans-serif;
+                font-size: small; color: #000; background-color: #FFF;
+                margin: 2em;
+        }
+        h1, h2, h3, h4, h5, h6 {
+                font-family: helvetica, monaco, "MS Sans Serif", arial, sans-serif;
+                font-weight: bold; font-style: normal;
+        }
+        h1 { color: #900; background-color: transparent; text-align: right; }
+        h3 { color: #333; background-color: transparent; }
 
-<!--<?xml-stylesheet type='text/xsl' href='rfc2629.xslt'/ ?>-->
+        td.RFCbug {
+                font-size: x-small; text-decoration: none;
+                width: 30px; height: 30px; padding-top: 2px;
+                text-align: justify; vertical-align: middle;
+                background-color: #000;
+        }
+        td.RFCbug span.RFC {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: bold; color: #666;
+        }
+        td.RFCbug span.hotText {
+                font-family: charcoal, monaco, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: normal; text-align: center; color: #FFF;
+        }
 
-<?rfc toc="yes" ?>
-<?rfc symrefs="yes" ?>
-<?rfc sortrefs="yes"?>
-<?rfc iprnotified="yes" ?>
-<?rfc strict="yes" ?>
-<?rfc compact="yes" ?>
-<?rfc comments="yes" ?>
-<?rfc inline="yes" ?>
-<?rfc linkmailto="no" ?>
-<?rfc tocdepth="3" ?>
-<!--
- 1. Update the docName
- 2. Update the date
- 3. Update the Revision History.
--->
+        table.TOCbug { width: 30px; height: 15px; }
+        td.TOCbug {
+                text-align: center; width: 30px; height: 15px;
+                color: #FFF; background-color: #900;
+        }
+        td.TOCbug a {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, sans-serif;
+                font-weight: bold; font-size: x-small; text-decoration: none;
+                color: #FFF; background-color: transparent;
+        }
 
-<rfc category="std" ipr="pre5378Trust200902" docName="draft-gregorio-uritemplate-05">
- <front>
-  <title>URI Template</title>
+        td.header {
+                font-family: arial, helvetica, sans-serif; font-size: x-small;
+                vertical-align: top; width: 33%;
+                color: #FFF; background-color: #666;
+        }
+        td.author { font-weight: bold; font-size: x-small; margin-left: 4em; }
+        td.author-text { font-size: x-small; }
 
-  <author initials='J.C.' surname="Gregorio" fullname='Joe Gregorio'>
-   <organization>Google</organization>
-   <address>
-    <email>joe@bitworking.org</email>
-    <uri>http://bitworking.org/</uri>
-   </address>
-  </author>
+        /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+        a.info {
+                /* This is the key. */
+                position: relative;
+                z-index: 24;
+                text-decoration: none;
+        }
+        a.info:hover {
+                z-index: 25;
+                color: #FFF; background-color: #900;
+        }
+        a.info span { display: none; }
+        a.info:hover span.info {
+                /* The span will display just on :hover state. */
+                display: block;
+                position: absolute;
+                font-size: smaller;
+                top: 2em; left: -5em; width: 15em;
+                padding: 2px; border: 1px solid #333;
+                color: #900; background-color: #EEE;
+                text-align: left;
+        }
 
-  <author initials="R." surname="Fielding" fullname="Roy T. Fielding" role="editor">
-    <organization abbrev="Adobe">Adobe Systems Incorporated</organization>
-    <address>
-      <email>fielding@gbiv.com</email>
-      <uri>http://roy.gbiv.com/</uri>
-    </address>
-  </author>
+        a { font-weight: bold; }
+        a:link    { color: #900; background-color: transparent; }
+        a:visited { color: #633; background-color: transparent; }
+        a:active  { color: #633; background-color: transparent; }
 
-  <author initials='M.H.' surname="Hadley" fullname='Marc Hadley'>
-   <organization>Oracle</organization>
-   <address>
-    <email>Marc.Hadley@oracle.com</email>
-    <uri>http://oracle.com/</uri>
-   </address>
-  </author>
+        p { margin-left: 2em; margin-right: 2em; }
+        p.copyright { font-size: x-small; }
+        p.toc { font-size: small; font-weight: bold; margin-left: 3em; }
+        table.toc { margin: 0 0 0 3em; padding: 0; border: 0; vertical-align: text-top; }
+        td.toc { font-size: small; font-weight: bold; vertical-align: text-top; }
 
-  <author initials='M.N.' surname="Nottingham" fullname='Mark Nottingham'>
-   <organization></organization>
-   <address>
-    <email>mnot@pobox.com</email>
-    <uri>http://mnot.net/</uri>
-   </address>
-  </author>
+        ol.text { margin-left: 2em; margin-right: 2em; }
+        ul.text { margin-left: 2em; margin-right: 2em; }
+        li      { margin-left: 3em; }
 
-  <author initials='D.O.' surname="Orchard" fullname='David Orchard'>
-   <organization></organization>
-   <address>
-    <uri>http://www.pacificspirit.com/</uri>
-   </address>
-  </author>
+        /* RFC-2629 <spanx>s and <artwork>s. */
+        em     { font-style: italic; }
+        strong { font-weight: bold; }
+        dfn    { font-weight: bold; font-style: normal; }
+        cite   { font-weight: normal; font-style: normal; }
+        tt     { color: #036; }
+        tt, pre, pre dfn, pre em, pre cite, pre span {
+                font-family: "Courier New", Courier, monospace; font-size: small;
+        }
+        pre {
+                text-align: left; padding: 4px;
+                color: #000; background-color: #CCC;
+        }
+        pre dfn  { color: #900; }
+        pre em   { color: #66F; background-color: #FFC; font-weight: normal; }
+        pre .key { color: #33C; font-weight: bold; }
+        pre .id  { color: #900; }
+        pre .str { color: #000; background-color: #CFF; }
+        pre .val { color: #066; }
+        pre .rep { color: #909; }
+        pre .oth { color: #000; background-color: #FCF; }
+        pre .err { background-color: #FCC; }
 
-  <date day="11" month="Jul" year="2011"/>
-  <abstract>
-   <t>
+        /* RFC-2629 <texttable>s. */
+        table.all, table.full, table.headers, table.none {
+                font-size: small; text-align: center; border-width: 2px;
+                vertical-align: top; border-collapse: collapse;
+        }
+        table.all, table.full { border-style: solid; border-color: black; }
+        table.headers, table.none { border-style: none; }
+        th {
+                font-weight: bold; border-color: black;
+                border-width: 2px 2px 3px 2px;
+        }
+        table.all th, table.full th { border-style: solid; }
+        table.headers th { border-style: none none solid none; }
+        table.none th { border-style: none; }
+        table.all td {
+                border-style: solid; border-color: #333;
+                border-width: 1px 2px;
+        }
+        table.full td, table.headers td, table.none td { border-style: none; }
+
+        hr { height: 1px; }
+        hr.insert {
+                width: 80%; border-style: none; border-width: 0;
+                color: #CCC; background-color: #CCC;
+        }
+--></style>
+</head>
+<body>
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<table summary="layout" width="66%" border="0" cellpadding="0" cellspacing="0"><tr><td><table summary="layout" width="100%" border="0" cellpadding="2" cellspacing="1">
+<tr><td class="header">Network Working Group</td><td class="header">J. Gregorio</td></tr>
+<tr><td class="header">Internet-Draft</td><td class="header">Google</td></tr>
+<tr><td class="header">Intended status: Standards Track</td><td class="header">R. Fielding, Ed.</td></tr>
+<tr><td class="header">Expires: January 12, 2012</td><td class="header">Adobe</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">M. Hadley</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">Oracle</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">M. Nottingham</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">D. Orchard</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">Jul 11, 2011</td></tr>
+</table></td></tr></table>
+<h1><br />URI Template<br />draft-gregorio-uritemplate-05</h1>
+
+<h3>Abstract</h3>
+
+<p>
     A URI Template is a compact sequence of characters
     for describing a range of Uniform Resource Identifiers
     through variable expansion.
@@ -82,48 +163,166 @@
     syntax and the process for expanding a URI Template into a
     URI reference, along with guidelines for the
     use of URI Templates on the Internet.
-   </t>
-  </abstract>
+   
+</p>
+<h3>Editorial Note (to be removed by RFC Editor)</h3>
 
-  <note title="Editorial Note (to be removed by RFC Editor)">
-   <t>
+<p>
     To provide feedback on this Internet-Draft, join the
-    <eref target="http://lists.w3.org/Archives/Public/uri/">W3C URI
-    mailing list (http://lists.w3.org/Archives/Public/uri/)</eref>.
-   </t>
-  </note>
- </front>
+    <a href='http://lists.w3.org/Archives/Public/uri/'>W3C URI
+    mailing list (http://lists.w3.org/Archives/Public/uri/)</a>.
+   
+</p>
+<h3>Status of this Memo</h3>
+<p>
+This Internet-Draft is submitted  in full
+conformance with the provisions of BCP&nbsp;78 and BCP&nbsp;79.</p>
+<p>
+Internet-Drafts are working documents of the Internet Engineering
+Task Force (IETF).  Note that other groups may also distribute
+working documents as Internet-Drafts.  The list of current
+Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
+<p>
+Internet-Drafts are draft documents valid for a maximum of six months
+and may be updated, replaced, or obsoleted by other documents at any time.
+It is inappropriate to use Internet-Drafts as reference material or to cite
+them other than as &ldquo;work in progress.&rdquo;</p>
+<p>
+This Internet-Draft will expire on January 12, 2012.</p>
 
- <middle>
-  <section title="Introduction" anchor="intro">
-   <section title="Overview" anchor="overview">
-    <t>
-     A Uniform Resource Identifier (URI) <xref target="RFC3986"/>
+<h3>Copyright Notice</h3>
+<p>
+Copyright (c) 2011 IETF Trust and the persons identified as the
+document authors.  All rights reserved.</p>
+<p>
+This document is subject to BCP 78 and the IETF Trust's Legal
+Provisions Relating to IETF Documents
+(http://trustee.ietf.org/license-info) in effect on the date of
+publication of this document.  Please review these documents
+carefully, as they describe your rights and restrictions with respect
+to this document. Code Components extracted from this document must
+include Simplified BSD License text as described in Section 4.e of
+the Trust Legal Provisions and are provided without warranty as
+described in the Simplified BSD License.</p>
+<p>
+This document may contain material from IETF Documents or IETF
+Contributions published or made publicly available before November
+10, 2008.  The person(s) controlling the copyright in some of this
+material may not have granted the IETF Trust the right to allow
+modifications of such material outside the IETF Standards Process.
+Without obtaining an adequate license from the person(s) controlling
+the copyright in such materials, this document may not be modified
+outside the IETF Standards Process, and derivative works of it may
+not be created outside the IETF Standards Process, except to format
+it for publication as an RFC or to translate it into languages other
+than English.</p>
+<a name="toc"></a><br /><hr />
+<h3>Table of Contents</h3>
+<p class="toc">
+<a href="#intro">1.</a>&nbsp;
+Introduction<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#overview">1.1.</a>&nbsp;
+Overview<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#types">1.2.</a>&nbsp;
+Levels and Expression Types<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#design">1.3.</a>&nbsp;
+Design Considerations<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#limitations">1.4.</a>&nbsp;
+Limitations<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#notation">1.5.</a>&nbsp;
+Notational Conventions<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#unicode-normal">1.6.</a>&nbsp;
+Character Encoding and Unicode Normalization<br />
+<a href="#syntax">2.</a>&nbsp;
+Syntax<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#literals">2.1.</a>&nbsp;
+Literals<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#expressions">2.2.</a>&nbsp;
+Expressions<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#variables">2.3.</a>&nbsp;
+Variables<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#modifiers">2.4.</a>&nbsp;
+Value Modifiers<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#prefix-values">2.4.1.</a>&nbsp;
+Prefix Values<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#component-values">2.4.2.</a>&nbsp;
+Component Values<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#defaults">2.5.</a>&nbsp;
+Value Defaults<br />
+<a href="#expansion">3.</a>&nbsp;
+Expansion<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#literal-expansion">3.1.</a>&nbsp;
+Literal Expansion<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#expression-expansion">3.2.</a>&nbsp;
+Expression Expansion<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#undef-expansion">3.2.1.</a>&nbsp;
+Undefined Variable Expansion<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#op-simple">3.2.2.</a>&nbsp;
+Simple String Expansion: {var}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#op-plus">3.2.3.</a>&nbsp;
+Reserved expansion: {+var}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#op-dot">3.2.4.</a>&nbsp;
+Label expansion with dot-prefix: {.var}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#op-slash">3.2.5.</a>&nbsp;
+Path segment expansion: {/var}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#op-semicolon">3.2.6.</a>&nbsp;
+Path-style parameter expansion: {;var}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#op-question">3.2.7.</a>&nbsp;
+Form-style query expansion: {?var}<br />
+<a href="#anchor1">4.</a>&nbsp;
+Security Considerations<br />
+<a href="#iana">5.</a>&nbsp;
+IANA Considerations<br />
+<a href="#ack">6.</a>&nbsp;
+Acknowledgments<br />
+<a href="#rfc.references1">7.</a>&nbsp;
+Normative References<br />
+<a href="#parser">Appendix&nbsp;A.</a>&nbsp;
+Example URI Template Parser<br />
+<a href="#revisions">Appendix&nbsp;B.</a>&nbsp;
+Revision History (to be removed by RFC Editor)<br />
+<a href="#rfc.authors">&#167;</a>&nbsp;
+Authors' Addresses<br />
+</p>
+<br clear="all" />
+
+<a name="intro"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1"></a><h3>1.&nbsp;
+Introduction</h3>
+
+<a name="overview"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.1"></a><h3>1.1.&nbsp;
+Overview</h3>
+
+<p>
+     A Uniform Resource Identifier (URI) <a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;Uniform Resource Identifier (URI): Generic Syntax,&rdquo; January&nbsp;2005.</span><span>)</span></a>
      is often used to identify a specific resource within a common
      space of similar resources. For example, personal web spaces
      are often delegated using a common pattern, such as
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   http://example.com/~fred/
   http://example.com/~mark/
-    </artwork></figure>
-    <t>
+</pre></div>
+<p>
      or a set of dictionary entries might be grouped in a hierarchy
      by the first letter of the term, as in
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   http://example.com/dictionary/c/cat
   http://example.com/dictionary/d/dog
-    </artwork></figure>
-    <t>
+</pre></div>
+<p>
      or a service interface might be invoked with various user input
      in a common pattern, as in
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   http://example.com/search?q=cat&amp;lang=en
   http://example.com/search?q=dog&amp;lang=fr
-    </artwork></figure>
-    <t>
+</pre></div>
+<p>
      URI Templates provide a mechanism for abstracting a space of
      resource identifiers such that the variable parts can be easily
      identified and described.  URI templates can have many uses,
@@ -132,30 +331,35 @@
      other forms of programmatic interaction with resources.
      For example, the above resources could be described by the
      following URI templates:
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   http://example.com/~{username}/
   http://example.com/dictionary/{term:1}/{term}
   http://example.com/search{?q,lang}
-    </artwork></figure>
-    <t>
+</pre></div>
+<p>
      We define the following terms:
-     <list style="symbols">
-      <t>expression -
+     </p>
+<ul class="text">
+<li>expression -
          The text between '{' and '}', including the enclosing braces,
-         as defined in <xref target="syntax"/>.</t>
-      <t>expansion -
+         as defined in <a class='info' href='#syntax'>Section&nbsp;2<span> (</span><span class='info'>Syntax</span><span>)</span></a>.
+</li>
+<li>expansion -
          The string result obtained from a template expression after
          processing it according to its expression type, list of variable
-         names, and value modifiers, as defined in <xref target="expansion"/>.</t>
-      <t>template processor -
+         names, and value modifiers, as defined in <a class='info' href='#expansion'>Section&nbsp;3<span> (</span><span class='info'>Expansion</span><span>)</span></a>.
+</li>
+<li>template processor -
          A program or library that, given a URI Template and a set of
          variables with values, transforms the template string into a
          URI-reference by parsing the template for expressions and
-         substituting each one with its corresponding expansion.</t>
-      </list>
-     </t>
-    <t>
+         substituting each one with its corresponding expansion.
+</li>
+</ul><p>
+     
+</p>
+<p>
      A URI Template provides both a structural description of a URI
      space and, when variable values are provided, a simple instruction
      on how to construct a URI corresponding to those values.
@@ -167,23 +371,24 @@
      are based on the URI generic syntax, allowing an implementation
      to process any URI Template without knowing the scheme-specific
      requirements of every possible resulting URI.
-    </t>
-    <t>
+    
+</p>
+<p>
      For example, the following URI Template includes a
      form-style parameter expression, as indicated by the "?" operator
      appearing before the variable names.
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   http://www.example.com/foo{?query,number}
-    </artwork></figure>
-    <t>
+</pre></div>
+<p>
      Each template expression describes, in a machine-readable manner,
      how a URI is to be constructed.  In this example,
      the expansion process for templates beginning with the
      question-mark ("?") operator follows the same pattern
      as form-style interfaces on the World Wide Web.
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   http://www.example.com/foo{?query,number}
                             \_____________/
                                |
@@ -192,64 +397,69 @@
           substitute "?" if it is the first substitution or "&amp;"
           thereafter, followed by the variable name, '=', and the
           variable's value.
-    </artwork></figure>
-    <t>
+</pre></div>
+<p>
      If the variables have the values
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   query  := "mycelium"
   number := 100
-    </artwork></figure>
-    <t>
+</pre></div>
+<p>
      then the expansion of the above URI Template is
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   http://www.example.com/foo?query=mycelium&amp;number=100
-    </artwork></figure>
-    <t>
+</pre></div>
+<p>
      Alternatively, if 'query' is undefined, then the expansion
      would be
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   http://www.example.com/foo?number=100
-    </artwork></figure>
-    <t>
+</pre></div>
+<p>
      or if both variables are undefined, then it would be
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   http://www.example.com/foo
-    </artwork></figure>
-    <t>
+</pre></div>
+<p>
      A URI Template may be provided in absolute form, as in the examples
      above, or in relative form.  A template MUST be expanded before the
      resulting reference can be resolved from relative to absolute form.
-    </t>
-    <t>
+    
+</p>
+<p>
      Although the URI syntax is used for the result, the template
      string is allowed to contain the broader set of characters
-     that can be found in IRI references <xref target="RFC3987"/>.
+     that can be found in IRI references <a class='info' href='#RFC3987'>[RFC3987]<span> (</span><span class='info'>Duerst, M. and M. Suignard, &ldquo;Internationalized Resource Identifiers (IRIs),&rdquo; January&nbsp;2005.</span><span>)</span></a>.
      A URI Template is therefore also an IRI template, and the result
      of template processing can be rendered as an IRI by transforming
      each of the pct-encoded sequences to their corresponding Unicode
      character if that character is not in the reserved set.
-    </t>
-   </section>
+    
+</p>
+<a name="types"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.2"></a><h3>1.2.&nbsp;
+Levels and Expression Types</h3>
 
-   <section title="Levels and Expression Types" anchor="types">
-    <t>
+<p>
      URI Templates are similar to a macro language with a fixed set of
      macro definitions: the expression type determines the expansion
      process.  The default expression type is simple string expansion, wherein
      a single named variable is replaced by its value as a string after UTF-8
      encoding the characters and then pct-encoding any octets that are
      not in the unreserved set.
-    </t>
-    <t>     
+    
+</p>
+<p>     
      Since most template processors implemented prior to this specification
      have only implemented the default expression type, we refer to these as
      Level 1 templates.
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
 .-----------------------------------------------------------------.
 | Level 1 examples, with variables having values of               |
 |                                                                 |
@@ -268,13 +478,13 @@
 |     |    O{empty}X             OX                               |
 |     |    O{undef}X             OX                               |
 `-----------------------------------------------------------------'
-    </artwork></figure>
-    <t>     
+</pre></div>
+<p>     
      Level 2 templates add the ability to define a default string, which is
      substituted if the variable is undefined, and the plus ("+") operator
      for expansion values that are allowed to include reserved characters.  
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
 .-----------------------------------------------------------------.
 | Level 2 examples, with variables having values of               |
 |                                                                 |
@@ -305,15 +515,15 @@
 |     |    up{+undef|/1}/here    up/1/here                        |
 |     |                                                           |
 `-----------------------------------------------------------------'
-    </artwork></figure>
-    <t>     
+</pre></div>
+<p>     
      Level 3 templates add more complex operators for lists of
      comma-separated values, dot-prefixed labels, slash-prefixed path
      segments, semicolon-prefixed path parameters, and the forms-style
      construction of a query syntax consisting of key=value pairs that
      are separated by an ampersand character.  
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
 .-----------------------------------------------------------------.
 | Level 3 examples, with variables having values of               |
 |                                                                 |
@@ -372,16 +582,16 @@
 |     |    {?x,y,undef}          ?x=1024&amp;y=768                    |
 |     |                                                           |
 `-----------------------------------------------------------------'
-    </artwork></figure>
-    <t>     
+</pre></div>
+<p>     
      Finally, Level 4 templates add the ability to specify value modifiers
      as a suffix to the variable name.  The prefix modifier (":") indicates
      that only a limited number of characters from the beginning of the
      value are used by the expansion.  The explode ("*") modifier tells
      the expansion process to treat the value as a multivalued structure ---
      a list of values or key=value pairs -- rather than as a single string.
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
 .-----------------------------------------------------------------.
 | Level 4 examples, with variables having values of               |
 |                                                                 |
@@ -449,11 +659,13 @@
 |     |    {?keys*}              ?semi=%3B&amp;dot=.&amp;comma=%2C        |
 |     |                                                           |
 `-----------------------------------------------------------------'
-    </artwork></figure>
-   </section>
+</pre></div>
+<a name="design"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.3"></a><h3>1.3.&nbsp;
+Design Considerations</h3>
 
-   <section title="Design Considerations" anchor="design">
-    <t>
+<p>
      Mechanisms similar to URI Templates have been defined within
      several specifications, including WSDL, WADL and OpenSearch.
      This specification extends and formally defines the syntax so
@@ -461,16 +673,18 @@
      Internet applications and within Internet message fields,
      while at the same time retaining compatibility with those
      earlier definitions.
-    </t>
-    <t>
+    
+</p>
+<p>
      The URI Template syntax has been designed to carefully balance
      the need for a powerful expansion mechanism with the need for
      ease of implementation. The syntax is designed to be trivial
      to parse while at the same time providing enough flexibility to
      express many common template scenarios.  Implementations are able
      to parse the template and perform the expansions in a single pass.
-    </t>
-    <t>
+    
+</p>
+<p>
      Templates are simple and readable when used with common
      examples because the single-character operators match the URI
      generic syntax delimiters.  The operator's associated delimiter
@@ -484,8 +698,9 @@
      plus ("+"), will substitute unencoded reserved characters found
      inside the variable values; the other operators will pct-encode
      reserved characters found in the variable values prior to expansion.
-    </t>
-    <t>
+    
+</p>
+<p>
      The most common cases for URI spaces can be described with
      Level 1 template expressions.  If we were only concerned with
      URI generation, then the template syntax could be limited to
@@ -499,11 +714,14 @@
      resources, modifiers on variable values provide a way
      to specify both the substring and the full value string
      with a single variable name.
-    </t>
-   </section>
+    
+</p>
+<a name="limitations"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.4"></a><h3>1.4.&nbsp;
+Limitations</h3>
 
-   <section title="Limitations" anchor="limitations">
-    <t>
+<p>
      Since a URI Template describes a superset of the identifiers,
      there is no implication that every possible expansion for
      each delimited variable expression corresponds to a URI of an
@@ -512,8 +730,9 @@
      with an appropriate set of values for the variables being
      substituted and will be able to cope with any errors that might
      occur when the resulting URI is used for name resolution or access.
-    </t>
-    <t>
+    
+</p>
+<p>
      URI Templates are not URIs: they do not identify
      an abstract or physical resource, they are not parsed as URIs,
      and should not be used in places where a URI would be expected
@@ -521,61 +740,68 @@
      processor prior to use.  Distinct field, element, or attribute
      names should be used to differentiate protocol elements that
      carry a URI Template from those that expect a URI reference.
-    </t>
-   </section>
+    
+</p>
+<a name="notation"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.5"></a><h3>1.5.&nbsp;
+Notational Conventions</h3>
 
-   <section title="Notational Conventions" anchor="notation">
-    <t>
+<p>
      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
      "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",
      "MAY", and "OPTIONAL" in this document are to be
-     interpreted as described in <xref target="RFC2119"/>.
-    </t>
-    <t>
+     interpreted as described in <a class='info' href='#RFC2119'>[RFC2119]<span> (</span><span class='info'>Bradner, S., &ldquo;Key words for use in RFCs to Indicate Requirement Levels,&rdquo; March&nbsp;1997.</span><span>)</span></a>.
+    
+</p>
+<p>
      This specification uses the Augmented Backus-Naur Form (ABNF)
-     notation of <xref target="RFC5234"/>.  The following ABNF rules
-     are imported from the normative references <xref target="RFC5234"/>,
-     <xref target="RFC3986"/>, and <xref target="RFC3987"/>.
-    </t>
-    <figure><artwork type="abnf">
-  ALPHA          =  %x41-5A / %x61-7A   ; A-Z / a-z
-  DIGIT          =  %x30-39             ; 0-9
-  HEXDIG         =  DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
-  
-  pct-encoded    =  "%" HEXDIG HEXDIG
-  unreserved     =  ALPHA / DIGIT / "-" / "." / "_" / "~"
-  reserved       =  gen-delims / sub-delims
-  gen-delims     =  ":" / "/" / "?" / "#" / "[" / "]" / "@"
-  sub-delims     =  "!" / "$" / "&amp;" / "'" / "(" / ")"
-                 /  "*" / "+" / "," / ";" / "="
-      
-  ucschar        =  %xA0-D7FF / %xF900-FDCF / %xFDF0-FFEF
-                 /  %x10000-1FFFD / %x20000-2FFFD / %x30000-3FFFD
-                 /  %x40000-4FFFD / %x50000-5FFFD / %x60000-6FFFD
-                 /  %x70000-7FFFD / %x80000-8FFFD / %x90000-9FFFD
-                 /  %xA0000-AFFFD / %xB0000-BFFFD / %xC0000-CFFFD
-                 /  %xD0000-DFFFD / %xE1000-EFFFD
+     notation of <a class='info' href='#RFC5234'>[RFC5234]<span> (</span><span class='info'>Crocker, D. and P. Overell, &ldquo;Augmented BNF for Syntax Specifications: ABNF,&rdquo; January&nbsp;2008.</span><span>)</span></a>.  The following ABNF rules
+     are imported from the normative references <a class='info' href='#RFC5234'>[RFC5234]<span> (</span><span class='info'>Crocker, D. and P. Overell, &ldquo;Augmented BNF for Syntax Specifications: ABNF,&rdquo; January&nbsp;2008.</span><span>)</span></a>,
+     <a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;Uniform Resource Identifier (URI): Generic Syntax,&rdquo; January&nbsp;2005.</span><span>)</span></a>, and <a class='info' href='#RFC3987'>[RFC3987]<span> (</span><span class='info'>Duerst, M. and M. Suignard, &ldquo;Internationalized Resource Identifiers (IRIs),&rdquo; January&nbsp;2005.</span><span>)</span></a>.
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  <dfn>ALPHA</dfn>          =  <span class='val'>%x41-5A</span> / <span class='val'>%x61-7A</span>   <em>; A-Z / a-z</em>
+  <dfn>DIGIT</dfn>          =  <span class='val'>%x30-39</span>             <em>; 0-9</em>
+  <dfn>HEXDIG</dfn>         =  <cite class='key'>DIGIT</cite> / "<span class='str'>A</span>" / "<span class='str'>B</span>" / "<span class='str'>C</span>" / "<span class='str'>D</span>" / "<span class='str'>E</span>" / "<span class='str'>F</span>"
 
-  iprivate       =  %xE000-F8FF / %xF0000-FFFFD / %x100000-10FFFD
-    </artwork></figure>
-   </section>
+  <dfn>pct-encoded</dfn>    =  "<span class='str'>%</span>" <cite class='key'>HEXDIG</cite> <cite class='key'>HEXDIG</cite>
+  <dfn>unreserved</dfn>     =  <cite class='key'>ALPHA</cite> / <cite class='key'>DIGIT</cite> / "<span class='str'>-</span>" / "<span class='str'>.</span>" / "<span class='str'>_</span>" / "<span class='str'>~</span>"
+  <dfn>reserved</dfn>       =  <cite class='id'>gen-delims</cite> / <cite class='id'>sub-delims</cite>
+  <dfn>gen-delims</dfn>     =  "<span class='str'>:</span>" / "<span class='str'>/</span>" / "<span class='str'>?</span>" / "<span class='str'>#</span>" / "<span class='str'>[</span>" / "<span class='str'>]</span>" / "<span class='str'>@</span>"
+  <dfn>sub-delims</dfn>     =  "<span class='str'>!</span>" / "<span class='str'>$</span>" / "<span class='str'>&amp;</span>" / "<span class='str'>'</span>" / "<span class='str'>(</span>" / "<span class='str'>)</span>"
+                 /  "<span class='str'>*</span>" / "<span class='str'>+</span>" / "<span class='str'>,</span>" / "<span class='str'>;</span>" / "<span class='str'>=</span>"
 
-   <section title='Character Encoding and Unicode Normalization'
-            anchor="unicode-normal">
-    <t>
+  <dfn>ucschar</dfn>        =  <span class='val'>%xA0-D7FF</span> / <span class='val'>%xF900-FDCF</span> / <span class='val'>%xFDF0-FFEF</span>
+                 /  <span class='val'>%x10000-1FFFD</span> / <span class='val'>%x20000-2FFFD</span> / <span class='val'>%x30000-3FFFD</span>
+                 /  <span class='val'>%x40000-4FFFD</span> / <span class='val'>%x50000-5FFFD</span> / <span class='val'>%x60000-6FFFD</span>
+                 /  <span class='val'>%x70000-7FFFD</span> / <span class='val'>%x80000-8FFFD</span> / <span class='val'>%x90000-9FFFD</span>
+                 /  <span class='val'>%xA0000-AFFFD</span> / <span class='val'>%xB0000-BFFFD</span> / <span class='val'>%xC0000-CFFFD</span>
+                 /  <span class='val'>%xD0000-DFFFD</span> / <span class='val'>%xE1000-EFFFD</span>
+
+  <dfn>iprivate</dfn>       =  <span class='val'>%xE000-F8FF</span> / <span class='val'>%xF0000-FFFFD</span> / <span class='val'>%x100000-10FFFD</span>
+</pre></div>
+<a name="unicode-normal"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.6"></a><h3>1.6.&nbsp;
+Character Encoding and Unicode Normalization</h3>
+
+<p>
      This specification uses the terms "character" and "coded
      character set" in accordance with the definitions provided
-     in <xref target="RFC2978"/>, and "character encoding" in
-     place of what <xref target="RFC2978"/> refers to as a "charset".
-    </t>
-    <t>
+     in <a class='info' href='#RFC2978'>[RFC2978]<span> (</span><span class='info'>Freed, N. and J. Postel, &ldquo;IANA Charset Registration Procedures,&rdquo; October&nbsp;2000.</span><span>)</span></a>, and "character encoding" in
+     place of what <a class='info' href='#RFC2978'>[RFC2978]<span> (</span><span class='info'>Freed, N. and J. Postel, &ldquo;IANA Charset Registration Procedures,&rdquo; October&nbsp;2000.</span><span>)</span></a> refers to as a "charset".
+    
+</p>
+<p>
      The ABNF notation defines its terminal values to be
      non-negative integers (codepoints) that are a superset of the
-     US-ASCII coded character set <xref target="ASCII"/>.  This
+     US-ASCII coded character set <a class='info' href='#ASCII'>[ASCII]<span> (</span><span class='info'>American National Standards Institute, &ldquo;Coded Character Set - 7-bit American Standard Code for Information Interchange,&rdquo; 1986.</span><span>)</span></a>.  This
      specification defines terminal values as codepoints within the
-     Unicode coded character set <xref target="UNIV4"/>.
-    </t>
-    <t>
+     Unicode coded character set <a class='info' href='#UNIV4'>[UNIV4]<span> (</span><span class='info'>The Unicode Consortium, &ldquo;The Unicode Standard, Version                   4.0.1, defined by: The Unicode Standard, Version 4.0                   (Reading, MA, Addison-Wesley, 2003. ISBN                   0-321-18578-1), as amended by Unicode 4.0.1                   (http://www.unicode.org/versions/Unicode4.0.1/),&rdquo; March&nbsp;2004.</span><span>)</span></a>.
+    
+</p>
+<p>
      In spite of the syntax and template expansion process being defined
      in terms of Unicode codepoints, it should be understood that
      templates occur in practice as a sequence of characters in
@@ -592,17 +818,19 @@
      expansion that a string of characters in a URI Template MUST be
      transformed into its corresponding sequence of normalized
      Unicode codepoints.
-    </t>
-    <t>
-     The Unicode Standard <xref target="UNIV4"/> defines various
+    
+</p>
+<p>
+     The Unicode Standard <a class='info' href='#UNIV4'>[UNIV4]<span> (</span><span class='info'>The Unicode Consortium, &ldquo;The Unicode Standard, Version                   4.0.1, defined by: The Unicode Standard, Version 4.0                   (Reading, MA, Addison-Wesley, 2003. ISBN                   0-321-18578-1), as amended by Unicode 4.0.1                   (http://www.unicode.org/versions/Unicode4.0.1/),&rdquo; March&nbsp;2004.</span><span>)</span></a> defines various
      equivalences between sequences of characters for various purposes.
-     Unicode Standard Annex #15 <xref target="UTR15"/> defines various
+     Unicode Standard Annex #15 <a class='info' href='#UTR15'>[UTR15]<span> (</span><span class='info'>Davis, M. and M. Duerst, &ldquo;Unicode Normalization Forms,&rdquo; April&nbsp;2003.</span><span>)</span></a> defines various
      Normalization Forms for these equivalences, in particular
      Normalization Form KC (NFKC: Compatibility Decomposition followed
      by Canonical Composition).  The normalization form determines how
      to consistently encode the equivalent strings.
-    </t>
-    <t>
+    
+</p>
+<p>
      In theory, all URI processing implementations, including template
      processors, should use the same normalization form for generating
      or handling a URI reference.  In practice, they do not.  However,
@@ -615,22 +843,24 @@
      a sequence of Unicode codepoints.  The final step of template
      processing will encode the expanded sequence of Unicode
      codepoints, which should still be in NFKC, as UTF-8
-     <xref target="RFC3629"/> and then further pct-encode any octets
+     <a class='info' href='#RFC3629'>[RFC3629]<span> (</span><span class='info'>Yergeau, F., &ldquo;UTF-8, a transformation format of ISO 10646,&rdquo; November&nbsp;2003.</span><span>)</span></a> and then further pct-encode any octets
      within the UTF-8 string that are not allowed in a URI.
-    </t>
-   </section>
-  </section>
+    
+</p>
+<a name="syntax"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2"></a><h3>2.&nbsp;
+Syntax</h3>
 
-  <section title="Syntax" anchor="syntax">
-   <t>
+<p>
     A URI Template is a string of printable Unicode characters
     that contains zero or more embedded variable expressions, each
     expression being delimited by a matching pair of braces ('{', '}').
-   </t>
-   <figure><artwork type="abnf">
-  URI-Template  = *( literals / expression )
-   </artwork></figure>
-   <t>
+   
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  <dfn>URI-Template</dfn>  = <span class='rep'>*</span>( <cite class='id'>literals</cite> / <cite class='id'>expression</cite> )
+</pre></div>
+<p>
     Although templates (and template processor implementations) are
     described above in terms of four gradual levels, we define the
     URI-Template syntax in terms of the ABNF for Level 4.  A template
@@ -638,8 +868,9 @@
     rules applicable only to higher levels.  However, it is RECOMMENDED
     that all parsers implement the full syntax such that unsupported
     levels can be properly identified as such to the end user.
-   </t>
-   <t>
+   
+</p>
+<p>
     Each character in a URI Template MUST be transcoded to an NFKC
     Unicode codepoint prior to evaluation.  If a character sequence
     in the template consists of pct-encoded triplets corresponding
@@ -648,22 +879,26 @@
     their corresponding Unicode codepoint.  In other words, pct-encoded
     UTF-8 found within the template is decoded prior to further processing
     unless the corresponding character is in the reserved set.
-   </t>
+   
+</p>
+<a name="literals"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.1"></a><h3>2.1.&nbsp;
+Literals</h3>
 
-   <section title="Literals" anchor="literals">
-    <t>
+<p>
      The characters outside of expressions in a URI Template string
      are intended to be translated literally to the URI-reference.
-    </t>
-    <figure><artwork type="abnf">
-  literals      =  %x21 / %x23-24 / %x26 / %x28-3B / %x3D / %x3F-5B
-                /  %x5D-5F / %x61-7A / %x7E / ucschar / iprivate
-                /  pct-encoded
-                     ; any Unicode character except: CTL, SP,
-                     ;  DQUOTE, "'", "%" (aside from pct-encoded),
-                     ;  "&lt;", "&gt;", "\", "^", "`", "{", "|", "}"
-    </artwork></figure>
-    <t>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  <dfn>literals</dfn>      =  <span class='val'>%x21</span> / <span class='val'>%x23-24</span> / <span class='val'>%x26</span> / <span class='val'>%x28-3B</span> / <span class='val'>%x3D</span> / <span class='val'>%x3F-5B</span>
+                /  <span class='val'>%x5D-5F</span> / <span class='val'>%x61-7A</span> / <span class='val'>%x7E</span> / <cite class='id'>ucschar</cite> / <cite class='id'>iprivate</cite>
+                /  <cite class='id'>pct-encoded</cite>
+                     <em>; any Unicode character except: CTL, SP,</em>
+                     <em>;  DQUOTE, "'", "%" (aside from pct-encoded),</em>
+                     <em>;  "&lt;", "&gt;", "\", "^", "`", "{", "|", "}"</em>
+</pre></div>
+<p>
      A sequence of pct-encoded literals that corresponds to a UTF-8
      encoded character that is not within the reserved set will be
      transcoded during template processing, as describe above.  If
@@ -671,27 +906,31 @@
      re-pct-encoded during the final step of template processing.
      Unreserved characters will therefore be normalized to their
      unencoded form as a side-effect of template processing.
-    </t>
-   </section>
+    
+</p>
+<a name="expressions"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.2"></a><h3>2.2.&nbsp;
+Expressions</h3>
 
-   <section title="Expressions" anchor="expressions">
-    <t>
+<p>
      Template expressions are the parameterized parts of a URI Template.
      Each expression contains an optional operator, which defines the
      expression type and its corresponding expansion process, followed by a
      comma-separated list of variable specifiers (variable names and
      optional value modifiers).  If no operator is provided, the expression
      defaults to simple variable expansion of unreserved values.
-    </t>
-    <figure><artwork type="abnf">
-  expression    =  "{" [ operator ] variable-list "}"
-  operator      =  "+" / "." / "/" / ";" / "?" / op-reserve
-  op-reserve    =  "," / "!" / "@"
-                       ; reserved for local use: "$" / "(" / ")"
-    </artwork></figure>
-   <t>
-   </t>
-    <t> 
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  <dfn>expression</dfn>    =  "<span class='str'>{</span>" [ <cite class='id'>operator</cite> ] <cite class='id'>variable-list</cite> "<span class='str'>}</span>"
+  <dfn>operator</dfn>      =  "<span class='str'>+</span>" / "<span class='str'>.</span>" / "<span class='str'>/</span>" / "<span class='str'>;</span>" / "<span class='str'>?</span>" / <cite class='id'>op-reserve</cite>
+  <dfn>op-reserve</dfn>    =  "<span class='str'>,</span>" / "<span class='str'>!</span>" / "<span class='str'>@</span>"
+                       <em>; reserved for local use: "$" / "(" / ")"</em>
+</pre></div>
+<p>
+   
+</p>
+<p> 
      The operator characters have been chosen to reflect each of their roles
      as reserved characters in the URI generic syntax.  The operators defined
      by this specification include:
@@ -704,50 +943,57 @@
      prefixed by ";"; and,
      question-mark ("?") for substituting a query component beginning
      with "?" and consisting of key=value pairs separated by "&amp;".
-     These operators will be described in detail in <xref target="expansion"/>.
-    </t>
-    <t>
+     These operators will be described in detail in <a class='info' href='#expansion'>Section&nbsp;3<span> (</span><span class='info'>Expansion</span><span>)</span></a>.
+    
+</p>
+<p>
      The operator characters comma (","), exclamation ("!"), and at-sign ("@")
      are reserved for future extensions.  A processor that unexpectedly
      encounters such an extension operator SHOULD pass the expression
      through unexpanded and MAY also indicate a warning to the invoking
      application.
-    </t>
-    <t>
+    
+</p>
+<p>
      The expression syntax specifically excludes use of the dollar ("$")
      and parentheses ["(" and ")"] characters so that they remain
      available for local language extensions outside the scope of this
      specification.
-    </t>
-   </section>
+    
+</p>
+<a name="variables"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.3"></a><h3>2.3.&nbsp;
+Variables</h3>
 
-   <section title="Variables" anchor="variables">
-    <t>
+<p>
      After the operator (if any), each expression contains a list of
      one or more comma-separated variable specifiers (varspec).
      The variable names serve multiple purposes: documentation for
      what kinds of values are expected, identifiers for associating
      values within a template processor, and the string to use
      for each key on key=value expansions.
-    </t>
-    <figure><artwork type="abnf">
-  variable-list =  varspec *( "," varspec )
-  varspec       =  varname [ modifier ] [ "|" default ]
-  varname       =  varchar *( varchar / "." )
-  varchar       =  ALPHA / DIGIT / "_" / ucschar / iprivate
-                /  pct-encoded
-    </artwork></figure>
-    <t>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  <dfn>variable-list</dfn> =  <cite class='id'>varspec</cite> <span class='rep'>*</span>( "<span class='str'>,</span>" <cite class='id'>varspec</cite> )
+  <dfn>varspec</dfn>       =  <cite class='id'>varname</cite> [ <cite class='id'>modifier</cite> ] [ "<span class='str'>|</span>" <cite class='id'>default</cite> ]
+  <dfn>varname</dfn>       =  <cite class='id'>varchar</cite> <span class='rep'>*</span>( <cite class='id'>varchar</cite> / "<span class='str'>.</span>" )
+  <dfn>varchar</dfn>       =  <cite class='key'>ALPHA</cite> / <cite class='key'>DIGIT</cite> / "<span class='str'>_</span>" / <cite class='id'>ucschar</cite> / <cite class='id'>iprivate</cite>
+                /  <cite class='id'>pct-encoded</cite>
+</pre></div>
+<p>
      An expression MAY reference variables that are unknown
      to the template processor or whose value is set to a special
      "undefined" value, such as undef or null.  Such undefined
      variables are given special treatment by the expansion process.
-    </t>
-    <t>
+    
+</p>
+<p>
      A variable value that is a string of length zero is not considered
      undefined; it has the defined value of an empty string.
-    </t>
-    <t>
+    
+</p>
+<p>
      A variable may have a composite or structured value, such as a
      list of values, an associative array of (key, value) pairs, or
      a structure of components defined by some separate schema.
@@ -755,41 +1001,48 @@
      syntax, but do have an impact on the expansion process.  A
      composite or structured value with zero member values is
      considered undefined.
-    </t>
-    <t>
+    
+</p>
+<p>
      If a variable appears more than once in an expression or
      within multiple expressions of a URI Template, the value of
      that variable MUST remain static throughout the expansion
      process (i.e., the variable must have the same value for the
      purpose of calculating each expansion).
-    </t>
-   </section>
+    
+</p>
+<a name="modifiers"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.4"></a><h3>2.4.&nbsp;
+Value Modifiers</h3>
 
-   <section title="Value Modifiers" anchor="modifiers">
-    <t>
+<p>
      Each of the variables in a Level 4 template expression can have
      a modifier indicating either that its expansion is limited to a
      prefix of the variable's value string or that its expansion is
      exploded into components based on an external type or schema
      associated with that variable.
-    </t>
-    <figure><artwork type="abnf">
-  modifier      =  prefix / explode
-    </artwork></figure>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  <dfn>modifier</dfn>      =  <cite class='id'>prefix</cite> / <cite class='id'>explode</cite>
+</pre></div>
+<a name="prefix-values"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.4.1"></a><h3>2.4.1.&nbsp;
+Prefix Values</h3>
 
-    <section title="Prefix Values" anchor="prefix-values">
-     <t>
+<p>
       A prefix modifier indicates that the variable expansion is limited
       to a prefix of the variable's value string.  Prefix modifiers are
       often used to partition an identifier space hierarchically, as is
       common in reference indices and hash-based storage.  It also serves
       to limit the expanded value to a maximum number of characters.
-     </t>
-     <figure><artwork type="abnf">
-  prefix        =  ":" offset
-  max-length    =  %x31-39 *DIGIT   ; positive integer
-     </artwork></figure>
-     <t>
+     
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  <dfn>prefix</dfn>        =  "<span class='str'>:</span>" <cite class='id'>offset</cite>
+  <dfn>max-length</dfn>    =  <span class='val'>%x31-39</span> <span class='rep'>*</span><cite class='key'>DIGIT</cite>   <em>; positive integer</em>
+</pre></div>
+<p>
       The max-length is a positive integer that refers to a maximum number
       of characters from the beginning of the variable's value as a
       Unicode string.
@@ -798,13 +1051,14 @@
       character or within a pct-encoded triplet.
       If the max-length is greater than the length of the variable's
       value, then the entire value string is used.
-     </t>
-     <t>
+     
+</p>
+<p>
       For example,
-     </t>
-     <figure><artwork>
+     
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   Given the variable assignments
-   
+
     var   := "value"
     semi  := ";"
 
@@ -815,11 +1069,13 @@
     {var:3}            val
     {semi}             %3B
     {semi:2}           %3B
-    </artwork></figure>
-    </section>
+</pre></div>
+<a name="component-values"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.4.2"></a><h3>2.4.2.&nbsp;
+Component Values</h3>
 
-    <section title="Component Values" anchor="component-values">
-     <t>
+<p>
       An explode modifier ("*") indicates that the
       variable represents a composite value that may be substituted
       in full or partial forms, depending on the variable's type or
@@ -831,11 +1087,11 @@
       in the template.  Likewise, a typed programming language might
       differentiate variables as strings, lists, associative arrays,
       or structures.
-     </t>
-     <figure><artwork type="abnf">
-  explode       =  "*"
-     </artwork></figure>
-     <t>
+     
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  <dfn>explode</dfn>       =  "<span class='str'>*</span>"
+</pre></div>
+<p>
       Explode modifiers improve brevity in the URI Template syntax.
       For example, a resource that provides a geographic map for a
       given street address might accept a hundred permutations on
@@ -844,32 +1100,33 @@
       described as a template with each and every address component
       listed in order, or with a far more simple template that makes
       use of an explode modifier, as in
-     </t>
-     <figure><artwork>
+     
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
    /mapper{?address*}
-     </artwork></figure>
-     <t>
+</pre></div>
+<p>
       along with some context that defines what the variable named
       "address" can include, such as by reference to some other
       standard for addressing (e.g., UPU S42 or AS/NZS 4819:2003).
       A recipient aware of the schema can then provide appropriate
       expansions, such as:
-     </t>
-     <figure><artwork>
+     
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
    /mapper?city=Newport%20Beach&amp;state=CA
-     </artwork></figure>
-     <t>
+</pre></div>
+<p>
       If an explode modifier is present, the expansion process for that
-      variable, as defined in <xref target="expansion"/>, is dependent on
+      variable, as defined in <a class='info' href='#expansion'>Section&nbsp;3<span> (</span><span class='info'>Expansion</span><span>)</span></a>, is dependent on
       both the operator being used and the type or schema of the value
       being substituted.
-     </t>
-    </section>
-    
-   </section>
+     
+</p>
+<a name="defaults"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.5"></a><h3>2.5.&nbsp;
+Value Defaults</h3>
 
-   <section title="Value Defaults" anchor="defaults">
-    <t>
+<p>
      Each of the variables in Level 2 (and above) templates may also
      be supplied with a default value to be used when a template processor
      determines that variable to be undefined. The default value is
@@ -879,15 +1136,15 @@
      The default is not affected by any variable modifiers, since we
      assume that the default string provided in the expression already
      reflects the desired value.
-    </t>
-    <figure><artwork type="abnf">
-  default       =  *( unreserved / "=" / pct-encoded )
-    </artwork></figure>
-    <t>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  <dfn>default</dfn>       =  <span class='rep'>*</span>( <cite class='id'>unreserved</cite> / "<span class='str'>=</span>" / <cite class='id'>pct-encoded</cite> )
+</pre></div>
+<p>
      The following examples illustrate how default values work with
      different variable types.
-    </t>
-    <figure><artwork>
+    
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   Given the variable assignments:
 
     var   := "value"
@@ -914,7 +1171,7 @@
     x{.empty|none}        x.
     x{.undef}             x
     x{.undef|none}        x.none
-    
+
     x{/name|none}         x/Fred,Wilma,Pebbles
     x{/name*|none}        x/Fred/Wilma/Pebbles
     x{/undef}             x
@@ -946,26 +1203,29 @@
     x{?empty_keys|none}   x?none
     x{?empty_keys|y=z}    x?y=z
     x{?empty_keys*|y=z}   x?y=z
-    
-    </artwork></figure>
-   </section>
-  </section>
 
-  <section title="Expansion" anchor="expansion">
-   <t>
+</pre></div>
+<a name="expansion"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3"></a><h3>3.&nbsp;
+Expansion</h3>
+
+<p>
     The process of URI Template expansion is to scan the template
     string from beginning to end, copying literal characters as-is
     and replacing each expression with the result of applying the
     expression's operator to the value of each variable named in
     the expression.
-   </t>
-   <t>
+   
+</p>
+<p>
     Each variable value MUST be formed as a sequence of NFKC Unicode
     codepoints prior to template expansion.  A value is assumed to be
     raw data that might need to be encoded by the template processor
     during expansion, depending on the expression type.
-   </t>
-   <t>
+   
+</p>
+<p>
     If a template processor encounters an error outside of an expression,
     such as a character sequence that does not match the &lt;URI-Template&gt;
     grammar, then processing of the template SHOULD cease, the URI-reference
@@ -976,21 +1236,28 @@
     the result unexpanded, processing of the remainder of the template SHOULD
     continue, and the location and type of error SHOULD be indicated to
     the invoking application.
-   </t>
+   
+</p>
+<a name="literal-expansion"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.1"></a><h3>3.1.&nbsp;
+Literal Expansion</h3>
 
-   <section title='Literal Expansion' anchor="literal-expansion">
-    <t>
+<p>
      If the literal character is allowed anywhere in the URI
      syntax (unreserved / reserved), then it is copied directly
      to the result string.  Otherwise, the pct-encoded equivalent
      of the literal character is copied to the result string by
      encoding the character in UTF-8 (a sequence of octets) and
      then encoding each octet as a pct-encoded triplet.
-    </t>
-   </section>
+    
+</p>
+<a name="expression-expansion"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.2"></a><h3>3.2.&nbsp;
+Expression Expansion</h3>
 
-   <section title='Expression Expansion' anchor="expression-expansion">
-    <t>
+<p>
      Each expression is indicated by an opening brace ("{") character
      and continues until the next closing brace ("}").  The expression
      is expanded by determining the expression type and then following
@@ -999,8 +1266,9 @@
      operator (simple string value expansion) and a single variable
      per expression.  Level 2 templates are limited to a single
      varspec per expression.
-    </t>
-    <t>
+    
+</p>
+<p>
      The expression type is determined by looking at the first
      character after the opening brace.  If the character is an
      operator, then remember the expression type associated with
@@ -1009,27 +1277,35 @@
      is not an operator, then the expression type is simple
      expansion and the first character is the beginning of the
      varspec list.
-    </t>
+    
+</p>
+<a name="undef-expansion"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.2.1"></a><h3>3.2.1.&nbsp;
+Undefined Variable Expansion</h3>
 
-    <section title='Undefined Variable Expansion' anchor="undef-expansion">
-     <t>
+<p>
       Regardless of the expression type, a variable that is undefined has
       no value.  A variable defined as a list or structure of component
       values is considered undefined if the list contains zero members or
       all of the structure's components are undefined.
-     </t>
-     <t>
+     
+</p>
+<p>
       If a default value is provided for an undefined variable, as described
-      for Level 2 (and above) templates in <xref target="defaults"/>, then 
+      for Level 2 (and above) templates in <a class='info' href='#defaults'>Section&nbsp;2.5<span> (</span><span class='info'>Value Defaults</span><span>)</span></a>, then 
       the default string is substituted in its place as the entire expansion
       for that varspec.  If all of the variables in an expression are 
       undefined and no defaults are given, then the expression's expansion
       is the empty string.
-     </t>
-    </section>
+     
+</p>
+<a name="op-simple"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.2.2"></a><h3>3.2.2.&nbsp;
+Simple String Expansion: {var}</h3>
 
-    <section title='Simple String Expansion: {var}' anchor="op-simple">
-     <t>
+<p>
       The default expression type when no operator is given is
       simple string expansion.  For each defined variable in the
       variable-list, modify its value as indicated by the optional
@@ -1037,25 +1313,28 @@
       octets that are not in the unreserved set, and then append
       the encoded value to the result string.  If more than one
       value is appended, separate each value with a comma (",").
-     </t>
-     <figure><preamble>For example,</preamble><artwork>
+     
+</p>
+<p>For example,
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   foo := "fred"
 
   "{foo}"        -&gt; "fred"
   "{foo,foo}"    -&gt; "fred,fred"
   "{bar,foo}"    -&gt; "fred"
   "{bar|wilma}"  -&gt; "wilma"
-     </artwork></figure>
-     <t>
+</pre></div>
+<p>
       Level 1 templates are limited to single variable expressions
       with no modifiers, defaults, or value structures.
       Simple string expansion in Level 2 templates adds variable
-      defaulting, as defined in <xref target="defaults"/>.
+      defaulting, as defined in <a class='info' href='#defaults'>Section&nbsp;2.5<span> (</span><span class='info'>Value Defaults</span><span>)</span></a>.
       Level 3 templates allow a list of variables.
       Level 4 templates add compound variable types and value modifiers,
       as follows:
-     </t>
-     <t>
+     
+</p>
+<p>
       For a variable defined as a single value string, the explode
       modifier has no effect.  The prefix modifier limits the
       expansion to the first max-length characters of that single
@@ -1063,102 +1342,115 @@
       multibyte UTF-8, or both, care must be taken to avoid
       splitting the value in mid-character: count each Unicode
       codepoint as one character.
-     </t>
-     <t>
+     
+</p>
+<p>
       For a variable defined as a list of values, when no value
       modifier is present or the explode modifier is given, the
       variable's string expansion consists of a concatenation
       of the individual values with each value separated by a
       comma (",").  A prefix modifier has no effect.
-     </t>
-     <t>
+     
+</p>
+<p>
       A variable defined as an associative array is expanded as a list
       of alternating key and value pairs, excluding any keys for which
       the corresponding value is undefined, when no value modifier is
       present.  If the explode modifier is given, then the keys with
       defined values are expanded as "key=value" pairs instead of
       "key,value".  A prefix modifier has no effect.
-     </t>
-    </section>
+     
+</p>
+<a name="op-plus"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.2.3"></a><h3>3.2.3.&nbsp;
+Reserved expansion: {+var}</h3>
 
-    <section title='Reserved expansion: {+var}' anchor="op-plus">
-     <t>
+<p>
       Reserved expansion is identical to simple expansion except that the
       substituted values may contain characters in the reserved set.
       The reserved expansion operator "+" is defined for Level 2
       templates (and above).
-     </t>
-     <figure><preamble>For example,</preamble><artwork>
+     
+</p>
+<p>For example,
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   foo  := "That's right!"
 
   "{foo}"        -&gt; "That%27s%20right%21"
   "{+foo}"       -&gt; "That%27s%20right!"
-  
+
   base := "http://example.com/home/"
-  
+
   "{base}index"  -&gt; "http%3A%2F%2Fexample.com%2Fhome%2Findex"
   "{+base}index" -&gt; "http://example.com/home/index"
-     </artwork></figure>
-     <t>
-      The same expansion process is followed as in <xref target="op-simple"/>
+</pre></div>
+<p>
+      The same expansion process is followed as in <a class='info' href='#op-simple'>Section&nbsp;3.2.2<span> (</span><span class='info'>Simple String Expansion: {var}</span><span>)</span></a>
       except that, instead of "pct-encode any octets that are not in
       the unreserved set", we pct-encode any octets that are not in
       either the reserved or unreserved sets.
-     </t>
-    </section>
+     
+</p>
+<a name="op-dot"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.2.4"></a><h3>3.2.4.&nbsp;
+Label expansion with dot-prefix: {.var}</h3>
 
-    <section title="Label expansion with dot-prefix: {.var}" anchor="op-dot">
-     <t>
+<p>
       The dot (".") operator indicates that the expression type is label
       expansion, which can be useful for describing URI spaces with
       varying domain names or path selectors (e.g., filename extensions).
-     </t>
-     <figure><artwork>
+     
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   For each variable in the variable-list, do one of
-  
+
     a) if the variable has a defined value
-    
+
         1) modify its value as indicated by the optional
            modifiers (if any);
-          
+
         2) encode the value as UTF-8;
-        
+
         3) pct-encode any octets that are not in the
            unreserved set;
-           
+
         4) append "." to the result string; and,
-        
+
         5) append the encoded value to the result string.
 
     b) if the variable is undefined and a default is given,
-    
+
         1) encode the default string as UTF-8;
-    
+
         2) append "." to the result string; and,
-    
+
         3) append the default to the result string.
 
     c) the variable is undefined and has no default,
        so ignore this variable.
-     </artwork></figure>
-     <t>
+</pre></div>
+<p>
       Since "." is not in the reserved set, a value that contains
       a "." has the effect of adding multiple labels.
-     </t>
-     <figure><preamble>For example,</preamble><artwork>
+     
+</p>
+<p>For example,
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   foo := "fred"
 
   "{foo}"        -&gt; ".fred"
   "{foo,foo}"    -&gt; ".fred.fred"
   "{bar,foo}"    -&gt; ".fred"
   "{bar|wilma}"  -&gt; ".wilma"
-     </artwork></figure>
-     <t>
+</pre></div>
+<p>
       Label expansion only applies to Level 3 and Level 4 templates.
       Level 4 templates add compound variable types and value modifiers,
       as follows:
-     </t>
-     <t>
+     
+</p>
+<p>
       For a variable defined as a single value string, the explode
       modifier has no effect.  The prefix modifier limits the
       expansion to the first max-length characters of that single
@@ -1166,15 +1458,17 @@
       multibyte UTF-8, or both, care must be taken to avoid
       splitting the value in mid-character: count each Unicode
       codepoint as one character.
-     </t>
-     <t>
+     
+</p>
+<p>
       For a variable defined as a list of values, when no value
       modifier is present or the explode modifier is given, the
       variable's string expansion consists of a concatenation
       of the individual defined values with each value prepended
       by a dot (".").  A prefix modifier has no effect.
-     </t>
-     <t>
+     
+</p>
+<p>
       When no value modifier is present, a variable defined as an
       associative array is expanded by appending the (key, value)
       pairs as alternating labels (i.e., ".key.value"), but
@@ -1182,62 +1476,68 @@
       undefined.  If the explode modifier is given, then the keys with
       defined values are expanded as ".key=value" instead of
       ".key.value".  A prefix modifier has no effect.
-     </t>
-    </section>
+     
+</p>
+<a name="op-slash"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.2.5"></a><h3>3.2.5.&nbsp;
+Path segment expansion: {/var}</h3>
 
-    <section title='Path segment expansion: {/var}' anchor="op-slash">
-     <t>
+<p>
       The slash ("/") operator indicates that the expression type is
       hierarchical path segment expansion, which can be useful for
       describing URI path hierarchies.
-     </t>
-     <figure><artwork>
+     
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   For each variable in the variable-list, do one of
-  
+
     a) if the variable has a defined value
-    
+
         1) modify its value as indicated by the optional
            modifiers (if any);
-          
+
         2) encode the value as UTF-8;
-        
+
         3) pct-encode any octets that are not in the
            unreserved set;
-           
+
         4) append "/" to the result string; and,
-        
+
         5) append the encoded value to the result string.
 
     b) if the variable is undefined and a default is given,
-    
+
         1) encode the default string as UTF-8;
-    
+
         2) append "/" to the result string; and,
-    
+
         3) append the default to the result string.
 
     c) the variable is undefined and has no default,
        so ignore this variable.
-     </artwork></figure>
-     <t>
+</pre></div>
+<p>
       Note that the expansion process for path segment expansion is
       identical to that of label expansion aside from the substitution
       of "/" instead of ".".
-     </t>
-     <figure><preamble>For example,</preamble><artwork>
+     
+</p>
+<p>For example,
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   foo := "fred"
 
   "{foo}"        -&gt; "/fred"
   "{foo,foo}"    -&gt; "/fred/fred"
   "{bar,foo}"    -&gt; "/fred"
   "{bar|wilma}"  -&gt; "/wilma"
-     </artwork></figure>
-     <t>
+</pre></div>
+<p>
       Label expansion only applies to Level 3 and Level 4 templates.
       Level 4 templates add compound variable types and value modifiers,
       as follows:
-     </t>
-     <t>
+     
+</p>
+<p>
       For a variable defined as a single value string, the explode
       modifier has no effect.  The prefix modifier limits the
       expansion to the first max-length characters of that single
@@ -1245,15 +1545,17 @@
       multibyte UTF-8, or both, care must be taken to avoid
       splitting the value in mid-character: count each Unicode
       codepoint as one character.
-     </t>
-     <t>
+     
+</p>
+<p>
       For a variable defined as a list of values, when no value
       modifier is present or the explode modifier is given, the
       variable's string expansion consists of a concatenation
       of the individual defined values with each value prepended
       by a slash ("/").  A prefix modifier has no effect.
-     </t>
-     <t>
+     
+</p>
+<p>
       When no value modifier is present, a variable defined as an
       associative array is expanded by appending the (key, value)
       pairs as alternating segments (i.e., "/key/value"), but
@@ -1261,84 +1563,118 @@
       undefined.  If the explode modifier is given, then the keys with
       defined values are expanded as "/key=value" instead of
       "/key/value".  A prefix modifier has no effect.
-     </t>
-    </section>
+     
+</p>
+<a name="op-semicolon"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.2.6"></a><h3>3.2.6.&nbsp;
+Path-style parameter expansion: {;var}</h3>
 
-    <section title='Path-style parameter expansion: {;var}' anchor="op-semicolon">
-     <t>
+<p>
       TBD.
-     </t>
-    </section>
+     
+</p>
+<a name="op-question"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3.2.7"></a><h3>3.2.7.&nbsp;
+Form-style query expansion: {?var}</h3>
 
-    <section title='Form-style query expansion: {?var}' anchor="op-question">
-     <t>
+<p>
       TBD.
-     </t>
-    </section>
+     
+</p>
+<a name="anchor1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4"></a><h3>4.&nbsp;
+Security Considerations</h3>
 
-   </section>
-  </section>
-
-  <section title="Security Considerations">
-   <t>
+<p>
     A URI Template does not contain active or executable content. Other
     security considerations are the same as those for URIs, as described
-    in section 7 of <xref target="RFC3986"/>.
-   </t>
-  </section>
+    in section 7 of <a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;Uniform Resource Identifier (URI): Generic Syntax,&rdquo; January&nbsp;2005.</span><span>)</span></a>.
+   
+</p>
+<a name="iana"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5"></a><h3>5.&nbsp;
+IANA Considerations</h3>
 
-  <section title="IANA Considerations" anchor="iana">
-   <t>
+<p>
     No IANA actions are required by this document.
-   </t>
-  </section>
+   
+</p>
+<a name="ack"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6"></a><h3>6.&nbsp;
+Acknowledgments</h3>
 
-  <section title="Acknowledgments" anchor="ack">
-   <t>
+<p>
     The following people made significant contributions to this
     specification: Mike Burrows, Michaeljohn Clement, DeWitt Clinton,
     John Cowan, James H. Manger, and James Snell.
-   </t>
-  </section>
- </middle>
+   
+</p>
+<a name="rfc.references1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>7.&nbsp;Normative References</h3>
+<table width="99%" border="0">
+<tr><td class="author-text" valign="top"><a name="ASCII">[ASCII]</a></td>
+<td class="author-text">American National Standards Institute, &ldquo;Coded Character Set - 7-bit American Standard Code for Information Interchange,&rdquo; ANSI&nbsp;X3.4, 1986.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2119">[RFC2119]</a></td>
+<td class="author-text"><a href="mailto:sob@harvard.edu">Bradner, S.</a>, &ldquo;<a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>,&rdquo; BCP&nbsp;14, RFC&nbsp;2119, March&nbsp;1997 (<a href="ftp://ftp.isi.edu/in-notes/rfc2119.txt">TXT</a>, <a href="http://xml.resource.org/public/rfc/html/rfc2119.html">HTML</a>, <a href="http://xml.resource.org/public/rfc/xml/rfc2119.xml">XML</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2978">[RFC2978]</a></td>
+<td class="author-text">Freed, N. and J. Postel, &ldquo;<a href="http://tools.ietf.org/html/rfc2978">IANA Charset Registration Procedures</a>,&rdquo; BCP&nbsp;19, RFC&nbsp;2978, October&nbsp;2000 (<a href="ftp://ftp.isi.edu/in-notes/rfc2978.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC3629">[RFC3629]</a></td>
+<td class="author-text">Yergeau, F., &ldquo;<a href="http://tools.ietf.org/html/rfc3629">UTF-8, a transformation format of ISO 10646</a>,&rdquo; STD&nbsp;63, RFC&nbsp;3629, November&nbsp;2003 (<a href="ftp://ftp.isi.edu/in-notes/rfc3629.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC3986">[RFC3986]</a></td>
+<td class="author-text">Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;<a href="http://tools.ietf.org/html/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a>,&rdquo; STD&nbsp;66, RFC&nbsp;3986, January&nbsp;2005 (<a href="ftp://ftp.isi.edu/in-notes/rfc3986.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC3987">[RFC3987]</a></td>
+<td class="author-text">Duerst, M. and M. Suignard, &ldquo;<a href="http://tools.ietf.org/html/rfc3987">Internationalized Resource Identifiers (IRIs)</a>,&rdquo; RFC&nbsp;3987, January&nbsp;2005 (<a href="ftp://ftp.isi.edu/in-notes/rfc3987.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC5234">[RFC5234]</a></td>
+<td class="author-text">Crocker, D. and P. Overell, &ldquo;<a href="http://tools.ietf.org/html/rfc5234">Augmented BNF for Syntax Specifications: ABNF</a>,&rdquo; STD&nbsp;68, RFC&nbsp;5234, January&nbsp;2008 (<a href="ftp://ftp.isi.edu/in-notes/rfc5234.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="UNIV4">[UNIV4]</a></td>
+<td class="author-text">The Unicode Consortium, &ldquo;The Unicode Standard, Version
+                  4.0.1, defined by: The Unicode Standard, Version 4.0
+                  (Reading, MA, Addison-Wesley, 2003. ISBN
+                  0-321-18578-1), as amended by Unicode 4.0.1
+                  (http://www.unicode.org/versions/Unicode4.0.1/),&rdquo; March&nbsp;2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="UTR15">[UTR15]</a></td>
+<td class="author-text">Davis, M. and M. Duerst, &ldquo;<a href="http://www.unicode.org/unicode/reports/tr15/tr15-23.html">Unicode Normalization Forms</a>,&rdquo; Unicode Standard Annex #&nbsp;15, April&nbsp;2003.</td></tr>
+</table>
 
- <back>
-  <references title='Normative References'>
-   &ASCII;
-   &UNIV4;
-   &UTR15;
-   &rfc2119;
-   &rfc2978;
-   &rfc3986;
-   &rfc3987;
-   &rfc3629;
-   &rfc5234;
-  </references>
+<a name="parser"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.A"></a><h3>Appendix A.&nbsp;
+Example URI Template Parser</h3>
 
-  <section title="Example URI Template Parser" anchor="parser">
-   <t>
+<p>
     Parsing a valid URI Template expression does not require
     building a parser from the given ABNF. Instead, the set of allowed
     characters in each part of URI Template expression has been
     chosen to avoid complex parsing, and breaking an expression into
     its component parts can be achieved by a series of splits
     of the character string.
-   </t>
-   <t>
+   
+</p>
+<p>
     Here is example Python code that parses a URI Template
     expression and returns the operator, argument, and
     variables as a tuple. The variables are returned
     as a dictionary of variable names mapped to their
     default values. If no default is given then the
     name maps to None.
-   </t>
-    <t>
+   
+</p>
+<p>
      TBD.
-    </t>
-  </section>
+    
+</p>
+<a name="revisions"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B"></a><h3>Appendix B.&nbsp;
+Revision History (to be removed by RFC Editor)</h3>
 
-  <section title="Revision History (to be removed by RFC Editor)" anchor="revisions">
-   <t>05 - Introduced levels to differentiate between legacy, partial,
+<p>05 - Introduced levels to differentiate between legacy, partial,
       and full implementations of URI Templates.
       Changed the default indicator to pipe ("|") to allow the defaults
       to contain the equals character and thus remove the need for complex
@@ -1349,8 +1685,9 @@
       Unicode codepoints rather than prematurely encoded as UTF-8, since
       that is easier to explain and more consistent with common language
       routines for processing Unicode strings.
-      </t>
-   <t>04 - Changed the operator syntax to a single character that is
+      
+</p>
+<p>04 - Changed the operator syntax to a single character that is
       analogous to its reserved role within the URI generic syntax,
       resulting in templates that are far more readable for the common
       cases. Added value modifiers for prefix and suffix expansion.
@@ -1362,20 +1699,66 @@
       reference string, such that the process for template expansion
       also includes transforming the surrounding string into a proper
       URI-reference rather than assuming it is already in absolute URI form.
-      Rewrote the text accordingly.</t>
-   <t>03 - Added more examples. Introduced error conditions and defined
+      Rewrote the text accordingly.
+</p>
+<p>03 - Added more examples. Introduced error conditions and defined
       their handling. Changed listjoin to list. Changed -append to -suffix,
       and allowed -prefix and -suffix to accept list variables. Clarified
-      the handling of unicode.</t>
-   <t>02 - Added operators and came up with coherent
+      the handling of unicode.
+</p>
+<p>02 - Added operators and came up with coherent
       percent-encoding and reserved character story.
       Added large examples section which is extracted
       and tested against the implementation.
-   </t>
-   <t>01
-   </t>
-   <t>00 - Initial Revision.
-   </t>
-  </section>
- </back>
-</rfc>
+   
+</p>
+<p>01
+   
+</p>
+<p>00 - Initial Revision.
+   
+</p>
+<a name="rfc.authors"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>Authors' Addresses</h3>
+<table width="99%" border="0" cellpadding="0" cellspacing="0">
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Joe Gregorio</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Google</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text">joe@bitworking.org</td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://bitworking.org/">http://bitworking.org/</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Roy T. Fielding (editor)</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Adobe Systems Incorporated</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text">fielding@gbiv.com</td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://roy.gbiv.com/">http://roy.gbiv.com/</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Marc Hadley</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Oracle</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text">Marc.Hadley@oracle.com</td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://oracle.com/">http://oracle.com/</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Mark Nottingham</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text">mnot@pobox.com</td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://mnot.net/">http://mnot.net/</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">David Orchard</td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://www.pacificspirit.com/">http://www.pacificspirit.com/</a></td></tr>
+</table>
+</body></html>
