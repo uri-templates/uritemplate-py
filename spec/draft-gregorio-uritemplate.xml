@@ -434,9 +434,9 @@
 |  ;  | Path-style parameters, semicolon-prefixed     (Sec 3.2.6) |
 |     |                                                           |
 |     |    {;hello:5}            ;hello=Hello                     |
-|     |    {;list}               ;red,green,blue                  |
+|     |    {;list}               ;list=red,green,blue             |
 |     |    {;list*}              ;red;green;blue                  |
-|     |    {;keys}               ;semi,%3B,dot,.,comma,%2C        |
+|     |    {;keys}               ;keys=semi,%3B,dot,.,comma,%2C   |
 |     |    {;keys*}              ;semi=%3B;dot=.;comma=%2C        |
 |     |                                                           |
 |-----+-----------------------------------------------------------|
@@ -1348,6 +1348,8 @@
       names before mapping.  Only require NFKC and UTF-8 for expansions
       of variable values.
       Fixed a lot of last-minute paste-o's in the examples.
+      Fixed Level 4 examples for unexploded keys to include the keys=
+      in the expansion.
       </t>
    <t>05 - Introduced levels to differentiate between legacy, partial,
       and full implementations of URI Templates.
