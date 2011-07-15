@@ -229,9 +229,8 @@
      string is allowed to contain the broader set of characters
      that can be found in IRI references <xref target="RFC3987"/>.
      A URI Template is therefore also an IRI template, and the result
-     of template processing can be rendered as an IRI by transforming
-     each of the pct-encoded sequences to their corresponding Unicode
-     character if that character is not in the reserved set.
+     of template processing can be transformed to an IRI by following
+     the process defined in Section 3.2 of <xref target="RFC3987"/>.
     </t>
    </section>
 
@@ -589,9 +588,8 @@
      encoding is defined by that protocol; without such a definition,
      a URI Template is assumed to be in the same character encoding as
      the surrounding text.  It is only during the process of template
-     expansion that a string of characters in a URI Template MUST be
-     transformed into its corresponding sequence of normalized
-     Unicode codepoints.
+     expansion that a string of characters in a URI Template is processed
+     as a sequence of Unicode codepoints.
     </t>
     <t>
      The Unicode Standard <xref target="UNIV4"/> defines various
@@ -605,18 +603,14 @@
     <t>
      In theory, all URI processing implementations, including template
      processors, should use the same normalization form for generating
-     or handling a URI reference.  In practice, they do not.  However,
-     template processors transform the template literals and variable
-     values from characters to codepoints, expand the expressions, and
-     then transform the resulting codepoints back to characters again.
+     a URI reference.  In practice, they do not.  Likewise, when
+     non-ASCII data that represents readable strings is pct-encoded
+     for use in a URI reference, it is best practice to encode the data
+     first as UTF-8 <xref target="RFC3629"/> and then further pct-encode
+     any octets within the UTF-8 string that are not allowed in a URI.
      In order to promote consistent generation of URI references from
-     templates, template processors MUST ensure that the template and
-     each variable value is in NFKC when they are transformed to
-     a sequence of Unicode codepoints.  The final step of template
-     processing will encode the expanded sequence of Unicode
-     codepoints, which should still be in NFKC, as UTF-8
-     <xref target="RFC3629"/> and then further pct-encode any octets
-     within the UTF-8 string that are not allowed in a URI.
+     templates, template processors MUST ensure that each variable value
+     is in NFKC and encoded as UTF-8 when used within an expansion.
     </t>
    </section>
   </section>
@@ -638,16 +632,6 @@
     rules applicable only to higher levels.  However, it is RECOMMENDED
     that all parsers implement the full syntax such that unsupported
     levels can be properly identified as such to the end user.
-   </t>
-   <t>
-    Each character in a URI Template MUST be transcoded to an NFKC
-    Unicode codepoint prior to evaluation.  If a character sequence
-    in the template consists of pct-encoded triplets corresponding
-    to a valid sequence of octets in UTF-8 that represent a character
-    not in the reserved set, then the triplets MUST be replaced with
-    their corresponding Unicode codepoint.  In other words, pct-encoded
-    UTF-8 found within the template is decoded prior to further processing
-    unless the corresponding character is in the reserved set.
    </t>
 
    <section title="Literals" anchor="literals">
@@ -738,6 +722,17 @@
                 /  pct-encoded
     </artwork></figure>
     <t>
+     A varname MAY contain one or more pct-encoded triplets.  If so,
+     these triplets MUST be decoded to octets prior to mapping the
+     varname to a variable name.  If the expression type calls for the
+     variable name to be included in the expansion result, then the
+     template processor MAY use either the original pct-encoded varname
+     or the string corresponding to a minimally encoded version of
+     the mapped variable name.  I.e., a varname containing unnecessarily
+     pct-encoded characters might be expanded to use those characters
+     directly instead.
+    </t>
+    <t>
      An expression MAY reference variables that are unknown
      to the template processor or whose value is set to a special
      "undefined" value, such as undef or null.  Such undefined
@@ -786,7 +781,7 @@
       to limit the expanded value to a maximum number of characters.
      </t>
      <figure><artwork type="abnf">
-  prefix        =  ":" offset
+  prefix        =  ":" max-length
   max-length    =  %x31-39 *DIGIT   ; positive integer
      </artwork></figure>
      <t>
@@ -875,13 +870,18 @@
      determines that variable to be undefined. The default value is
      limited to unreserved characters, the equal sign ("="), and
      pct-encoded triplets, since the default is provided in the exact
-     form that it would appear in the expanded URI reference.
+     form that it would appear in the expansion.
      The default is not affected by any variable modifiers, since we
      assume that the default string provided in the expression already
-     reflects the desired value.
+     reflects any desired modifier.
     </t>
     <figure><artwork type="abnf">
-  default       =  *( unreserved / "=" / pct-encoded )
+  default       =  %x21 / %x23-24 / %x26 / %x28-2B / %x2D-3B
+                /  %x3D / %x3F-5B / %x5D-5F / %x61-7A / %x7E
+                /  ucschar / iprivate / pct-encoded
+                     ; any Unicode character except: CTL, SP,
+                     ;  DQUOTE, "'", "%" (aside from pct-encoded),
+                     ;  ",", "&lt;", "&gt;", "\", "^", "`", "{", "|", "}"
     </artwork></figure>
     <t>
      The following examples illustrate how default values work with
@@ -973,9 +973,11 @@
     indicated to the invoking application.  If an error is encountered inside
     an expression, such as an operator or value modifier that it does not
     recognize or cannot support, then the expression SHOULD be copied to
-    the result unexpanded, processing of the remainder of the template SHOULD
-    continue, and the location and type of error SHOULD be indicated to
-    the invoking application.
+    the result unexpanded, processing of the remainder of the template
+    SHOULD continue, and the location and type of error SHOULD be indicated
+    to the invoking application.  In this latter case, the result returned
+    will not be a valid URI reference; it will be an incompletely expanded
+    template string that is only intended for diagnostic use.
    </t>
 
    <section title='Literal Expansion' anchor="literal-expansion">
@@ -1338,6 +1340,13 @@
   </section>
 
   <section title="Revision History (to be removed by RFC Editor)" anchor="revisions">
+   <t>06 - Replaced "offset" with "max-length" in def of prefix.
+      Allow any literals except comma in a default.
+      Removed pct-decode normalization process for entire template, since
+      that is a lot more than necessary -- just normalize the variable
+      names before mapping.  Only require NFKC and UTF-8 for expansions
+      of variable values.
+      </t>
    <t>05 - Introduced levels to differentiate between legacy, partial,
       and full implementations of URI Templates.
       Changed the default indicator to pipe ("|") to allow the defaults
