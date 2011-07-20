@@ -29,7 +29,7 @@
  3. Update the Revision History.
 -->
 
-<rfc category="std" ipr="pre5378Trust200902" docName="draft-gregorio-uritemplate-05">
+<rfc category="std" ipr="pre5378Trust200902" docName="draft-gregorio-uritemplate-06">
  <front>
   <title>URI Template</title>
 
@@ -72,7 +72,7 @@
    </address>
   </author>
 
-  <date day="11" month="Jul" year="2011"/>
+  <date day="20" month="Jul" year="2011"/>
   <abstract>
    <t>
     A URI Template is a compact sequence of characters
@@ -589,29 +589,30 @@
      encoding is defined by that protocol; without such a definition,
      a URI Template is assumed to be in the same character encoding as
      the surrounding text.  It is only during the process of template
-     expansion that a string of characters in a URI Template is processed
-     as a sequence of Unicode codepoints.
+     expansion that a string of characters in a URI Template is REQUIRED
+     to be processed as a sequence of Unicode codepoints.
     </t>
     <t>
      The Unicode Standard <xref target="UNIV4"/> defines various
      equivalences between sequences of characters for various purposes.
      Unicode Standard Annex #15 <xref target="UTR15"/> defines various
-     Normalization Forms for these equivalences, in particular
-     Normalization Form KC (NFKC: Compatibility Decomposition followed
-     by Canonical Composition).  The normalization form determines how
-     to consistently encode the equivalent strings.
-    </t>
-    <t>
+     Normalization Forms for these equivalences.  The normalization form
+     determines how to consistently encode equivalent strings.
      In theory, all URI processing implementations, including template
      processors, should use the same normalization form for generating
-     a URI reference.  In practice, they do not.  Likewise, when
-     non-ASCII data that represents readable strings is pct-encoded
-     for use in a URI reference, it is best practice to encode the data
-     first as UTF-8 <xref target="RFC3629"/> and then further pct-encode
-     any octets within the UTF-8 string that are not allowed in a URI.
-     In order to promote consistent generation of URI references from
-     templates, template processors MUST ensure that each variable value
-     is in NFKC and encoded as UTF-8 when used within an expansion.
+     a URI reference.  In practice, they do not.  If a value has been
+     provided by the same server as the resource, then it can be assumed
+     that the string is already in the form expected by that server.
+     If a value is provided by a user, such as via a data-entry dialog,
+     then the string SHOULD be normalized as Normalization Form C
+     (NFC: Canonical Decomposition, followed by Canonical Composition)
+     prior to being used in expansions by a template processor.
+    </t>
+    <t>
+     Likewise, when non-ASCII data that represents readable strings is
+     pct-encoded for use in a URI reference, a template processor MUST
+     first encode the string as UTF-8 <xref target="RFC3629"/> and then
+     pct-encode any octets that are not allowed in a URI reference.
     </t>
    </section>
   </section>
@@ -638,7 +639,10 @@
    <section title="Literals" anchor="literals">
     <t>
      The characters outside of expressions in a URI Template string
-     are intended to be translated literally to the URI-reference.
+     are intended to be copied literally to the URI-reference if the
+     character is allowed in a URI (reserved / unreserved / pct-encoded)
+     or, if not allowed, copied to the URI-reference in its UTF-8
+     pct-encoded form.
     </t>
     <figure><artwork type="abnf">
   literals      =  %x21 / %x23-24 / %x26 / %x28-3B / %x3D / %x3F-5B
@@ -648,15 +652,6 @@
                      ;  DQUOTE, "'", "%" (aside from pct-encoded),
                      ;  "&lt;", "&gt;", "\", "^", "`", "{", "|", "}"
     </artwork></figure>
-    <t>
-     A sequence of pct-encoded literals that corresponds to a UTF-8
-     encoded character that is not within the reserved set will be
-     transcoded during template processing, as describe above.  If
-     such a character is not in the unreserved set, it will be
-     re-pct-encoded during the final step of template processing.
-     Unreserved characters will therefore be normalized to their
-     unencoded form as a side-effect of template processing.
-    </t>
    </section>
 
    <section title="Expressions" anchor="expressions">
@@ -684,7 +679,7 @@
      dot (".") for substituting values as a sequence of name labels prefixed
      by ".";
      slash ("/") for substituting values as a sequence of path segments
-     separated by "/";
+     prefixed by "/";
      semicolon (";") for substituting key=value pairs as path parameters
      prefixed by ";"; and,
      question-mark ("?") for substituting a query component beginning
@@ -958,13 +953,8 @@
     string from beginning to end, copying literal characters as-is
     and replacing each expression with the result of applying the
     expression's operator to the value of each variable named in
-    the expression.
-   </t>
-   <t>
-    Each variable value MUST be formed as a sequence of NFKC Unicode
-    codepoints prior to template expansion.  A value is assumed to be
-    raw data that might need to be encoded by the template processor
-    during expansion, depending on the expression type.
+    the expression.  Each variable's value MUST be formed prior to
+    template expansion.
    </t>
    <t>
     If a template processor encounters an error outside of an expression,
@@ -984,8 +974,8 @@
    <section title='Literal Expansion' anchor="literal-expansion">
     <t>
      If the literal character is allowed anywhere in the URI
-     syntax (unreserved / reserved), then it is copied directly
-     to the result string.  Otherwise, the pct-encoded equivalent
+     syntax (unreserved / reserved / pct-encoded ), then it is copied
+     directly to the result string.  Otherwise, the pct-encoded equivalent
      of the literal character is copied to the result string by
      encoding the character in UTF-8 (a sequence of octets) and
      then encoding each octet as a pct-encoded triplet.
@@ -1341,12 +1331,14 @@
   </section>
 
   <section title="Revision History (to be removed by RFC Editor)" anchor="revisions">
-   <t>06 - Replaced "offset" with "max-length" in def of prefix.
-      Allow any literals except comma in a default.
+   <t>06 - Replaced "offset" with "max-length" in definition of prefix.
+      Allowed any literals except comma in a default.
+      Noted that IRI literals may need to be pct-encoded for the URI.
+      Removed NFKC requirement -- state that NFC should be applied only
+      for user-supplied data-entry values.
       Removed pct-decode normalization process for entire template, since
       that is a lot more than necessary -- just normalize the variable
-      names before mapping.  Only require NFKC and UTF-8 for expansions
-      of variable values.
+      names before mapping.  
       Fixed a lot of last-minute paste-o's in the examples.
       Fixed Level 4 examples for unexploded keys to include the keys=
       in the expansion.
