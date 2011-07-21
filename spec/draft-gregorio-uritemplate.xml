@@ -269,9 +269,8 @@
 `-----------------------------------------------------------------'
     </artwork></figure>
     <t>     
-     Level 2 templates add the ability to define a default string, which is
-     substituted if the variable is undefined, and the plus ("+") operator
-     for expansion values that are allowed to include reserved characters.  
+     Level 2 templates add the plus ("+") operator for expansion of
+     values that are allowed to include reserved characters.  
     </t>
     <figure><artwork>
 .-----------------------------------------------------------------.
@@ -286,22 +285,15 @@
 |-----------------------------------------------------------------|
 | Op       Expression            Expansion                        |
 |-----------------------------------------------------------------|
-|     | String expansion with defaults                (Sec 3.2.2) |
-|     |                                                           |
-|     |    {var|default}         value                            |
-|     |    O{empty|default}X     OX                               |
-|     |    O{undef|default}X     OdefaultX                        |
-|     |                                                           |
-|-----+-----------------------------------------------------------|
-|  +  | Reserved expansion with defaults              (Sec 3.2.3) |
+|  +  | Reserved string expansion                     (Sec 3.2.3) |
 |     |                                                           |
 |     |    {+var}                value                            |
 |     |    {+hello}              Hello%20World!                   |
+|     |    O{+empty}X            OX                               |
+|     |    O{+undef}X            OX                               |
 |     |    {+path}/here          /foo/bar/here                    |
 |     |    here?ref={+path}      here?ref=/foo/bar                |
 |     |    up{+path}{var}/here   up/foo/barvalue/here             |
-|     |    up{+empty|/1}/here    up/here                          |
-|     |    up{+undef|/1}/here    up/1/here                        |
 |     |                                                           |
 `-----------------------------------------------------------------'
     </artwork></figure>
@@ -334,7 +326,6 @@
 |     |    ?{x,empty}            ?1024,                           |
 |     |    ?{x,undef}            ?1024                            |
 |     |    ?{undef,y}            ?768                             |
-|     |    ?{x,undef|0}          ?1024,0                          |
 |     |                                                           |
 |-----+-----------------------------------------------------------|
 |  +  | Reserved expansion with multiple variables    (Sec 3.2.3) |
@@ -390,6 +381,7 @@
 |             path  := "/foo/bar"                                 |
 |             list  := [ "red", "green", "blue" ]                 |
 |             keys  := [("semi",";"),("dot","."),("comma",",")]   |
+|             empty_keys  := []                                   |
 |                                                                 |
 | Op       Expression            Expansion                        |
 |-----------------------------------------------------------------|
@@ -419,6 +411,8 @@
 |     |    X{.list*}             X.red.green.blue                 |
 |     |    X{.keys}              X.semi,%3B,dot,.,comma,%2C       |
 |     |    X{.keys*}             X.semi=%3B.dot=..comma=%2C       |
+|     |    X{.empty_keys}        X                                |
+|     |    X{.empty_keys*}       X                                |
 |     |                                                           |
 |-----+-----------------------------------------------------------|
 |  /  | Path segments, slash-prefixed                 (Sec 3.2.5) |
@@ -521,6 +515,17 @@
      processor prior to use.  Distinct field, element, or attribute
      names should be used to differentiate protocol elements that
      carry a URI Template from those that expect a URI reference.
+    </t>
+    <t>
+     Some URI Templates can be used in reverse for the purpose of
+     variable matching: comparing the template to a fully formed
+     URI in order to extract the variable parts from that URI and
+     assign them to the named variables.  Variable matching only works
+     well if the template expressions are delimited by the beginning or
+     end of the URI or by characters that cannot be part of the
+     expansion, such as reserved characters surrounding a simple
+     string expression.  In general, regular expression languages
+     are better suited for variable matching.
     </t>
    </section>
 
@@ -666,7 +671,7 @@
     <figure><artwork type="abnf">
   expression    =  "{" [ operator ] variable-list "}"
   operator      =  "+" / "." / "/" / ";" / "?" / op-reserve
-  op-reserve    =  "," / "!" / "@"
+  op-reserve    =  "=" / "," / "!" / "@" / "|"
                        ; reserved for local use: "$" / "(" / ")"
     </artwork></figure>
    <t>
@@ -687,11 +692,8 @@
      These operators will be described in detail in <xref target="expansion"/>.
     </t>
     <t>
-     The operator characters comma (","), exclamation ("!"), and at-sign ("@")
-     are reserved for future extensions.  A processor that unexpectedly
-     encounters such an extension operator SHOULD pass the expression
-     through unexpanded and MAY also indicate a warning to the invoking
-     application.
+     The operator characters equals ("="), comma (","), exclamation ("!"),
+     at-sign ("@"), and pipe ("|") are reserved for future extensions.
     </t>
     <t>
      The expression syntax specifically excludes use of the dollar ("$")
@@ -712,7 +714,7 @@
     </t>
     <figure><artwork type="abnf">
   variable-list =  varspec *( "," varspec )
-  varspec       =  varname [ modifier ] [ "|" default ]
+  varspec       =  varname [ modifier ]
   varname       =  varchar *( varchar / "." )
   varchar       =  ALPHA / DIGIT / "_" / ucschar / iprivate
                 /  pct-encoded
@@ -859,92 +861,6 @@
     
    </section>
 
-   <section title="Value Defaults" anchor="defaults">
-    <t>
-     Each of the variables in Level 2 (and above) templates may also
-     be supplied with a default value to be used when a template processor
-     determines that variable to be undefined. The default value is
-     limited to unreserved characters, the equal sign ("="), and
-     pct-encoded triplets, since the default is provided in the exact
-     form that it would appear in the expansion.
-     The default is not affected by any variable modifiers, since we
-     assume that the default string provided in the expression already
-     reflects any desired modifier.
-    </t>
-    <figure><artwork type="abnf">
-  default       =  %x21 / %x23-24 / %x26 / %x28-2B / %x2D-3B
-                /  %x3D / %x3F-5B / %x5D-5F / %x61-7A / %x7E
-                /  ucschar / iprivate / pct-encoded
-                     ; any Unicode character except: CTL, SP,
-                     ;  DQUOTE, "'", "%" (aside from pct-encoded),
-                     ;  ",", "&lt;", "&gt;", "\", "^", "`", "{", "|", "}"
-    </artwork></figure>
-    <t>
-     The following examples illustrate how default values work with
-     different variable types.
-    </t>
-    <figure><artwork>
-  Given the variable assignments:
-
-    var   := "value"
-    name  := [ "Fred", "Wilma", "Pebbles" ]
-    favs  := [("color","red"), ("volume","high")]
-    empty_keys := []
-    empty := ""
-    undef := null
-
-  Example Template        Expansion
-
-    {var|default}         value
-    {undef|default}       default
-    {undef:3|default}     default
-
-    x{empty}y             xy
-    x{empty|_}y           xy
-    x{undef}y             xy
-    x{undef|_}y           x_y
-
-    x{.name|none}         x.Fred,Wilma,Pebbles
-    x{.name*|none}        x.Fred.Wilma.Pebbles
-    x{.empty}             x.
-    x{.empty|none}        x.
-    x{.undef}             x
-    x{.undef|none}        x.none
-    
-    x{/name|none}         x/Fred,Wilma,Pebbles
-    x{/name*|none}        x/Fred/Wilma/Pebbles
-    x{/undef}             x
-    x{/undef|none}        x/none
-    x{/empty}             x/
-    x{/empty|none}        x/
-    x{/empty_keys}        x
-    x{/empty_keys|none}   x/none
-    x{/empty_keys*}       x
-    x{/empty_keys*|none}  x/none
-
-    x{;name|none}         x;name=Fred,Wilma,Pebbles
-    x{;favs|none}         x;favs=color,red,volume,high
-    x{;favs*|none}        x;color=red;volume=high
-    x{;empty}             x;empty
-    x{;empty|none}        x;empty
-    x{;undef}             x
-    x{;undef|none}        x;none
-    x{;undef|foo=y}       x;foo=y
-
-    x{?var|none}          x?var=value
-    x{?favs|none}         x?favs=color,red,volume,high
-    x{?favs*|none}        x?color=red&amp;volume=high
-    x{?empty}             x?empty=
-    x{?empty|foo=none}    x?empty=
-    x{?undef}             x
-    x{?undef|foo=none}    x?foo=none
-    x{?empty_keys}        x
-    x{?empty_keys|none}   x?none
-    x{?empty_keys|y=z}    x?y=z
-    x{?empty_keys*|y=z}   x?y=z
-    
-    </artwork></figure>
-   </section>
   </section>
 
   <section title="Expansion" anchor="expansion">
@@ -1012,19 +928,15 @@
       all of the structure's components are undefined.
      </t>
      <t>
-      If a default value is provided for an undefined variable, as described
-      for Level 2 (and above) templates in <xref target="defaults"/>, then 
-      the default string is substituted in its place as the entire expansion
-      for that varspec.  If all of the variables in an expression are 
-      undefined and no defaults are given, then the expression's expansion
-      is the empty string.
+      If all of the variables in an expression are undefined, then the
+      expression's expansion is the empty string.
      </t>
     </section>
 
     <section title='Simple String Expansion: {var}' anchor="op-simple">
      <t>
-      The default expression type when no operator is given is
-      simple string expansion.  For each defined variable in the
+      Simple string expansion is the default expression type when no
+      operator is given.  For each defined variable in the
       variable-list, modify its value as indicated by the optional
       modifiers (if any), encode the value as UTF-8, pct-encode any
       octets that are not in the unreserved set, and then append
@@ -1040,10 +952,8 @@
   "{bar|wilma}"  -&gt; "wilma"
      </artwork></figure>
      <t>
-      Level 1 templates are limited to single variable expressions
-      with no modifiers, defaults, or value structures.
-      Simple string expansion in Level 2 templates adds variable
-      defaulting, as defined in <xref target="defaults"/>.
+      Level 1 and 2 templates are limited to single variable expressions
+      without modifiers or value structures.
       Level 3 templates allow a list of variables.
       Level 4 templates add compound variable types and value modifiers,
       as follows:
@@ -1107,32 +1017,17 @@
       varying domain names or path selectors (e.g., filename extensions).
      </t>
      <figure><artwork>
-  For each variable in the variable-list, do one of
+  For each variable in the variable-list that has a defined value:
   
-    a) if the variable has a defined value
-    
-        1) modify its value as indicated by the optional
-           modifiers (if any);
+   1) modify its value as indicated by any optional modifiers;
           
-        2) encode the value as UTF-8;
+   2) encode the value as UTF-8;
         
-        3) pct-encode any octets that are not in the
-           unreserved set;
+   3) pct-encode any octets that are not in the unreserved set;
            
-        4) append "." to the result string; and,
+   4) append "." to the result string; and,
         
-        5) append the encoded value to the result string.
-
-    b) if the variable is undefined and a default is given,
-    
-        1) encode the default string as UTF-8;
-    
-        2) append "." to the result string; and,
-    
-        3) append the default to the result string.
-
-    c) the variable is undefined and has no default,
-       so ignore this variable.
+   5) append the encoded value to the result string.
      </artwork></figure>
      <t>
       Since "." is not in the reserved set, a value that contains
@@ -1185,32 +1080,17 @@
       describing URI path hierarchies.
      </t>
      <figure><artwork>
-  For each variable in the variable-list, do one of
+  For each variable in the variable-list with a defined value:
   
-    a) if the variable has a defined value
-    
-        1) modify its value as indicated by the optional
-           modifiers (if any);
-          
-        2) encode the value as UTF-8;
-        
-        3) pct-encode any octets that are not in the
-           unreserved set;
-           
-        4) append "/" to the result string; and,
-        
-        5) append the encoded value to the result string.
+   1) modify its value as indicated by any optional modifiers;
 
-    b) if the variable is undefined and a default is given,
-    
-        1) encode the default string as UTF-8;
-    
-        2) append "/" to the result string; and,
-    
-        3) append the default to the result string.
+   2) encode the value as UTF-8;
+        
+   3) pct-encode any octets that are not in the unreserved set;
 
-    c) the variable is undefined and has no default,
-       so ignore this variable.
+   4) append "/" to the result string; and,
+        
+   5) append the encoded value to the result string.
      </artwork></figure>
      <t>
       Note that the expansion process for path segment expansion is
@@ -1317,22 +1197,15 @@
     its component parts can be achieved by a series of splits
     of the character string.
    </t>
-   <t>
-    Here is example Python code that parses a URI Template
-    expression and returns the operator, argument, and
-    variables as a tuple. The variables are returned
-    as a dictionary of variable names mapped to their
-    default values. If no default is given then the
-    name maps to None.
-   </t>
     <t>
      TBD.
     </t>
   </section>
 
   <section title="Revision History (to be removed by RFC Editor)" anchor="revisions">
-   <t>06 - Replaced "offset" with "max-length" in definition of prefix.
-      Allowed any literals except comma in a default.
+   <t>06 - Removed template defaults for undefined variables.
+      Added paragraph on limitations of variable matching templates.
+      Replaced "offset" with "max-length" in definition of prefix.
       Noted that IRI literals may need to be pct-encoded for the URI.
       Removed NFKC requirement -- state that NFC should be applied only
       for user-supplied data-entry values.
