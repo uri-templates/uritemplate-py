@@ -72,7 +72,7 @@
    </address>
   </author>
 
-  <date day="20" month="Jul" year="2011"/>
+  <date day="20" month="Aug" year="2011"/>
   <abstract>
    <t>
     A URI Template is a compact sequence of characters
@@ -157,8 +157,8 @@
      </t>
     <t>
      A URI Template provides both a structural description of a URI
-     space and, when variable values are provided, a simple instruction
-     on how to construct a URI corresponding to those values.
+     space and, when variable values are provided, machine-readable
+     instructions on how to construct a URI corresponding to those values.
      A URI Template is transformed into a URI-reference by replacing each
      delimited expression with its value as defined by the
      expression type and the values of variables named within the
@@ -177,11 +177,9 @@
   http://www.example.com/foo{?query,number}
     </artwork></figure>
     <t>
-     Each template expression describes, in a machine-readable manner,
-     how a URI is to be constructed.  In this example,
-     the expansion process for templates beginning with the
+     The expansion process for expressions beginning with the
      question-mark ("?") operator follows the same pattern
-     as form-style interfaces on the World Wide Web.
+     as form-style interfaces on the World Wide Web:
     </t>
     <figure><artwork>
   http://www.example.com/foo{?query,number}
@@ -269,8 +267,9 @@
 `-----------------------------------------------------------------'
     </artwork></figure>
     <t>     
-     Level 2 templates add the plus ("+") operator for expansion of
-     values that are allowed to include reserved characters.  
+     Level 2 templates add the plus ("+") operator, for expansion of
+     values that are allowed to include reserved characters, and the
+     crosshatch ("#") operator for expansion of fragment identifiers.  
     </t>
     <figure><artwork>
 .-----------------------------------------------------------------.
@@ -294,6 +293,14 @@
 |     |    {+path}/here          /foo/bar/here                    |
 |     |    here?ref={+path}      here?ref=/foo/bar                |
 |     |    up{+path}{var}/here   up/foo/barvalue/here             |
+|     |                                                           |
+|-----+-----------------------------------------------------------|
+|  #  | Fragment expansion, crosshatch-prefixed       (Sec 3.2.4) |
+|     |                                                           |
+|     |    X{#var}               X#value                          |
+|     |    X{#hello}             X#Hello%20World!                 |
+|     |    X{#empty}             X#                               |
+|     |    X{#undef}             X                                |
 |     |                                                           |
 `-----------------------------------------------------------------'
     </artwork></figure>
@@ -334,14 +341,20 @@
 |     |    {+path,x}/here        /foo/bar,1024/here               |
 |     |                                                           |
 |-----+-----------------------------------------------------------|
-|  .  | Label expansion, dot-prefixed                 (Sec 3.2.4) |
+|  #  | Fragment expansion with multiple variables    (Sec 3.2.4) |
+|     |                                                           |
+|     |    {#x,hello,y}          #1024,Hello%20World!,768         |
+|     |    {#path,x}/here        #/foo/bar,1024/here              |
+|     |                                                           |
+|-----+-----------------------------------------------------------|
+|  .  | Label expansion, dot-prefixed                 (Sec 3.2.5) |
 |     |                                                           |
 |     |    X{.var}               X.value                          |
 |     |    X{.empty}             X.                               |
 |     |    X{.undef}             X                                |
 |     |                                                           |
 |-----+-----------------------------------------------------------|
-|  /  | Path segments, slash-prefixed                 (Sec 3.2.5) |
+|  /  | Path segments, slash-prefixed                 (Sec 3.2.6) |
 |     |                                                           |
 |     |    {/var}                /value                           |
 |     |    {/var,empty}          /value/                          |
@@ -349,18 +362,25 @@
 |     |    {/var,x}/here         /value/1024/here                 |
 |     |                                                           |
 |-----+-----------------------------------------------------------|
-|  ;  | Path-style parameters, semicolon-prefixed     (Sec 3.2.6) |
+|  ;  | Path-style parameters, semicolon-prefixed     (Sec 3.2.7) |
 |     |                                                           |
 |     |    {;x,y}                ;x=1024;y=768                    |
 |     |    {;x,y,empty}          ;x=1024;y=768;empty              |
 |     |    {;x,y,undef}          ;x=1024;y=768                    |
 |     |                                                           |
 |-----+-----------------------------------------------------------|
-|  ?  | Form-style query, ampersand-separated         (Sec 3.2.7) |
+|  ?  | Form-style query, ampersand-separated         (Sec 3.2.8) |
 |     |                                                           |
 |     |    {?x,y}                ?x=1024&amp;y=768                    |
 |     |    {?x,y,empty}          ?x=1024&amp;y=768&amp;empty=             |
 |     |    {?x,y,undef}          ?x=1024&amp;y=768                    |
+|     |                                                           |
+|-----+-----------------------------------------------------------|
+|  &amp;  | Form-style query continuation                 (Sec 3.2.9) |
+|     |                                                           |
+|     |    ?fixed=yes{&amp;x}        ?fixed=yes&amp;x=1024                |
+|     |    {&amp;x,y,empty}          &amp;x=1024&amp;y=768&amp;empty=             |
+|     |    {&amp;x,y,undef}          &amp;x=1024&amp;y=768                    |
 |     |                                                           |
 `-----------------------------------------------------------------'
     </artwork></figure>
@@ -368,9 +388,10 @@
      Finally, Level 4 templates add the ability to specify value modifiers
      as a suffix to the variable name.  The prefix modifier (":") indicates
      that only a limited number of characters from the beginning of the
-     value are used by the expansion.  The explode ("*") modifier tells
-     the expansion process to treat the value as a multivalued structure ---
-     a list of values or key=value pairs -- rather than as a single string.
+     value are used by the expansion.  The explode ("*") modifier indicates
+     that the variable is to be treated as a composite value, consisting of
+     either a list of names or an associative array of (name, value) pairs,
+     that is expanded as if each member were a separate variable.
     </t>
     <figure><artwork>
 .-----------------------------------------------------------------.
@@ -404,7 +425,16 @@
 |     |    {+keys*}              semi=;,dot=.,comma=,             |
 |     |                                                           |
 |-----+-----------------------------------------------------------|
-|  .  | Label expansion, dot-prefixed                 (Sec 3.2.4) |
+|  #  | Fragment expansion with value modifiers       (Sec 3.2.4) |
+|     |                                                           |
+|     |    {#path:6}/here        #/foo/b/here                     |
+|     |    {#list}               #red,green,blue                  |
+|     |    {#list*}              #red,green,blue                  |
+|     |    {#keys}               #semi,;,dot,.,comma,,            |
+|     |    {#keys*}              #semi=;,dot=.,comma=,            |
+|     |                                                           |
+|-----+-----------------------------------------------------------|
+|  .  | Label expansion, dot-prefixed                 (Sec 3.2.5) |
 |     |                                                           |
 |     |    X{.var:3}             X.val                            |
 |     |    X{.list}              X.red,green,blue                 |
@@ -415,7 +445,7 @@
 |     |    X{.empty_keys*}       X                                |
 |     |                                                           |
 |-----+-----------------------------------------------------------|
-|  /  | Path segments, slash-prefixed                 (Sec 3.2.5) |
+|  /  | Path segments, slash-prefixed                 (Sec 3.2.6) |
 |     |                                                           |
 |     |    {/var:1,var}          /v/value                         |
 |     |    {/list}               /red,green,blue                  |
@@ -425,7 +455,7 @@
 |     |    {/keys*}              /semi=%3B/dot=./comma=%2C        |
 |     |                                                           |
 |-----+-----------------------------------------------------------|
-|  ;  | Path-style parameters, semicolon-prefixed     (Sec 3.2.6) |
+|  ;  | Path-style parameters, semicolon-prefixed     (Sec 3.2.7) |
 |     |                                                           |
 |     |    {;hello:5}            ;hello=Hello                     |
 |     |    {;list}               ;list=red,green,blue             |
@@ -434,13 +464,22 @@
 |     |    {;keys*}              ;semi=%3B;dot=.;comma=%2C        |
 |     |                                                           |
 |-----+-----------------------------------------------------------|
-|  ?  | Form-style query, ampersand-separated         (Sec 3.2.7) |
+|  ?  | Form-style query, ampersand-separated         (Sec 3.2.8) |
 |     |                                                           |
 |     |    {?var:3}              ?var=val                         |
 |     |    {?list}               ?list=red,green,blue             |
 |     |    {?list*}              ?list=red&amp;list=green&amp;list=blue   |
 |     |    {?keys}               ?keys=semi,%3B,dot,.,comma,%2C   |
 |     |    {?keys*}              ?semi=%3B&amp;dot=.&amp;comma=%2C        |
+|     |                                                           |
+|-----+-----------------------------------------------------------|
+|  &amp;  | Form-style query continuation                 (Sec 3.2.9) |
+|     |                                                           |
+|     |    {&amp;var:3}              &amp;var=val                         |
+|     |    {&amp;list}               &amp;list=red,green,blue             |
+|     |    {&amp;list*}              &amp;list=red&amp;list=green&amp;list=blue   |
+|     |    {&amp;keys}               &amp;keys=semi,%3B,dot,.,comma,%2C   |
+|     |    {&amp;keys*}              &amp;semi=%3B&amp;dot=.&amp;comma=%2C        |
 |     |                                                           |
 `-----------------------------------------------------------------'
     </artwork></figure>
@@ -468,14 +507,14 @@
      Templates are simple and readable when used with common
      examples because the single-character operators match the URI
      generic syntax delimiters.  The operator's associated delimiter
-     (";", "?", "/", and ".") is omitted when none of the listed variables
-     are defined.  Likewise, the expansion process for ";"
+     (".", ";", "/", "?", "&amp;", and "#") is omitted when none of the
+     listed variables are defined.  Likewise, the expansion process for ";"
      (path-style parameters) will omit the "=" when the variable value
      is empty, whereas the process for "?" (form-style parameters)
      will not omit the "=" when the value is empty.  Multiple variables
      and list values have their values joined with "," if there is no
-     predefined joining mechanism for the operator.  Only one operator,
-     plus ("+"), will substitute unencoded reserved characters found
+     predefined joining mechanism for the operator.  The "+" and "#"
+     operators will substitute unencoded reserved characters found
      inside the variable values; the other operators will pct-encode
      reserved characters found in the variable values prior to expansion.
     </t>
@@ -504,8 +543,8 @@
      existing resource.  Our expectation is that an application
      constructing URIs according to the template will be provided
      with an appropriate set of values for the variables being
-     substituted and will be able to cope with any errors that might
-     occur when the resulting URI is used for name resolution or access.
+     substituted, or at least a means of validating user data-entry
+     for those values.
     </t>
     <t>
      URI Templates are not URIs: they do not identify
@@ -670,27 +709,33 @@
     </t>
     <figure><artwork type="abnf">
   expression    =  "{" [ operator ] variable-list "}"
-  operator      =  "+" / "." / "/" / ";" / "?" / op-reserve
+  operator      =  "+" / "#" / "." / "/" / ";" / "?" / "&amp;"
+                /  op-reserve
   op-reserve    =  "=" / "," / "!" / "@" / "|"
                        ; reserved for local use: "$" / "(" / ")"
     </artwork></figure>
-   <t>
-   </t>
     <t> 
      The operator characters have been chosen to reflect each of their roles
      as reserved characters in the URI generic syntax.  The operators defined
-     by this specification include:
-     plus ("+") for substituting values that may contain reserved characters;
-     dot (".") for substituting values as a sequence of name labels prefixed
-     by ".";
-     slash ("/") for substituting values as a sequence of path segments
-     prefixed by "/";
-     semicolon (";") for substituting key=value pairs as path parameters
-     prefixed by ";"; and,
-     question-mark ("?") for substituting a query component beginning
-     with "?" and consisting of key=value pairs separated by "&amp;".
-     These operators will be described in detail in <xref target="expansion"/>.
+     in <xref target="expansion"/> of this specification include:
     </t>
+    <figure><artwork>
+   +   Reserved character strings;
+   
+   #   Fragment identifiers prefixed by "#";
+   
+   .   Name labels or extensions prefixed by ".";
+   
+   /   Path segments prefixed by "/";
+   
+   ;   Path parameter key or key=value pairs prefixed by ";";
+   
+   ?   Query component beginning with "?" and consisting of
+       key=value pairs separated by "&amp;"; and,
+         
+   &amp;   Continuation of query-style &amp;key=value pairs within
+       a literal query component.
+    </artwork></figure>
     <t>
      The operator characters equals ("="), comma (","), exclamation ("!"),
      at-sign ("@"), and pipe ("|") are reserved for future extensions.
@@ -709,26 +754,24 @@
      one or more comma-separated variable specifiers (varspec).
      The variable names serve multiple purposes: documentation for
      what kinds of values are expected, identifiers for associating
-     values within a template processor, and the string to use
-     for each key on key=value expansions.
+     values within a template processor, and the literal string to use
+     for the name in name=value expansions (aside from when exploding
+     an associative array).
     </t>
     <figure><artwork type="abnf">
   variable-list =  varspec *( "," varspec )
   varspec       =  varname [ modifier ]
   varname       =  varchar *( varchar / "." )
-  varchar       =  ALPHA / DIGIT / "_" / ucschar / iprivate
-                /  pct-encoded
+  varchar       =  ALPHA / DIGIT / "_" / pct-encoded
     </artwork></figure>
     <t>
-     A varname MAY contain one or more pct-encoded triplets.  If so,
-     these triplets MUST be decoded to octets prior to mapping the
-     varname to a variable name.  If the expression type calls for the
-     variable name to be included in the expansion result, then the
-     template processor MAY use either the original pct-encoded varname
-     or the string corresponding to a minimally encoded version of
-     the mapped variable name.  I.e., a varname containing unnecessarily
-     pct-encoded characters might be expanded to use those characters
-     directly instead.
+     A varname MAY contain one or more pct-encoded triplets.
+     These triplets are considered an essential part of the variable name
+     and are not decoded during processing.
+     A varname containing pct-encoded characters is not the same variable
+     as a varname with those same characters decoded.  Applications that
+     provide URI Templates are expected to be consistent in their use of
+     pct-encoding within variable names.
     </t>
     <t>
      An expression MAY reference variables that are unknown
@@ -741,20 +784,11 @@
      undefined; it has the defined value of an empty string.
     </t>
     <t>
-     A variable may have a composite or structured value, such as a
-     list of values, an associative array of (key, value) pairs, or
-     a structure of components defined by some separate schema.
+     A variable may have a composite value in the form of a
+     list of values or an associative array of (name, value) pairs.
      Such value types are not directly indicated by the template
      syntax, but do have an impact on the expansion process.  A
-     composite or structured value with zero member values is
-     considered undefined.
-    </t>
-    <t>
-     If a variable appears more than once in an expression or
-     within multiple expressions of a URI Template, the value of
-     that variable MUST remain static throughout the expansion
-     process (i.e., the variable must have the same value for the
-     purpose of calculating each expansion).
+     composite value with zero member values is considered undefined.
     </t>
    </section>
 
@@ -763,8 +797,8 @@
      Each of the variables in a Level 4 template expression can have
      a modifier indicating either that its expansion is limited to a
      prefix of the variable's value string or that its expansion is
-     exploded into components based on an external type or schema
-     associated with that variable.
+     exploded as a composite value in the form of a value list or
+     an associative array of (name, value) pairs.
     </t>
     <figure><artwork type="abnf">
   modifier      =  prefix / explode
@@ -777,6 +811,8 @@
       often used to partition an identifier space hierarchically, as is
       common in reference indices and hash-based storage.  It also serves
       to limit the expanded value to a maximum number of characters.
+      Prefix modifiers are not applicable to variables that have composite
+      values.
      </t>
      <figure><artwork type="abnf">
   prefix        =  ":" max-length
@@ -792,10 +828,7 @@
       If the max-length is greater than the length of the variable's
       value, then the entire value string is used.
      </t>
-     <t>
-      For example,
-     </t>
-     <figure><artwork>
+     <figure><preamble>For example,</preamble><artwork>
   Given the variable assignments
    
     var   := "value"
@@ -811,12 +844,12 @@
     </artwork></figure>
     </section>
 
-    <section title="Component Values" anchor="component-values">
+    <section title="Composite Values" anchor="composite-values">
      <t>
       An explode modifier ("*") indicates that the
       variable represents a composite value that may be substituted
-      in full or partial forms, depending on the variable's type or
-      schema.  Since URI Templates do not contain an indication of
+      in full or partial forms, depending on the variable's type and
+      value set.  Since URI Templates do not contain an indication of
       type or schema, this is assumed to be determined by context.
       An example context is a mark-up element or header field that
       contains one attribute that is a template and one or more other
@@ -852,10 +885,13 @@
    /mapper?city=Newport%20Beach&amp;state=CA
      </artwork></figure>
      <t>
-      If an explode modifier is present, the expansion process for that
-      variable, as defined in <xref target="expansion"/>, is dependent on
-      both the operator being used and the type or schema of the value
-      being substituted.
+      The expansion process for exploded variables is dependent on
+      both the operator being used and whether the composite value is to
+      be treated as a list of values or as an associative array of
+      (name, value) pairs.  Structures are processed as if they are an
+      associative array with names corresponding to the fields in the
+      structure definition and "." separators used to indicate name
+      hierarchy in substructures.
      </t>
     </section>
     
@@ -866,7 +902,7 @@
   <section title="Expansion" anchor="expansion">
    <t>
     The process of URI Template expansion is to scan the template
-    string from beginning to end, copying literal characters as-is
+    string from beginning to end, copying literal characters
     and replacing each expression with the result of applying the
     expression's operator to the value of each variable named in
     the expression.  Each variable's value MUST be formed prior to
@@ -914,241 +950,390 @@
      character after the opening brace.  If the character is an
      operator, then remember the expression type associated with
      that operator for later expansion decisions and skip to the
-     next character for the varspec list.  If the first character
-     is not an operator, then the expression type is simple
+     next character for the variable-list.  If the first character
+     is not an operator, then the expression type is simple string
      expansion and the first character is the beginning of the
-     varspec list.
+     variable-list.
     </t>
+    <figure><preamble>The examples in the subsections below use
+    the following definitions for variable values:</preamble><artwork>
 
-    <section title='Undefined Variable Expansion' anchor="undef-expansion">
+      dom   := "example.com"
+      dub   := "me/too"
+      foo   := "That's right!"
+      hello := "Hello World!"
+      half  := "50%"
+      var   := "value"
+      who   := "fred"
+      base  := "http://example.com/home/"
+      path  := "/foo/bar"
+      list  := [ "red", "green", "blue" ]
+      keys  := [("semi",";"),("dot","."),("comma",",")]
+      v     := "6"   
+      x     := "1024"
+      y     := "768"
+      empty := ""
+      empty_keys  := []
+      undef := null
+    </artwork></figure>
+
+    <section title='Variable Expansion' anchor="variable-expansion">
      <t>
-      Regardless of the expression type, a variable that is undefined has
-      no value.  A variable defined as a list or structure of component
-      values is considered undefined if the list contains zero members or
-      all of the structure's components are undefined.
-     </t>
-     <t>
+      A variable that is undefined has no value and is ignored by the
+      expansion process.  A variable defined as a list value is considered
+      undefined if the list contains zero members.  A variable defined as
+      an associative array of (name, value) pairs is considered undefined
+      if the array contains zero members or if all member names in the array
+      have undefined values.
       If all of the variables in an expression are undefined, then the
       expression's expansion is the empty string.
+     </t>
+     <t>
+      Variable expansion of a defined, non-empty value results in a
+      substring of allowed URI characters.  A template processor MUST
+      encode the value string as UTF-8 and transform each octet that
+      is not in the allowed set into the corresponding pct-encoded triplet.
+      The allowed set depends on the expression type: reserved ("+")
+      and fragment ("#") expansions allow the set of characters in
+      ( unreserved / reserved / pct-encoded ) to be passed through without
+      pct-encoding, whereas all other expression types allow only unreserved
+      characters to be passed through without pct-encoding.  Note that
+      the percent character ("%") is only allowed as part of a pct-encoded
+      triplet and only for reserved/fragment expansion: in all other cases,
+      a value of "%" MUST be pct-encoded as "%25" by variable expansion.
+     </t>
+     <t>
+      If a variable appears more than once in an expression or
+      within multiple expressions of a URI Template, the value of
+      that variable MUST remain static throughout the expansion
+      process (i.e., the variable must have the same value for the
+      purpose of calculating each expansion).  However, if reserved
+      characters or pct-encoded triplets occur in the value, they will be
+      pct-encoded by some expression types and not by others.
+     </t>
+     <t>
+      For a variable that is a simple string value, expansion consists
+      of appending the encoded value to the result string.  The explode
+      modifier has no effect.  The prefix modifier limits the expansion to
+      the first max-length characters of the decoded value.   If the value
+      contains multibyte UTF-8, care must be taken to avoid splitting the
+      value in mid-character: count each Unicode codepoint as one character.
+     </t>
+     <t>
+      For a variable that is a list of values, expansion consists of 
+      concatenating the defined member string values, encoded as above,
+      with a separator string inserted between those values.  A prefix
+      modifier has no effect.  If no explode modifier is given, the
+      separator string is a comma (",").  If an explode modifier is given,
+      the separator string is defined per operator by the following table,
+      where NUL is the default expression type:
+   </t>
+   <figure><artwork>
+.-----------------------------------------------------------------.
+|  operator:  NUL     +      .      /      ;      ?      &amp;     #  |
+| separator:  ","    ","    "."    "/"    ";"    "&amp;"    "&amp;"   "," |
+`-----------------------------------------------------------------'
+   </artwork></figure>
+     <t>
+      For a variable that is an associative array, expansion consists of a
+      list of either "name,value" (without explode modifier) or "name=value"
+      (with explode modifier) pairs, excluding any pairs for which the
+      corresponding value is undefined, with a separator string inserted
+      between defined pairs.  The separator string is defined in the same
+      way as for list variables above.  Both the name and value strings are
+      encoded in the same way as simple string values.
      </t>
     </section>
 
     <section title='Simple String Expansion: {var}' anchor="op-simple">
      <t>
       Simple string expansion is the default expression type when no
-      operator is given.  For each defined variable in the
-      variable-list, modify its value as indicated by the optional
-      modifiers (if any), encode the value as UTF-8, pct-encode any
-      octets that are not in the unreserved set, and then append
-      the encoded value to the result string.  If more than one
-      value is appended, separate each value with a comma (",").
+      operator is given.
      </t>
-     <figure><preamble>For example,</preamble><artwork>
-  foo := "fred"
+     <t>
+      For each defined variable in the variable-list,
+      perform variable expansion, as defined in
+      <xref target="variable-expansion"/>, with the allowed characters
+      being those in the unreserved set.  If more than one variable has
+      a defined value, append a comma (",") to the result string as a
+      separator between variable expansions.
+     </t>
+     <figure><artwork>
+  Example Template     Expansion
 
-  "{foo}"        -&gt; "fred"
-  "{foo,foo}"    -&gt; "fred,fred"
-  "{bar,foo}"    -&gt; "fred"
-  "{bar|wilma}"  -&gt; "wilma"
+    {var}              value
+    {hello}            Hello%20World%21
+    {half}             50%25
+    O{empty}X          OX
+    O{undef}X          OX
+    {x,y}              1024,768
+    {x,hello,y}        1024,Hello%20World%21,768
+    ?{x,empty}         ?1024,
+    ?{x,undef}         ?1024
+    ?{undef,y}         ?768
+    {var:3}            val
+    {var:30}           value
+    {list}             red,green,blue
+    {list*}            red,green,blue
+    {keys}             semi,%3B,dot,.,comma,%2C
+    {keys*}            semi=%3B,dot=.,comma=%2C
      </artwork></figure>
-     <t>
-      Level 1 and 2 templates are limited to single variable expressions
-      without modifiers or value structures.
-      Level 3 templates allow a list of variables.
-      Level 4 templates add compound variable types and value modifiers,
-      as follows:
-     </t>
-     <t>
-      For a variable defined as a single value string, the explode
-      modifier has no effect.  The prefix modifier limits the
-      expansion to the first max-length characters of that single
-      value.   If the value contains pct-encoded triplets,
-      multibyte UTF-8, or both, care must be taken to avoid
-      splitting the value in mid-character: count each Unicode
-      codepoint as one character.
-     </t>
-     <t>
-      For a variable defined as a list of values, when no value
-      modifier is present or the explode modifier is given, the
-      variable's string expansion consists of a concatenation
-      of the individual values with each value separated by a
-      comma (",").  A prefix modifier has no effect.
-     </t>
-     <t>
-      A variable defined as an associative array is expanded as a list
-      of alternating key and value pairs, excluding any keys for which
-      the corresponding value is undefined, when no value modifier is
-      present.  If the explode modifier is given, then the keys with
-      defined values are expanded as "key=value" pairs instead of
-      "key,value".  A prefix modifier has no effect.
-     </t>
     </section>
 
     <section title='Reserved expansion: {+var}' anchor="op-plus">
      <t>
-      Reserved expansion is identical to simple expansion except that the
-      substituted values may contain characters in the reserved set.
-      The reserved expansion operator "+" is defined for Level 2
-      templates (and above).
+      Reserved expansion, as indicated by the plus ("+") operator for Level 2
+      and above templates, is identical to simple string expansion except
+      that the substituted values may also contain pct-encoded triplets and
+      characters in the reserved set.
      </t>
-     <figure><preamble>For example,</preamble><artwork>
-  foo  := "That's right!"
-
-  "{foo}"        -&gt; "That%27s%20right%21"
-  "{+foo}"       -&gt; "That%27s%20right!"
-  
-  base := "http://example.com/home/"
-  
-  "{base}index"  -&gt; "http%3A%2F%2Fexample.com%2Fhome%2Findex"
-  "{+base}index" -&gt; "http://example.com/home/index"
-     </artwork></figure>
      <t>
-      The same expansion process is followed as in <xref target="op-simple"/>
-      except that, instead of "pct-encode any octets that are not in
-      the unreserved set", we pct-encode any octets that are not in
-      either the reserved or unreserved sets.
+      For each defined variable in the variable-list, perform variable
+      expansion, as defined in <xref target="variable-expansion"/>, with the
+      allowed characters being those in the set
+      (unreserved / reserved / pct-encoded).
+      If more than one variable has a defined value, append a comma (",")
+      to the result string as a separator between variable expansions.
      </t>
+     <figure><artwork>
+  Example Template        Expansion
+
+    {foo}                 That%27s%20right%21
+    {+foo}                That%27s%20right!
+    {+half}               50%25
+
+    {base}index           http%3A%2F%2Fexample.com%2Fhome%2Findex
+    {+base}index          http://example.com/home/index
+    {+var}                value
+    {+hello}              Hello%20World!
+    O{+empty}X            OX
+    O{+undef}X            OX
+    
+    {+path}/here          /foo/bar/here
+    here?ref={+path}      here?ref=/foo/bar
+    up{+path}{var}/here   up/foo/barvalue/here
+    {+x,hello,y}          1024,Hello%20World!,768
+    {+path,x}/here        /foo/bar,1024/here
+    
+    {+path:6}/here        /foo/b/here
+    {+list}               red,green,blue
+    {+list*}              red,green,blue
+    {+keys}               semi,;,dot,.,comma,,
+    {+keys*}              semi=;,dot=.,comma=,
+     </artwork></figure>
+    </section>
+
+    <section title='Fragment expansion: {#var}' anchor="op-crosshatch">
+     <t>
+      Fragment expansion, as indicated by the crosshatch ("#") operator for
+      Level 2 and above templates, is identical to reserved expansion except
+      that a crosshatch character (fragment delimiter) is appended first to
+      the result string if any of the variables are defined.
+     </t>
+     <figure><artwork>
+  Example Template     Expansion
+
+    {#foo}             #That%27s%20right!
+    {#var}             #value
+    {#hello}           #Hello%20World!
+    {#half}            #50%25
+    foo{#empty}        foo#
+    foo{#undef}        foo
+    {#x,hello,y}       #1024,Hello%20World!,768
+    {#path,x}/here     #/foo/bar,1024/here
+    {#path:6}/here     #/foo/b/here
+    {#list}            #red,green,blue
+    {#list*}           #red,green,blue
+    {#keys}            #semi,;,dot,.,comma,,
+    {#keys*}           #semi=;,dot=.,comma=,
+       </artwork></figure>
     </section>
 
     <section title="Label expansion with dot-prefix: {.var}" anchor="op-dot">
      <t>
-      The dot (".") operator indicates that the expression type is label
-      expansion, which can be useful for describing URI spaces with
+      Label expansion, as indicated by the dot (".") operator for Level 3 
+      and above templates, is useful for describing URI spaces with
       varying domain names or path selectors (e.g., filename extensions).
      </t>
-     <figure><artwork>
-  For each variable in the variable-list that has a defined value:
-  
-   1) modify its value as indicated by any optional modifiers;
-          
-   2) encode the value as UTF-8;
-        
-   3) pct-encode any octets that are not in the unreserved set;
-           
-   4) append "." to the result string; and,
-        
-   5) append the encoded value to the result string.
-     </artwork></figure>
      <t>
-      Since "." is not in the reserved set, a value that contains
+      For each defined variable in the variable-list, append "." to the
+      result string and then perform variable expansion, as defined in
+      <xref target="variable-expansion"/>, with the allowed characters
+      being those in the unreserved set.
+     </t>
+     <t>
+      Since "." is in the unreserved set, a value that contains
       a "." has the effect of adding multiple labels.
      </t>
-     <figure><preamble>For example,</preamble><artwork>
-  foo := "fred"
+     <figure><artwork>
+  Example Template     Expansion
 
-  "{.foo}"        -&gt; ".fred"
-  "{.foo,foo}"    -&gt; ".fred.fred"
-  "{.bar,foo}"    -&gt; ".fred"
-  "{.bar|wilma}"  -&gt; ".wilma"
+    {.who}             .fred
+    {.who,who}         .fred.fred
+    {.half,who}        .50%25.fred
+    www{.dom}          www.example.com
+    X{.var}            X.value
+    X{.empty}          X.
+    X{.undef}          X
+    X{.var:3}          X.val
+    X{.list}           X.red,green,blue
+    X{.list*}          X.red.green.blue
+    X{.keys}           X.semi,%3B,dot,.,comma,%2C
+    X{.keys*}          X.semi=%3B.dot=..comma=%2C
+    X{.empty_keys}     X
+    X{.empty_keys*}    X
      </artwork></figure>
-     <t>
-      Label expansion only applies to Level 3 and Level 4 templates.
-      Level 4 templates add compound variable types and value modifiers,
-      as follows:
-     </t>
-     <t>
-      For a variable defined as a single value string, the explode
-      modifier has no effect.  The prefix modifier limits the
-      expansion to the first max-length characters of that single
-      value.   If the value contains pct-encoded triplets,
-      multibyte UTF-8, or both, care must be taken to avoid
-      splitting the value in mid-character: count each Unicode
-      codepoint as one character.
-     </t>
-     <t>
-      For a variable defined as a list of values, when no value
-      modifier is present or the explode modifier is given, the
-      variable's string expansion consists of a concatenation
-      of the individual defined values with each value prepended
-      by a dot (".").  A prefix modifier has no effect.
-     </t>
-     <t>
-      When no value modifier is present, a variable defined as an
-      associative array is expanded by appending the (key, value)
-      pairs as alternating labels (i.e., ".key.value"), but
-      excluding any keys for which the corresponding value is
-      undefined.  If the explode modifier is given, then the keys with
-      defined values are expanded as ".key=value" instead of
-      ".key.value".  A prefix modifier has no effect.
-     </t>
     </section>
 
     <section title='Path segment expansion: {/var}' anchor="op-slash">
      <t>
-      The slash ("/") operator indicates that the expression type is
-      hierarchical path segment expansion, which can be useful for
-      describing URI path hierarchies.
+      Path segment expansion, as indicated by the slash ("/") operator
+      in Level 3 and above templates, is useful for describing URI
+      path hierarchies.
      </t>
-     <figure><artwork>
-  For each variable in the variable-list with a defined value:
-  
-   1) modify its value as indicated by any optional modifiers;
-
-   2) encode the value as UTF-8;
-        
-   3) pct-encode any octets that are not in the unreserved set;
-
-   4) append "/" to the result string; and,
-        
-   5) append the encoded value to the result string.
-     </artwork></figure>
+     <t>
+      For each defined variable in the variable-list, append "/" to the
+      result string and then perform variable expansion, as defined in
+      <xref target="variable-expansion"/>, with the allowed characters
+      being those in the unreserved set.
+     </t>
      <t>
       Note that the expansion process for path segment expansion is
       identical to that of label expansion aside from the substitution
-      of "/" instead of ".".
+      of "/" instead of ".".  However, unlike ".", a "/" is a reserved
+      character and will be pct-encoded if found in a value.
      </t>
-     <figure><preamble>For example,</preamble><artwork>
-  foo := "fred"
+     <figure><artwork>
+  Example Template     Expansion
 
-  "{/foo}"        -&gt; "/fred"
-  "{/foo,foo}"    -&gt; "/fred/fred"
-  "{/bar,foo}"    -&gt; "/fred"
-  "{/bar|wilma}"  -&gt; "/wilma"
+    {/who}             /fred
+    {/who,who}         /fred/fred
+    {/half,who}        /50%25/fred
+    {/who,dub}         /fred/me%2Ftoo
+    {/var}             /value
+    {/var,empty}       /value/
+    {/var,undef}       /value
+    {/var,x}/here      /value/1024/here
+    {/var:1,var}       /v/value
+    {/list}            /red,green,blue
+    {/list*}           /red/green/blue
+    {/list*,path:4}    /red/green/blue/%2Ffoo
+    {/keys}            /semi,%3B,dot,.,comma,%2C
+    {/keys*}           /semi=%3B/dot=./comma=%2C
      </artwork></figure>
-     <t>
-      Label expansion only applies to Level 3 and Level 4 templates.
-      Level 4 templates add compound variable types and value modifiers,
-      as follows:
-     </t>
-     <t>
-      For a variable defined as a single value string, the explode
-      modifier has no effect.  The prefix modifier limits the
-      expansion to the first max-length characters of that single
-      value.   If the value contains pct-encoded triplets,
-      multibyte UTF-8, or both, care must be taken to avoid
-      splitting the value in mid-character: count each Unicode
-      codepoint as one character.
-     </t>
-     <t>
-      For a variable defined as a list of values, when no value
-      modifier is present or the explode modifier is given, the
-      variable's string expansion consists of a concatenation
-      of the individual defined values with each value prepended
-      by a slash ("/").  A prefix modifier has no effect.
-     </t>
-     <t>
-      When no value modifier is present, a variable defined as an
-      associative array is expanded by appending the (key, value)
-      pairs as alternating segments (i.e., "/key/value"), but
-      excluding any keys for which the corresponding value is
-      undefined.  If the explode modifier is given, then the keys with
-      defined values are expanded as "/key=value" instead of
-      "/key/value".  A prefix modifier has no effect.
-     </t>
     </section>
 
     <section title='Path-style parameter expansion: {;var}' anchor="op-semicolon">
      <t>
-      TBD.
+      Path-style parameter expansion, as indicated by the semicolon (";")
+      operator in Level 3 and above templates, is useful for describing URI
+      path parameters, such as "pathname;property" or "pathname;key=value".
      </t>
+     <t>
+      For each defined variable in the variable-list:
+      <list style="symbols">
+       <t>append ";" to the result string;</t>
+       <t>if no explode modifier is present or the variable does not have
+          a composite value, append the variable name (encoded as if it
+          were a literal string) to the result string and,
+          if the variable's value is not empty, append "=" to the result
+          string; and,</t>
+       <t>perform variable expansion, as defined in
+          <xref target="variable-expansion"/>, with the allowed characters
+          being those in the unreserved set.</t>
+      </list>
+     </t>
+     <figure><artwork>
+  Example Template     Expansion
+
+    {;who}             ;who=fred
+    {;half}            ;half=50%25
+    {;empty}           ;empty
+    {;v,empty,who}     ;v=6;empty;who=fred
+    {;v,bar,who}       ;v=6;who=fred
+    {;x,y}             ;x=1024;y=768
+    {;x,y,empty}       ;x=1024;y=768;empty
+    {;x,y,undef}       ;x=1024;y=768
+    {;hello:5}         ;hello=Hello
+    {;list}            ;list=red,green,blue
+    {;list*}           ;red;green;blue
+    {;keys}            ;keys=semi,%3B,dot,.,comma,%2C
+    {;keys*}           ;semi=%3B;dot=.;comma=%2C
+     </artwork></figure>
     </section>
 
     <section title='Form-style query expansion: {?var}' anchor="op-question">
      <t>
-      TBD.
+      Form-style query expansion, as indicated by the question-mark ("?")
+      operator in Level 3 and above templates, is useful for describing an
+      entire optional query component.
      </t>
+     <t>
+      For each defined variable in the variable-list:
+      <list style="symbols">
+       <t>append "?" to the result string if this is the first defined value
+          or append "&amp;" thereafter;</t>
+       <t>if no explode modifier is present or the variable does not have
+          a composite value, append the variable name (encoded as if it
+          were a literal string) and an equals character ("=") to the result
+          string; and,</t>
+       <t>perform variable expansion, as defined in
+          <xref target="variable-expansion"/>, with the allowed characters
+          being those in the unreserved set.</t>
+      </list>
+     </t>
+     <figure><artwork>
+  Example Template     Expansion
+
+    {?who}             ?who=fred
+    {?half}            ?half=50%25
+    {?x,y}             ?x=1024&amp;y=768
+    {?x,y,empty}       ?x=1024&amp;y=768&amp;empty=
+    {?x,y,undef}       ?x=1024&amp;y=768
+    {?var:3}           ?var=val
+    {?list}            ?list=red,green,blue
+    {?list*}           ?list=red&amp;list=green&amp;list=blue
+    {?keys}            ?keys=semi,%3B,dot,.,comma,%2C
+    {?keys*}           ?semi=%3B&amp;dot=.&amp;comma=%2C
+     </artwork></figure>
     </section>
 
+    <section title='Form-style query continuation: {&amp;var}' anchor="op-ampersand">
+     <t>
+      Form-style query continuation, as indicated by the ampersand ("&amp;")
+      operator in Level 3 and above templates, is useful for describing
+      optional &amp;name=value pairs in a template that already contains a
+      literal query component with fixed parameters.
+     </t>
+     <t>
+      For each defined variable in the variable-list:
+      <list style="symbols">
+       <t>append "&amp;" to the result string;</t>
+       <t>if no explode modifier is present or the variable does not have
+          a composite value, append the variable name (encoded as if it
+          were a literal string) and an equals character ("=") to the result
+          string; and,</t>
+       <t>perform variable expansion, as defined in
+          <xref target="variable-expansion"/>, with the allowed characters
+          being those in the unreserved set.</t>
+      </list>
+     </t>
+     <figure><artwork>
+  Example Template     Expansion
+
+    {&amp;who}             &amp;who=fred
+    {&amp;half}            &amp;half=50%25
+    ?fixed=yes{&amp;x}     ?fixed=yes&amp;x=1024
+    {&amp;x,y,empty}       &amp;x=1024&amp;y=768&amp;empty=
+    {&amp;x,y,undef}       &amp;x=1024&amp;y=768
+    
+    {&amp;var:3}           &amp;var=val
+    {&amp;list}            &amp;list=red,green,blue
+    {&amp;list*}           &amp;list=red&amp;list=green&amp;list=blue
+    {&amp;keys}            &amp;keys=semi,%3B,dot,.,comma,%2C
+    {&amp;keys*}           &amp;semi=%3B&amp;dot=.&amp;comma=%2C
+     </artwork></figure>
+    </section>
    </section>
   </section>
 
@@ -1188,71 +1373,153 @@
    &rfc5234;
   </references>
 
-  <section title="Example URI Template Parser" anchor="parser">
+  <section title="Implementation Hints" anchor="implementation">
    <t>
-    Parsing a valid URI Template expression does not require
-    building a parser from the given ABNF. Instead, the set of allowed
-    characters in each part of URI Template expression has been
-    chosen to avoid complex parsing, and breaking an expression into
-    its component parts can be achieved by a series of splits
-    of the character string.
+    The normative sections on expansion describe each operator with
+    a separate expansion process for the sake of descriptive clarity.
+    In actual implementations, we expect the expressions to be processed
+    left-to-right using a common algorithm that has only minor variations
+    in process per operator.  This appendix describes one such algorithm.
    </t>
-    <t>
-     TBD.
-    </t>
-  </section>
-
-  <section title="Revision History (to be removed by RFC Editor)" anchor="revisions">
-   <t>06 - Removed template defaults for undefined variables.
-      Added paragraph on limitations of variable matching templates.
-      Replaced "offset" with "max-length" in definition of prefix.
-      Noted that IRI literals may need to be pct-encoded for the URI.
-      Removed NFKC requirement -- state that NFC should be applied only
-      for user-supplied data-entry values.
-      Removed pct-decode normalization process for entire template, since
-      that is a lot more than necessary -- just normalize the variable
-      names before mapping.  
-      Fixed a lot of last-minute paste-o's in the examples.
-      Fixed Level 4 examples for unexploded keys to include the keys=
-      in the expansion.
-      </t>
-   <t>05 - Introduced levels to differentiate between legacy, partial,
-      and full implementations of URI Templates.
-      Changed the default indicator to pipe ("|") to allow the defaults
-      to contain the equals character and thus remove the need for complex
-      defaulting for the different variable types.
-      Removed suffix, remainder, and labelled value expansion because
-      there didn't seem much interest in them.
-      Clarified that templates and values are processed as sequences of
-      Unicode codepoints rather than prematurely encoded as UTF-8, since
-      that is easier to explain and more consistent with common language
-      routines for processing Unicode strings.
-      </t>
-   <t>04 - Changed the operator syntax to a single character that is
-      analogous to its reserved role within the URI generic syntax,
-      resulting in templates that are far more readable for the common
-      cases. Added value modifiers for prefix and suffix expansion.
-      Added explode modifiers to allow expansion of complex variables
-      and lists according to (external) variable types or schema.
-      Replaced use of "expansion" with "expression", since expansion
-      is traditionally used to refer to the result after expanding
-      a macro (not the macro itself). Made applicable to any hypertext
-      reference string, such that the process for template expansion
-      also includes transforming the surrounding string into a proper
-      URI-reference rather than assuming it is already in absolute URI form.
-      Rewrote the text accordingly.</t>
-   <t>03 - Added more examples. Introduced error conditions and defined
-      their handling. Changed listjoin to list. Changed -append to -suffix,
-      and allowed -prefix and -suffix to accept list variables. Clarified
-      the handling of unicode.</t>
-   <t>02 - Added operators and came up with coherent
-      percent-encoding and reserved character story.
-      Added large examples section which is extracted
-      and tested against the implementation.
+   <t>
+    Initialize an empty result string and its non-error state.
    </t>
-   <t>01
+   <t> 
+    Scan the template and copy literals to the result string (as in
+    <xref target="literal-expansion"/>) until an expression is indicated
+    by a "{" or the template ends.  When it ends, return the result string
+    and its current error or non-error state.
+    <list style="symbols">
+     <t>If an expression is found, scan the template to the next "}"
+        and extract the characters in between the braces.</t>
+     <t>If the template ends before a "}", then append the "{" and
+        extracted characters to the result string and return with
+        an error status indicating the expression is malformed.</t>
+    </list>
    </t>
-   <t>00 - Initial Revision.
+   <t>
+    Examine the first character of the extracted expression for an operator.
+    <list style="symbols">
+     <t>If the expression ended (i.e., is "{}"), an operator is found that
+        is unknown or unimplemented, or the character is not in the
+        varchar set (<xref target="variables"/>), then
+        append "{", the extracted expression, and "}" to the result string,
+        remember that the result is in an error state, and then go back to
+        scan the remainder of the template.</t>
+     <t>If a known and implemented operator is found, store the operator
+        and skip to the next character to begin the varspec-list.</t>
+     <t>Otherwise, store the operator as NUL (simple string expansion).</t>
+    </list>
+   </t>
+   <t>
+    Use the following value table to determine the processing behavior by
+    expression type operator.
+    The entry for "first" is the string to append to the result first if
+    any of the expression's variables are defined.
+    The entry for "sep" is the separator to append to the result before
+    any second (or subsequent) defined variable expansion.
+    The entry for "named" is a boolean for whether or not the expansion
+    includes the variable name when no explode modifier is given.  
+    The entry for "ifemp" is a string to append to the name when the
+    expansion includes the variable (or key) name and that variable
+    (or key) has an empty value.
+    The entry for "allow" indicates what characters to allow unencoded
+    within the value expansion: (U) means any character not in the
+    unreserved set will be encoded; (U+R) means any character not in
+    the (unreserved / reserved / pct-encoding) set will be encoded; and,
+    for both cases, disallowed characters are encoded as UTF-8 (a
+    sequence of octets) and then each octet is encoded as a pct-encoded
+    triplet.
+   </t>
+   <figure><artwork>
+.------------------------------------------------------------------.
+|          NUL     +      .       /       ;      ?      &amp;      #   |
+|------------------------------------------------------------------|
+| first |  ""     ""     "."     "/"     ";"    "?"    "&amp;"    "#"  |
+| sep   |  ","    ","    "."     "/"     ";"    "&amp;"    "&amp;"    ","  |
+| named | false  false  false   false   true   true   true   false |
+| ifemp |  ""     ""     ""      ""      ""     "="    "="    ""   |
+| allow |   U     U+R     U       U       U      U      U     U+R  |
+`------------------------------------------------------------------'
+   </artwork></figure>
+   <t>
+    With the above table in mind, process the variable-list as follows:
+   </t>
+   <t>
+    For each varspec, extract the varname and optional modifier,
+    lookup the value for that variable, and then:
+    <list style="symbols">
+     <t>If the varname is unknown or corresponds to a variable with an
+        undefined value (<xref target="variable-expansion"/>), then skip to
+        the next varspec.</t>
+     <t>If this is the first defined variable for this expression, append
+        the first string for this expression type to the result string 
+        and remember that it has been done.  Otherwise, append the
+        sep string to the result string.</t>
+     <t>If an explode modifier is present, then
+      <list style="symbols">
+        <t>If the variable is a list, then append each defined list member
+           to the result string, after encoding any characters that
+           are not in the allow set, with the sep string appended to the
+           result between each defined list member.</t>
+        <t>If the variable is an associative array of (name, value) pairs,
+           then append each pair with a defined value to the result string
+           as "name=value", after encoding any characters that are not in
+           the allow set, with the sep string appended to the result between
+           each defined pair.</t>
+        <t>Otherwise (the variable is a string): 
+         <list style="symbols">
+           <t>If named is true, append the varname to the result string using
+              the same encoding process as for literals, and
+            <list style="symbols">
+              <t>if the value is empty, append the ifemp string to the
+                 result string and skip to the next varspec;</t>
+              <t>otherwise, append "=" to the result string.</t>
+            </list>
+           </t>
+           <t>Append the value to the result string after encoding any
+              characters that are not in the allow set.</t>
+         </list>
+        </t>
+      </list>
+     </t>
+     <t>If an explode modifier is not present, then
+      <list style="symbols">
+        <t>If named is true, append the varname to the result string using
+              the same encoding process as for literals, and
+         <list style="symbols">
+           <t>if the value is empty, append the ifemp string to the
+               result string and skip to the next varspec;</t>
+           <t>otherwise, append "=" to the result string.</t>
+         </list>
+        </t>
+        <t>If the variable is a list, append each defined list member
+           to the result string, after encoding any characters that are not
+           in the allow set, with a comma (",") appended to the result
+           between each defined list member.</t>
+        <t>If the variable is an associative array of (name, value) pairs,
+           append each pair with a defined value to the result string
+           as "name,value", after encoding any characters that are not in
+           the allow set, with a comma (",") appended to the result between
+           each defined pair.</t>
+        <t>Otherwise (the variable is a string), then
+         <list style="symbols">
+           <t>if a prefix modifier is present and the prefix length is
+              less than the value string length in number of Unicode
+              characters, append that number of characters from the
+              beginning of the value string to the result string, after
+              encoding any characters that are not in the allow set, while
+              taking care not to split multi-octet or pct-encoded triplet
+              characters that represent a single Unicode codepoint;</t>
+           <t>otherwise, append the value to the result string after
+              encoding any characters that are not in the allow set.</t>
+         </list>
+        </t>
+      </list>
+     </t>
+    </list>
+    When the variable-list for this expression is exhausted,
+    go back to scan the remainder of the template.
    </t>
   </section>
  </back>
