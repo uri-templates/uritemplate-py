@@ -1428,66 +1428,100 @@
         the first string for this expression type to the result string 
         and remember that it has been done.  Otherwise, append the
         sep string to the result string.</t>
-     <t>If an explode modifier is present, then
-      <list style="symbols">
-        <t>If the variable is a list, then append each defined list member
-           to the result string, after encoding any characters that
-           are not in the allow set, with the sep string appended to the
-           result between each defined list member.</t>
-        <t>If the variable is an associative array of (name, value) pairs,
-           then append each pair with a defined value to the result string
-           as "name=value", after encoding any characters that are not in
-           the allow set, with the sep string appended to the result between
-           each defined pair.</t>
-        <t>Otherwise (the variable is a string): 
-         <list style="symbols">
-           <t>If named is true, append the varname to the result string using
-              the same encoding process as for literals, and
+     <t>If this variable's value is a string, then:
+        <list style="symbols">
+         <t>if named is true, append the varname to the result string using
+            the same encoding process as for literals, and
             <list style="symbols">
-              <t>if the value is empty, append the ifemp string to the
-                 result string and skip to the next varspec;</t>
-              <t>otherwise, append "=" to the result string.</t>
+             <t>if the value is empty, append the ifemp string to the
+                result string and skip to the next varspec;</t>
+             <t>otherwise, append "=" to the result string.</t>
             </list>
-           </t>
-           <t>Append the value to the result string after encoding any
-              characters that are not in the allow set.</t>
-         </list>
-        </t>
-      </list>
+         </t>
+         <t>if a prefix modifier is present and the prefix length is
+            less than the value string length in number of Unicode
+            characters, append that number of characters from the
+            beginning of the value string to the result string, after
+            encoding any characters that are not in the allow set, while
+            taking care not to split multi-octet or pct-encoded triplet
+            characters that represent a single Unicode codepoint;</t>
+         <t>otherwise, append the value to the result string after
+            encoding any characters that are not in the allow set.</t>
+        </list>
      </t>
-     <t>If an explode modifier is not present, then
-      <list style="symbols">
-        <t>If named is true, append the varname to the result string using
-              the same encoding process as for literals, and
-         <list style="symbols">
-           <t>if the value is empty, append the ifemp string to the
-               result string and skip to the next varspec;</t>
-           <t>otherwise, append "=" to the result string.</t>
-         </list>
-        </t>
-        <t>If the variable is a list, append each defined list member
-           to the result string, after encoding any characters that are not
-           in the allow set, with a comma (",") appended to the result
-           between each defined list member.</t>
-        <t>If the variable is an associative array of (name, value) pairs,
-           append each pair with a defined value to the result string
-           as "name,value", after encoding any characters that are not in
-           the allow set, with a comma (",") appended to the result between
-           each defined pair.</t>
-        <t>Otherwise (the variable is a string), then
-         <list style="symbols">
-           <t>if a prefix modifier is present and the prefix length is
-              less than the value string length in number of Unicode
-              characters, append that number of characters from the
-              beginning of the value string to the result string, after
-              encoding any characters that are not in the allow set, while
-              taking care not to split multi-octet or pct-encoded triplet
-              characters that represent a single Unicode codepoint;</t>
-           <t>otherwise, append the value to the result string after
-              encoding any characters that are not in the allow set.</t>
-         </list>
-        </t>
-      </list>
+     <t>If this variable's value is a list, then:
+        <list style="symbols">
+         <t>if no explode modifier is given, then:
+            <list style="symbols">
+             <t>if named is true, append the varname to the result string
+                using the same encoding process as for literals, and
+                <list style="symbols">
+                 <t>if the value is empty, append the ifemp string to the
+                    result string and skip to the next varspec;</t>
+                 <t>otherwise, append "=" to the result string; and</t>
+                </list>
+             </t>
+             <t>append each defined list member to the result string,
+                after encoding any characters that are not in the allow set,
+                with a comma (",") appended to the result between each
+                defined list member.</t>
+            </list>
+         </t>
+         <t>else if an explode modifier is given and named is false, then:
+            <list style="symbols">
+             <t>append each defined list member to the result string,
+                after encoding any characters that are not in the allow set,
+                with the sep string appended to the result between each
+                defined list member.</t>
+            </list>
+         </t>
+         <t>else if an explode modifier is given and named is true, then
+            for each defined list member, do:
+            <list style="symbols">
+             <t>if this is not the first defined list member, append the
+                sep string to the result string;</t>
+             <t>append the varname to the result string
+                using the same encoding process as for literals, and
+                <list style="symbols">
+                 <t>if the member value is empty, append the ifemp string to
+                    the result string and skip to the next list member;</t>
+                 <t>otherwise, append "=" to the result string; and</t>
+                </list>
+             </t>
+             <t>append the member value to the result string after encoding
+                any characters that are not in the allow set.</t>
+            </list>
+         </t>
+        </list>
+     </t>
+     <t>If this variable's value is an associative array or any other form
+        of paired (name, value) structure, then:
+        <list style="symbols">
+         <t>if no explode modifier is given, then:
+            <list style="symbols">
+             <t>if named is true, append the varname to the result string
+                using the same encoding process as for literals, and
+                <list style="symbols">
+                 <t>if the value is empty, append the ifemp string to the
+                    result string and skip to the next varspec;</t>
+                 <t>otherwise, append "=" to the result string; and</t>
+                </list>
+             </t>
+             <t>append each pair with a defined value to the result string
+                as "name,value", after encoding any characters that are not
+                in the allow set, with a comma (",") appended to the result
+                between each defined pair.</t>
+            </list>
+         </t>
+         <t>else if an explode modifier is given, then:
+            <list style="symbols">
+             <t>append each pair with a defined value to the result string
+                as "name=value", after encoding any characters that are not
+                in the allow set, with the sep string appended to the result
+                between each defined pair.</t>
+            </list>
+         </t>
+        </list>
      </t>
     </list>
     When the variable-list for this expression is exhausted,
