@@ -252,8 +252,6 @@
 |                                                                 |
 |             var   := "value"                                    |
 |             hello := "Hello World!"                             |
-|             empty := ""                                         |
-|             undef := null                                       |
 |                                                                 |
 |-----------------------------------------------------------------|
 | Op       Expression            Expansion                        |
@@ -885,17 +883,24 @@
     template expansion.
    </t>
    <t>
+    The requirements on expansion for each aspect of the URI Template
+    grammar are defined in this section.  A non-normative algorithm for
+    the expansion process as a whole is provided in
+    <xref target="implementation"/>.
+   </t>
+   <t>
     If a template processor encounters an error outside of an expression,
     such as a character sequence that does not match the &lt;URI-Template&gt;
     grammar, then processing of the template SHOULD cease, the URI-reference
-    result SHOULD be undefined, and the location and type of error SHOULD be
+    result SHOULD contain the expanded part of the template followed by the
+    remainder unexpanded, and the location and type of error SHOULD be
     indicated to the invoking application.  If an error is encountered inside
     an expression, such as an operator or value modifier that it does not
     recognize or cannot support, then the expression SHOULD be copied to
     the result unexpanded, processing of the remainder of the template
     SHOULD continue, and the location and type of error SHOULD be indicated
-    to the invoking application.  In this latter case, the result returned
-    will not be a valid URI reference; it will be an incompletely expanded
+    to the invoking application.  If an error occurs, the result returned
+    might not be a valid URI reference; it will be an incompletely expanded
     template string that is only intended for diagnostic use.
    </t>
 
@@ -995,13 +1000,18 @@
       value in mid-character: count each Unicode codepoint as one character.
      </t>
      <t>
-      For a variable that is a list of values, expansion consists of 
-      concatenating the defined member string values, encoded as above,
-      with a separator string inserted between those values.  A prefix
-      modifier has no effect.  If no explode modifier is given, the
-      separator string is a comma (",").  If an explode modifier is given,
-      the separator string is defined per operator by the following table,
-      where NUL is the default expression type:
+      For a variable that is a list of values, expansion depends on both
+      the operator and the possible presence of an explode modifier.
+      If an explode modifier is given and the operator is "?" or "&amp;"
+      (query parameters), the list is expanded like an associative array
+      in which each member value is paired with a name equal to the varname.
+      Otherwise, list expansion consists of concatenating the defined
+      member string values, encoded as above, with a separator string
+      inserted between those values.  A prefix modifier has no effect.
+      If no explode modifier is given, the separator string is a comma (",").
+      If an explode modifier is given, the separator string is defined per
+      operator by the following table, where NUL is the default expression
+      type:
    </t>
    <figure><artwork>
 .-----------------------------------------------------------------.
@@ -1205,11 +1215,15 @@
       For each defined variable in the variable-list:
       <list style="symbols">
        <t>append ";" to the result string;</t>
-       <t>if no explode modifier is present or the variable does not have
-          a composite value, append the variable name (encoded as if it
-          were a literal string) to the result string and,
-          if the variable's value is not empty, append "=" to the result
-          string; and,</t>
+       <t>if the variable has a simple string value or
+          no explode modifier is given, then:
+          <list style="symbols">
+           <t>append the variable name (encoded as if it were a literal
+              string) to the result string;</t>
+           <t>if the variable's value is not empty, append "=" to the
+              result string;</t>
+          </list>
+       </t>
        <t>perform variable expansion, as defined in
           <xref target="variable-expansion"/>, with the allowed characters
           being those in the unreserved set.</t>
@@ -1245,10 +1259,10 @@
       <list style="symbols">
        <t>append "?" to the result string if this is the first defined value
           or append "&amp;" thereafter;</t>
-       <t>if no explode modifier is present or the variable does not have
-          a composite value, append the variable name (encoded as if it
-          were a literal string) and an equals character ("=") to the result
-          string; and,</t>
+       <t>if the variable has a simple string value or
+          no explode modifier is given, append the variable name
+          (encoded as if it were a literal string) and an equals
+          character ("=") to the result string; and,</t>
        <t>perform variable expansion, as defined in
           <xref target="variable-expansion"/>, with the allowed characters
           being those in the unreserved set.</t>
@@ -1281,10 +1295,9 @@
       For each defined variable in the variable-list:
       <list style="symbols">
        <t>append "&amp;" to the result string;</t>
-       <t>if no explode modifier is present or the variable does not have
-          a composite value, append the variable name (encoded as if it
-          were a literal string) and an equals character ("=") to the result
-          string; and,</t>
+       <t>if the variable has a simple string value or no explode modifier
+          is given, append the variable name (encoded as if it were a literal
+          string) and an equals character ("=") to the result string; and,</t>
        <t>perform variable expansion, as defined in
           <xref target="variable-expansion"/>, with the allowed characters
           being those in the unreserved set.</t>
@@ -1467,7 +1480,8 @@
                 defined list member.</t>
             </list>
          </t>
-         <t>else if an explode modifier is given and named is false, then:
+         <t>else if an explode modifier is given and the operator is not
+            "?" or "&amp;", then:
             <list style="symbols">
              <t>append each defined list member to the result string,
                 after encoding any characters that are not in the allow set,
@@ -1475,8 +1489,8 @@
                 defined list member.</t>
             </list>
          </t>
-         <t>else if an explode modifier is given and named is true, then
-            for each defined list member, do:
+         <t>else if an explode modifier is given and the operator is
+            "?" or "&amp;", then for each defined list member, do:
             <list style="symbols">
              <t>if this is not the first defined list member, append the
                 sep string to the result string;</t>
