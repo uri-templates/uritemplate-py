@@ -442,7 +442,7 @@
 |     |                                                           |
 |     |    {?var:3}              ?var=val                         |
 |     |    {?list}               ?list=red,green,blue             |
-|     |    {?list*}              ?list=red&amp;list=green&amp;list=blue   |
+|     |    {?list*}              ?red&amp;green&amp;blue                  |
 |     |    {?keys}               ?keys=semi,%3B,dot,.,comma,%2C   |
 |     |    {?keys*}              ?semi=%3B&amp;dot=.&amp;comma=%2C        |
 |     |                                                           |
@@ -451,7 +451,7 @@
 |     |                                                           |
 |     |    {&amp;var:3}              &amp;var=val                         |
 |     |    {&amp;list}               &amp;list=red,green,blue             |
-|     |    {&amp;list*}              &amp;list=red&amp;list=green&amp;list=blue   |
+|     |    {&amp;list*}              &amp;red&amp;green&amp;blue                  |
 |     |    {&amp;keys}               &amp;keys=semi,%3B,dot,.,comma,%2C   |
 |     |    {&amp;keys*}              &amp;semi=%3B&amp;dot=.&amp;comma=%2C        |
 |     |                                                           |
@@ -1000,14 +1000,9 @@
       value in mid-character: count each Unicode codepoint as one character.
      </t>
      <t>
-      For a variable that is a list of values, expansion depends on both
-      the operator and the possible presence of an explode modifier.
-      If an explode modifier is given and the operator is "?" or "&amp;"
-      (query parameters), the list is expanded like an associative array
-      in which each member value is paired with a name equal to the varname.
-      Otherwise, list expansion consists of concatenating the defined
-      member string values, encoded as above, with a separator string
-      inserted between those values.  A prefix modifier has no effect.
+      For a variable that is a list of values, expansion consists of
+      concatenating the defined member string values, encoded as above,
+      with a separator string inserted between those values.
       If no explode modifier is given, the separator string is a comma (",").
       If an explode modifier is given, the separator string is defined per
       operator by the following table, where NUL is the default expression
@@ -1278,7 +1273,7 @@
     {?x,y,undef}       ?x=1024&amp;y=768
     {?var:3}           ?var=val
     {?list}            ?list=red,green,blue
-    {?list*}           ?list=red&amp;list=green&amp;list=blue
+    {?list*}           ?red&amp;green&amp;blue
     {?keys}            ?keys=semi,%3B,dot,.,comma,%2C
     {?keys*}           ?semi=%3B&amp;dot=.&amp;comma=%2C
      </artwork></figure>
@@ -1314,7 +1309,7 @@
     
     {&amp;var:3}           &amp;var=val
     {&amp;list}            &amp;list=red,green,blue
-    {&amp;list*}           &amp;list=red&amp;list=green&amp;list=blue
+    {&amp;list*}           &amp;red&amp;green&amp;blue
     {&amp;keys}            &amp;keys=semi,%3B,dot,.,comma,%2C
     {&amp;keys*}           &amp;semi=%3B&amp;dot=.&amp;comma=%2C
      </artwork></figure>
@@ -1480,30 +1475,12 @@
                 defined list member.</t>
             </list>
          </t>
-         <t>else if an explode modifier is given and the operator is not
-            "?" or "&amp;", then:
+         <t>else if an explode modifier is given, then:
             <list style="symbols">
              <t>append each defined list member to the result string,
                 after encoding any characters that are not in the allow set,
                 with the sep string appended to the result between each
                 defined list member.</t>
-            </list>
-         </t>
-         <t>else if an explode modifier is given and the operator is
-            "?" or "&amp;", then for each defined list member, do:
-            <list style="symbols">
-             <t>if this is not the first defined list member, append the
-                sep string to the result string;</t>
-             <t>append the varname to the result string
-                using the same encoding process as for literals, and
-                <list style="symbols">
-                 <t>if the member value is empty, append the ifemp string to
-                    the result string and skip to the next list member;</t>
-                 <t>otherwise, append "=" to the result string; and</t>
-                </list>
-             </t>
-             <t>append the member value to the result string after encoding
-                any characters that are not in the allow set.</t>
             </list>
          </t>
         </list>
