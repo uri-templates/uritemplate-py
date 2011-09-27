@@ -1,6 +1,6 @@
 NAME=draft-gregorio-uritemplate
-REV=06
-LASTREV=05
+REV=07
+LASTREV=06
 LAST=$(NAME)-$(LASTREV)
 SOURCE=$(NAME)
 TARGET=$(NAME)-$(REV)
