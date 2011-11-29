@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='RFC6365'>
+
+<front>
+<title>Terminology Used in Internationalization in the IETF</title>
+<author initials='P.' surname='Hoffman' fullname='P. Hoffman'>
+<organization /></author>
+<author initials='J.' surname='Klensin' fullname='J. Klensin'>
+<organization /></author>
+<date year='2011' month='September' />
+<abstract>
+<t>This document provides a list of terms used in the IETF when discussing internationalization.  The purpose is to help frame discussions of internationalization in the various areas of the IETF and to help introduce the main concepts to IETF participants.  This memo documents an Internet Best Current Practice.</t></abstract></front>
+
+<seriesInfo name='BCP' value='166' />
+<seriesInfo name='RFC' value='6365' />
+<format type='TXT' octets='103155' target='http://www.rfc-editor.org/rfc/rfc6365.txt' />
+</reference>
