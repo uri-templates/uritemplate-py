@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='W3C.SUB-wadl'
+           target='http://www.w3.org/Submission/2009/SUBM-wadl-20090831/'>
+<front>
+<title>Web Application Description Language</title>
+
+<author initials='M.' surname='Hadley' fullname='Marc Hadley'>
+    <organization>Sun Microsystems</organization>
+</author>
+
+<date month='August' day='31' year='2009' />
+</front>
+
+<format type='HTML' target='http://www.w3.org/Submission/2009/SUBM-wadl-20090831/' />
+</reference>

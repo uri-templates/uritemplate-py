@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='W3C.REC-wsdl20-20070626'
+           target='http://www.w3.org/TR/2007/REC-wsdl20-20070626'>
+<front>
+<title>Web Services Description Language (WSDL) Version 2.0 Part 1: Core Language</title>
+
+<author initials='S.' surname='Weerawarana' fullname='Sanjiva Weerawarana'>
+    <organization />
+</author>
+
+<author initials='J.' surname='Moreau' fullname='Jean-Jacques Moreau'>
+    <organization />
+</author>
+
+<author initials='A.' surname='Ryman' fullname='Arthur Ryman'>
+    <organization />
+</author>
+
+<author initials='R.' surname='Chinnici' fullname='Roberto Chinnici'>
+    <organization />
+</author>
+
+<date month='June' day='26' year='2007' />
+</front>
+
+<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-wsdl20-20070626' />
+<format type='HTML' target='http://www.w3.org/TR/2007/REC-wsdl20-20070626' />
+</reference>

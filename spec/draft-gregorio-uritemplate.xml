@@ -9,6 +9,8 @@
  <!ENTITY ASCII   SYSTEM 'bibxml/_reference.ANSI.X3-4.1986.xml'>
  <!ENTITY UNIV6   SYSTEM 'bibxml/univ6.xml'>
  <!ENTITY UTR15   SYSTEM 'bibxml/utr15.xml'>
+ <!ENTITY WSDL    SYSTEM 'bibxml/reference.W3C.REC-wsdl20-20070626.xml'>
+ <!ENTITY WADL    SYSTEM 'bibxml/reference.W3C.SUB-wadl.xml'>
  ]>
 
 <!--<?xml-stylesheet type='text/xsl' href='rfc2629.xslt'/ ?>-->
@@ -462,13 +464,14 @@
 
    <section title="Design Considerations" anchor="design">
     <t>
-     Mechanisms similar to URI Templates have been defined within
-     several specifications, including WSDL, WADL and OpenSearch.
-     This specification extends and formally defines the syntax so
-     that URI Templates can be used consistently across multiple
-     Internet applications and within Internet message fields,
-     while at the same time retaining compatibility with those
-     earlier definitions.
+     Mechanisms similar to URI Templates have been defined within several
+     specifications, including WSDL <xref target="W3C.REC-wsdl20-20070626"/>,
+     WADL <xref target="W3C.SUB-wadl"/> and OpenSearch <eref
+     target="http://www.opensearch.org/Specifications/OpenSearch/1.1"/>. This
+     specification extends and formally defines the syntax so that URI
+     Templates can be used consistently across multiple Internet applications
+     and within Internet message fields, while at the same time retaining
+     compatibility with those earlier definitions.
     </t>
     <t>
      The URI Template syntax has been designed to carefully balance
@@ -1358,6 +1361,11 @@
    &rfc3987;
    &rfc3629;
    &rfc5234;
+  </references>
+  
+  <references title="Informative References">
+    &WSDL;
+    &WADL;
   </references>
 
   <section title="Implementation Hints" anchor="implementation">
