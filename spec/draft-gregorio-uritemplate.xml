@@ -243,6 +243,11 @@
      encoding the characters and then pct-encoding any octets that are
      not in the unreserved set.
     </t>
+    <t>
+     Note that reserved and unreserved are formally defined in <xref
+     target="notation"/>, using the same definitions that appear in <xref
+     target="RFC3986"/>.
+    </t>
     <t>     
      Since most template processors implemented prior to this specification
      have only implemented the default expression type, we refer to these as
