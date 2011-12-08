@@ -672,7 +672,7 @@
     </t>
     <figure><artwork type="abnf">
   literals      =  %x21 / %x23-24 / %x26 / %x28-3B / %x3D / %x3F-5B
-                /  %x5D-5F / %x61-7A / %x7E / ucschar / iprivate
+                /  %x5D / %x5F / %x61-7A / %x7E / ucschar / iprivate
                 /  pct-encoded
                      ; any Unicode character except: CTL, SP,
                      ;  DQUOTE, "'", "%" (aside from pct-encoded),
