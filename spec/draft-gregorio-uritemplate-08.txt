@@ -28,7 +28,7 @@ Abstract
 Editorial Note (to be removed by RFC Editor)
 
    To provide feedback on this Internet-Draft, join the W3C URI mailing
-   list (http://lists.w3.org/Archives/Public/uri/) [1].
+   list <http://lists.w3.org/Archives/Public/uri/>.
 
 Status of this Memo
 
@@ -753,7 +753,7 @@ Internet-Draft                URI Template                      Nov 2011
    allowed, copied to the URI-reference in its UTF-8 pct-encoded form.
 
      literals      =  %x21 / %x23-24 / %x26 / %x28-3B / %x3D / %x3F-5B
-                   /  %x5D-5F / %x61-7A / %x7E / ucschar / iprivate
+                   /  %x5D / %x5F / %x61-7A / %x7E / ucschar / iprivate
                    /  pct-encoded
                         ; any Unicode character except: CTL, SP,
                         ;  DQUOTE, "'", "%" (aside from pct-encoded),
@@ -1495,16 +1495,16 @@ Internet-Draft                URI Template                      Nov 2011
               August 2009,
               <http://www.w3.org/Submission/2009/SUBM-wadl-20090831/>.
 
-URIs
-
-   [1]  <http://lists.w3.org/Archives/Public/uri/>
-
 
 Appendix A.  Implementation Hints
 
    The normative sections on expansion describe each operator with a
    separate expansion process for the sake of descriptive clarity.  In
    actual implementations, we expect the expressions to be processed
+   left-to-right using a common algorithm that has only minor variations
+   in process per operator.  This appendix describes one such algorithm.
+
+   Initialize an empty result string and its non-error state.
 
 
 
@@ -1512,11 +1512,6 @@ Gregorio, et al.          Expires June 1, 2012                 [Page 27]
 
 Internet-Draft                URI Template                      Nov 2011
 
-
-   left-to-right using a common algorithm that has only minor variations
-   in process per operator.  This appendix describes one such algorithm.
-
-   Initialize an empty result string and its non-error state.
 
    Scan the template and copy literals to the result string (as in
    Section 3.1) until an expression is indicated by a "{" or the
@@ -1556,19 +1551,6 @@ Internet-Draft                URI Template                      Nov 2011
    encoded as UTF-8 (a sequence of octets) and then each octet is
    encoded as a pct-encoded triplet.
 
-
-
-
-
-
-
-
-
-Gregorio, et al.          Expires June 1, 2012                 [Page 28]
-
-Internet-Draft                URI Template                      Nov 2011
-
-
    .------------------------------------------------------------------.
    |          NUL     +      .       /       ;      ?      &      #   |
    |------------------------------------------------------------------|
@@ -1578,6 +1560,14 @@ Internet-Draft                URI Template                      Nov 2011
    | ifemp |  ""     ""     ""      ""      ""     "="    "="    ""   |
    | allow |   U     U+R     U       U       U      U      U     U+R  |
    `------------------------------------------------------------------'
+
+
+
+
+Gregorio, et al.          Expires June 1, 2012                 [Page 28]
+
+Internet-Draft                URI Template                      Nov 2011
+
 
    With the above table in mind, process the variable-list as follows:
 
@@ -1615,16 +1605,6 @@ Internet-Draft                URI Template                      Nov 2011
             encoding any characters that are not in the allow set, with
             a comma (",") appended to the result between each defined
             list member.
-
-
-
-
-
-Gregorio, et al.          Expires June 1, 2012                 [Page 29]
-
-Internet-Draft                URI Template                      Nov 2011
-
-
       *  else if an explode modifier is given, then:
          +  append each defined list member to the result string, after
             encoding any characters that are not in the allow set, with
@@ -1635,6 +1615,16 @@ Internet-Draft                URI Template                      Nov 2011
       *  if no explode modifier is given, then:
          +  if named is true, append the varname to the result string
             using the same encoding process as for literals, and
+
+
+
+
+
+Gregorio, et al.          Expires June 1, 2012                 [Page 29]
+
+Internet-Draft                URI Template                      Nov 2011
+
+
             -  if the value is empty, append the ifemp string to the
                result string and skip to the next varspec;
             -  otherwise, append "=" to the result string; and
@@ -1674,13 +1664,6 @@ Authors' Addresses
    URI:   http://mitre.org/
 
 
-
-
-Gregorio, et al.          Expires June 1, 2012                 [Page 30]
-
-Internet-Draft                URI Template                      Nov 2011
-
-
    Mark Nottingham
    Rackspace
 
@@ -1688,10 +1671,27 @@ Internet-Draft                URI Template                      Nov 2011
    URI:   http://www.mnot.net/
 
 
+
+
+
+
+
+Gregorio, et al.          Expires June 1, 2012                 [Page 30]
+
+Internet-Draft                URI Template                      Nov 2011
+
+
    David Orchard
    Salesforce.com
 
    URI:   http://www.pacificspirit.com/
+
+
+
+
+
+
+
 
 
 
