@@ -193,6 +193,9 @@ Internet-Draft                URI Template                      Nov 2011
      http://example.com/search?q=cat&lang=en
      http://example.com/search?q=chien&lang=fr
 
+   A URI Template is a compact sequence of characters for describing a
+   range of Uniform Resource Identifiers through variable expansion.
+
    URI Templates provide a mechanism for abstracting a space of resource
    identifiers such that the variable parts can be easily identified and
    described.  URI templates can have many uses, including discovery of
@@ -214,9 +217,6 @@ Internet-Draft                URI Template                      Nov 2011
    o  template processor - A program or library that, given a URI
       Template and a set of variables with values, transforms the
       template string into a URI-reference by parsing the template for
-      expressions and substituting each one with its corresponding
-      expansion.
-
 
 
 
@@ -224,6 +224,9 @@ Gregorio, et al.          Expires June 1, 2012                  [Page 4]
 
 Internet-Draft                URI Template                      Nov 2011
 
+
+      expressions and substituting each one with its corresponding
+      expansion.
 
    A URI Template provides both a structural description of a URI space
    and, when variable values are provided, machine-readable instructions
@@ -271,15 +274,14 @@ Internet-Draft                URI Template                      Nov 2011
 
    or if both variables are undefined, then it would be
 
-     http://www.example.com/foo
-
-
 
 
 Gregorio, et al.          Expires June 1, 2012                  [Page 5]
 
 Internet-Draft                URI Template                      Nov 2011
 
+
+     http://www.example.com/foo
 
    A URI Template may be provided in absolute form, as in the examples
    above, or in relative form.  A template MUST be expanded before the
@@ -325,8 +327,6 @@ Internet-Draft                URI Template                      Nov 2011
    Level 2 templates add the plus ("+") operator, for expansion of
    values that are allowed to include reserved characters, and the
    crosshatch ("#") operator for expansion of fragment identifiers.
-
-
 
 
 

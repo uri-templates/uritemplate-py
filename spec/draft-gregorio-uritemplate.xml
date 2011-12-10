@@ -125,6 +125,10 @@
   http://example.com/search?q=chien&amp;lang=fr
     </artwork></figure>
     <t>
+     A URI Template is a compact sequence of characters for describing a 
+     range of Uniform Resource Identifiers through variable expansion.
+    </t>
+    <t>
      URI Templates provide a mechanism for abstracting a space of
      resource identifiers such that the variable parts can be easily
      identified and described.  URI templates can have many uses,
