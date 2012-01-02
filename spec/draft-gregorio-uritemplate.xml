@@ -1340,8 +1340,15 @@
 
   <section title="Security Considerations">
    <t>
-    A URI Template does not contain active or executable content. Other
-    security considerations are the same as those for URIs, as described
+    A URI Template does not contain active or executable content. However, it
+    might be possible to craft unanticipated URIs if an attacker is given 
+    control of both the template and the variables, or if the expression
+    types used in a template are poorly chosen (e.g., they do not encode
+    reserved characters appropriate to the portion of the URI they are used
+    within).
+   </t>
+   <t>
+    Other security considerations are the same as those for URIs, as described
     in section 7 of <xref target="RFC3986"/>.
    </t>
   </section>
