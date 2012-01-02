@@ -1381,11 +1381,11 @@
 
   <section title="Implementation Hints" anchor="implementation">
    <t>
-    The normative sections on expansion describe each operator with
-    a separate expansion process for the sake of descriptive clarity.
-    In actual implementations, we expect the expressions to be processed
-    left-to-right using a common algorithm that has only minor variations
-    in process per operator.  This appendix describes one such algorithm.
+    The normative sections on expansion describe each operator with a separate
+    expansion process for the sake of descriptive clarity. In actual
+    implementations, we expect the expressions to be processed left-to-right
+    using a common algorithm that has only minor variations in process per
+    operator. This non-normative appendix describes one such algorithm.
    </t>
    <t>
     Initialize an empty result string and its non-error state.
