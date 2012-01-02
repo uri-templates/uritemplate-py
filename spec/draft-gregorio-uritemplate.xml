@@ -936,13 +936,15 @@
    <section title='Expression Expansion' anchor="expression-expansion">
     <t>
      Each expression is indicated by an opening brace ("{") character
-     and continues until the next closing brace ("}").  The expression
-     is expanded by determining the expression type and then following
-     that type's expansion process for each comma-separated varspec
-     in the expression.  Level 1 templates are limited to the default
-     operator (simple string value expansion) and a single variable
-     per expression.  Level 2 templates are limited to a single
-     varspec per expression.
+     and continues until the next closing brace ("}").  Expressions cannot
+     be nested.
+    </t>
+    <t>
+	 An expression is expanded by determining its expression type and then
+     following that type's expansion process for each comma-separated varspec
+     in the expression. Level 1 templates are limited to the default operator
+     (simple string value expansion) and a single variable per expression.
+     Level 2 templates are limited to a single varspec per expression.
     </t>
     <t>
      The expression type is determined by looking at the first
