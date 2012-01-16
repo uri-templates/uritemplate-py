@@ -144,14 +144,14 @@
 <tr><td class="header">Network Working Group</td><td class="header">J. Gregorio</td></tr>
 <tr><td class="header">Internet-Draft</td><td class="header">Google</td></tr>
 <tr><td class="header">Intended status: Standards Track</td><td class="header">R. Fielding</td></tr>
-<tr><td class="header">Expires: July 18, 2012</td><td class="header">Adobe</td></tr>
+<tr><td class="header">Expires: July 19, 2012</td><td class="header">Adobe</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">M. Hadley</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">MITRE</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">M. Nottingham</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">Rackspace</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">D. Orchard</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">Salesforce.com</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">Jan 15, 2012</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">Jan 16, 2012</td></tr>
 </table></td></tr></table>
 <h1><br />URI Template<br />draft-gregorio-uritemplate-08</h1>
 
@@ -182,7 +182,7 @@ and may be updated, replaced, or obsoleted by other documents at any time.
 It is inappropriate to use Internet-Drafts as reference material or to cite
 them other than as &ldquo;work in progress.&rdquo;</p>
 <p>
-This Internet-Draft will expire on July 18, 2012.</p>
+This Internet-Draft will expire on July 19, 2012.</p>
 
 <h3>Copyright Notice</h3>
 <p>
@@ -973,7 +973,7 @@ Variables</h3>
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   <dfn>variable-list</dfn> =  <cite class='id'>varspec</cite> <span class='rep'>*</span>( "<span class='str'>,</span>" <cite class='id'>varspec</cite> )
   <dfn>varspec</dfn>       =  <cite class='id'>varname</cite> [ <cite class='id'>modifier</cite> ]
-  <dfn>varname</dfn>       =  <cite class='id'>varchar</cite> <span class='rep'>*</span>( <cite class='id'>varchar</cite> / "<span class='str'>.</span>" )
+  <dfn>varname</dfn>       =  <cite class='id'>varchar</cite> <span class='rep'>*</span>( ["<span class='str'>.</span>"] <cite class='id'>varchar</cite> )
   <dfn>varchar</dfn>       =  <cite class='key'>ALPHA</cite> / <cite class='key'>DIGIT</cite> / "<span class='str'>_</span>" / <cite class='id'>pct-encoded</cite>
 </pre></div>
 <p>
@@ -1044,7 +1044,7 @@ Prefix Values</h3>
      
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   <dfn>prefix</dfn>        =  "<span class='str'>:</span>" <cite class='id'>max-length</cite>
-  <dfn>max-length</dfn>    =  <span class='val'>%x31-39</span> <span class='rep'>*</span><cite class='key'>DIGIT</cite>   <em>; positive integer</em>
+  <dfn>max-length</dfn>    =  <span class='val'>%x31-39</span> <span class='rep'>0*3</span><cite class='key'>DIGIT</cite>   <em>; positive integer &lt; 10000</em>
 </pre></div>
 <p>
       The max-length is a positive integer that refers to a maximum number
@@ -1162,19 +1162,28 @@ Expansion</h3>
    
 </p>
 <p>
-    If a template processor encounters an error outside of an expression,
-    such as a character sequence that does not match the &lt;URI-Template&gt;
-    grammar, then processing of the template SHOULD cease, the URI-reference
-    result SHOULD contain the expanded part of the template followed by the
+    If a template processor encounters a character sequence outside an
+    expression that does not match the &lt;URI-Template&gt; grammar, then
+    processing of the template SHOULD cease, the URI-reference result
+    SHOULD contain the expanded part of the template followed by the
     remainder unexpanded, and the location and type of error SHOULD be
-    indicated to the invoking application.  If an error is encountered inside
-    an expression, such as an operator or value modifier that it does not
-    recognize or cannot support, then the expression SHOULD be copied to
-    the result unexpanded, processing of the remainder of the template
-    SHOULD continue, and the location and type of error SHOULD be indicated
-    to the invoking application.  If an error occurs, the result returned
-    might not be a valid URI reference; it will be an incompletely expanded
-    template string that is only intended for diagnostic use.
+    indicated to the invoking application.
+   
+</p>
+<p>
+    If an error is encountered in an expression, such as an operator
+    or value modifier that the template processor does not recognize or
+    does not yet support, or a character is found that is not allowed by
+    the &lt;expression&gt; grammar, then the unprocessed parts of the
+    expression SHOULD be copied to the result unexpanded, processing of the
+    remainder of the template SHOULD continue, and the location and type of
+    error SHOULD be indicated to the invoking application.
+   
+</p>
+<p>
+    If an error occurs, the result returned might not be a valid URI
+    reference; it will be an incompletely expanded template string that is
+    only intended for diagnostic use.
    
 </p>
 <a name="literal-expansion"></a><br /><hr />
@@ -1203,7 +1212,7 @@ Expression Expansion</h3>
     
 </p>
 <p>
-	 An expression is expanded by determining its expression type and then
+	  An expression is expanded by determining its expression type and then
      following that type's expansion process for each comma-separated varspec
      in the expression. Level 1 templates are limited to the default operator
      (simple string value expansion) and a single variable per expression.
@@ -1248,7 +1257,7 @@ Expression Expansion</h3>
 Variable Expansion</h3>
 
 <p>
-      A variable that is undefined (<a class='info' href='#variable-expansion'>Section&nbsp;3.2.1<span> (</span><span class='info'>Variable Expansion</span><span>)</span></a>)
+      A variable that is undefined (<a class='info' href='#variables'>Section&nbsp;2.3<span> (</span><span class='info'>Variables</span><span>)</span></a>)
       has no value and is ignored by the expansion process.
       If all of the variables in an expression are undefined, then the
       expression's expansion is the empty string.
@@ -1707,7 +1716,7 @@ Acknowledgments</h3>
     specification: Mike Burrows, Michaeljohn Clement, DeWitt Clinton,
     John Cowan, Stephen Farrell, Robbie Gates, Vijay K. Gurbani,
     Peter Johanson, Murray S. Kucherawy, James H. Manger, Tom Petch,
-    Marc Portier, James Snell, and Jiankang Yao.
+    Marc Portier, Pete Resnick, James Snell, and Jiankang Yao.
    
 </p>
 <a name="rfc.references"></a><br /><hr />
@@ -1773,8 +1782,9 @@ Implementation Hints</h3>
 <p> 
     Scan the template and copy literals to the result string (as in
     <a class='info' href='#literal-expansion'>Section&nbsp;3.1<span> (</span><span class='info'>Literal Expansion</span><span>)</span></a>) until an expression is indicated
-    by a "{" or the template ends.  When it ends, return the result string
-    and its current error or non-error state.
+    by a "{", an error is indicated by the presence of a non-literals
+    character other than "{", or the template ends.  When it ends,
+    return the result string and its current error or non-error state.
     </p>
 <ul class="text">
 <li>If an expression is found, scan the template to the next "}"
@@ -1841,8 +1851,30 @@ Implementation Hints</h3>
    
 </p>
 <p>
-    For each varspec, extract the varname and optional modifier,
-    lookup the value for that variable, and then:
+    For each varspec, extract a variable name and optional modifier from
+    the expression by scanning the variable-list until a character not in
+    the varname set is found or the end of the expression is reached.
+    </p>
+<ul class="text">
+<li>If it is the end of the expression and the varname is empty,
+        go back to scan the remainder of the template.
+</li>
+<li>If it is not the end of the expression and the last character found
+        indicates a modifier ("*" or ":"), remember that modifier.
+        If it is an explode ("*"), scan the next character.
+        If it is a prefix (":"), continue scanning the next one to four
+        characters for the max-length represented as a decimal integer and
+        then, if it is still not the end of the expression, scan the next
+        character.
+</li>
+<li>If it is not the end of the expression and the last character found
+        is not a comma (","), append "{", the stored operator (if any), the
+        scanned varname and modifier, the remaining expression, and "}" to
+        the result string, remember that the result is in an error state,
+        and then go back to scan the remainder of the template.
+</li>
+</ul><p>
+    Lookup the value for the scanned variable name, and then:
     </p>
 <ul class="text">
 <li>If the varname is unknown or corresponds to a variable with an

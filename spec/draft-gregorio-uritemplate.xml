@@ -62,7 +62,7 @@
    </address>
   </author>
 
-  <date day="15" month="Jan" year="2012"/>
+  <date day="16" month="Jan" year="2012"/>
   <abstract>
    <t>
     A URI Template is a compact sequence of characters
@@ -729,7 +729,7 @@
     <figure><artwork type="abnf">
   variable-list =  varspec *( "," varspec )
   varspec       =  varname [ modifier ]
-  varname       =  varchar *( varchar / "." )
+  varname       =  varchar *( ["."] varchar )
   varchar       =  ALPHA / DIGIT / "_" / pct-encoded
     </artwork></figure>
     <t>
@@ -790,7 +790,7 @@
      </t>
      <figure><artwork type="abnf">
   prefix        =  ":" max-length
-  max-length    =  %x31-39 *DIGIT   ; positive integer
+  max-length    =  %x31-39 0*3DIGIT   ; positive integer &lt; 10000
      </artwork></figure>
      <t>
       The max-length is a positive integer that refers to a maximum number
@@ -901,19 +901,26 @@
     <xref target="implementation"/>.
    </t>
    <t>
-    If a template processor encounters an error outside of an expression,
-    such as a character sequence that does not match the &lt;URI-Template&gt;
-    grammar, then processing of the template SHOULD cease, the URI-reference
-    result SHOULD contain the expanded part of the template followed by the
+    If a template processor encounters a character sequence outside an
+    expression that does not match the &lt;URI-Template&gt; grammar, then
+    processing of the template SHOULD cease, the URI-reference result
+    SHOULD contain the expanded part of the template followed by the
     remainder unexpanded, and the location and type of error SHOULD be
-    indicated to the invoking application.  If an error is encountered inside
-    an expression, such as an operator or value modifier that it does not
-    recognize or cannot support, then the expression SHOULD be copied to
-    the result unexpanded, processing of the remainder of the template
-    SHOULD continue, and the location and type of error SHOULD be indicated
-    to the invoking application.  If an error occurs, the result returned
-    might not be a valid URI reference; it will be an incompletely expanded
-    template string that is only intended for diagnostic use.
+    indicated to the invoking application.
+   </t>
+   <t>
+    If an error is encountered in an expression, such as an operator
+    or value modifier that the template processor does not recognize or
+    does not yet support, or a character is found that is not allowed by
+    the &lt;expression&gt; grammar, then the unprocessed parts of the
+    expression SHOULD be copied to the result unexpanded, processing of the
+    remainder of the template SHOULD continue, and the location and type of
+    error SHOULD be indicated to the invoking application.
+   </t>
+   <t>
+    If an error occurs, the result returned might not be a valid URI
+    reference; it will be an incompletely expanded template string that is
+    only intended for diagnostic use.
    </t>
 
    <section title='Literal Expansion' anchor="literal-expansion">
@@ -934,7 +941,7 @@
      be nested.
     </t>
     <t>
-	 An expression is expanded by determining its expression type and then
+	  An expression is expanded by determining its expression type and then
      following that type's expansion process for each comma-separated varspec
      in the expression. Level 1 templates are limited to the default operator
      (simple string value expansion) and a single variable per expression.
@@ -973,7 +980,7 @@
 
     <section title='Variable Expansion' anchor="variable-expansion">
      <t>
-      A variable that is undefined (<xref target="variable-expansion"/>)
+      A variable that is undefined (<xref target="variables"/>)
       has no value and is ignored by the expansion process.
       If all of the variables in an expression are undefined, then the
       expression's expansion is the empty string.
@@ -1377,7 +1384,7 @@
     specification: Mike Burrows, Michaeljohn Clement, DeWitt Clinton,
     John Cowan, Stephen Farrell, Robbie Gates, Vijay K. Gurbani,
     Peter Johanson, Murray S. Kucherawy, James H. Manger, Tom Petch,
-    Marc Portier, James Snell, and Jiankang Yao.
+    Marc Portier, Pete Resnick, James Snell, and Jiankang Yao.
    </t>
   </section>
  </middle>
@@ -1574,8 +1581,9 @@
    <t> 
     Scan the template and copy literals to the result string (as in
     <xref target="literal-expansion"/>) until an expression is indicated
-    by a "{" or the template ends.  When it ends, return the result string
-    and its current error or non-error state.
+    by a "{", an error is indicated by the presence of a non-literals
+    character other than "{", or the template ends.  When it ends,
+    return the result string and its current error or non-error state.
     <list style="symbols">
      <t>If an expression is found, scan the template to the next "}"
         and extract the characters in between the braces.</t>
@@ -1632,8 +1640,26 @@
     With the above table in mind, process the variable-list as follows:
    </t>
    <t>
-    For each varspec, extract the varname and optional modifier,
-    lookup the value for that variable, and then:
+    For each varspec, extract a variable name and optional modifier from
+    the expression by scanning the variable-list until a character not in
+    the varname set is found or the end of the expression is reached.
+    <list style="symbols">
+     <t>If it is the end of the expression and the varname is empty,
+        go back to scan the remainder of the template.</t>
+     <t>If it is not the end of the expression and the last character found
+        indicates a modifier ("*" or ":"), remember that modifier.
+        If it is an explode ("*"), scan the next character.
+        If it is a prefix (":"), continue scanning the next one to four
+        characters for the max-length represented as a decimal integer and
+        then, if it is still not the end of the expression, scan the next
+        character.</t>
+     <t>If it is not the end of the expression and the last character found
+        is not a comma (","), append "{", the stored operator (if any), the
+        scanned varname and modifier, the remaining expression, and "}" to
+        the result string, remember that the result is in an error state,
+        and then go back to scan the remainder of the template.</t>
+    </list>
+    Lookup the value for the scanned variable name, and then:
     <list style="symbols">
      <t>If the varname is unknown or corresponds to a variable with an
         undefined value (<xref target="variable-expansion"/>), then skip to
