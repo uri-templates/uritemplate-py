@@ -415,8 +415,8 @@ Overview</h3>
 </pre></div>
 <p>
      A URI Template may be provided in absolute form, as in the examples
-     above, or in relative form.  A template MUST be expanded before the
-     resulting reference can be resolved from relative to absolute form.
+     above, or in relative form.  A template is expanded before the
+     resulting reference is resolved from relative to absolute form.
     
 </p>
 <p>
@@ -1002,8 +1002,15 @@ Variables</h3>
      A variable may have a composite value in the form of a list of values or
      an associative array of (name, value) pairs. Such value types are not
      directly indicated by the template syntax, but do have an impact on the
-     expansion process (<a class='info' href='#variable-expansion'>Section&nbsp;3.2.1<span> (</span><span class='info'>Variable Expansion</span><span>)</span></a>). A composite
-     value with zero member values is considered undefined.
+     expansion process (<a class='info' href='#variable-expansion'>Section&nbsp;3.2.1<span> (</span><span class='info'>Variable Expansion</span><span>)</span></a>).
+    
+</p>
+<p>
+     A variable defined as a list value
+     is considered undefined if the list contains zero members.
+     A variable defined as an associative array of (name, value) pairs
+     is considered undefined if the array contains zero members or
+     if all member names in the array are associated with undefined values.
     
 </p>
 <a name="modifiers"></a><br /><hr />
@@ -1126,6 +1133,13 @@ Composite Values</h3>
       hierarchy in substructures.
      
 </p>
+<p>
+      If a variable has a composite structure and only some of the fields
+      in that structure have defined values, then only the defined pairs
+      are present in the expansion.  This can be useful for templates that
+      consist of a large number of potential query terms.
+     
+</p>
 <a name="expansion"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.3"></a><h3>3.&nbsp;
@@ -1234,12 +1248,8 @@ Expression Expansion</h3>
 Variable Expansion</h3>
 
 <p>
-      A variable that is undefined has no value and is ignored by the
-      expansion process.  A variable defined as a list value is considered
-      undefined if the list contains zero members.  A variable defined as
-      an associative array of (name, value) pairs is considered undefined
-      if the array contains zero members or if all member names in the array
-      have undefined values.
+      A variable that is undefined (<a class='info' href='#variable-expansion'>Section&nbsp;3.2.1<span> (</span><span class='info'>Variable Expansion</span><span>)</span></a>)
+      has no value and is ignored by the expansion process.
       If all of the variables in an expression are undefined, then the
       expression's expansion is the empty string.
      
@@ -1641,10 +1651,36 @@ Security Considerations</h3>
 <p>
     A URI Template does not contain active or executable content. However, it
     might be possible to craft unanticipated URIs if an attacker is given 
-    control of both the template and the variables, or if the expression
-    types used in a template are poorly chosen (e.g., they do not encode
-    reserved characters appropriate to the portion of the URI they are used
-    within).
+    control over the template or over the variable values within an
+    expression that allows reserved characters in the expansion.
+    In either case, the security considerations are largely determined by
+    who provides the template, who provides the values to use for variables
+    within the template, in what execution context the expansion occurs
+    (client or server), and where the resulting URIs are used.
+   
+</p>
+<p>
+    This specification does not limit where URI Templates might be used.
+    Current implementations exist within server-side development frameworks
+    and within client-side javascript for computed links or forms.
+   
+</p>
+<p>
+    Within frameworks, templates usually act as guides for where data
+    might occur within later (request-time) URIs in client requests.
+    Hence, the security concerns are not in the templates themselves,
+    but rather in how the server extracts and processes the
+    user-provided data within a normal Web request.
+   
+</p>
+<p>
+    Within client-side implementations, a URI template has many of the
+    same properties as HTML forms, except limited to URI characters and
+    possibly included in HTTP header field values instead of just message
+    body content.  Care ought to be taken to ensure that potentially
+    dangerous URI reference strings, such as those beginning with
+    "javascript:", do not appear in the expansion unless both the template
+    and the values are provided by a trusted source.
    
 </p>
 <p>
@@ -1669,8 +1705,9 @@ Acknowledgments</h3>
 <p>
     The following people made contributions to this
     specification: Mike Burrows, Michaeljohn Clement, DeWitt Clinton,
-    John Cowan, Robbie Gates, Murray S. Kucherawy, James H. Manger,
-    Marc Portier, and James Snell.
+    John Cowan, Stephen Farrell, Robbie Gates, Vijay K. Gurbani,
+    Peter Johanson, Murray S. Kucherawy, James H. Manger, Tom Petch,
+    Marc Portier, James Snell, and Jiankang Yao.
    
 </p>
 <a name="rfc.references"></a><br /><hr />

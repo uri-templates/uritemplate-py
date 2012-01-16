@@ -83,25 +83,25 @@ Table of Contents
        2.4.1.  Prefix Values  . . . . . . . . . . . . . . . . . . . . 15
        2.4.2.  Composite Values . . . . . . . . . . . . . . . . . . . 16
    3.  Expansion  . . . . . . . . . . . . . . . . . . . . . . . . . . 17
-     3.1.  Literal Expansion  . . . . . . . . . . . . . . . . . . . . 17
+     3.1.  Literal Expansion  . . . . . . . . . . . . . . . . . . . . 18
      3.2.  Expression Expansion . . . . . . . . . . . . . . . . . . . 18
-       3.2.1.  Variable Expansion . . . . . . . . . . . . . . . . . . 18
+       3.2.1.  Variable Expansion . . . . . . . . . . . . . . . . . . 19
        3.2.2.  Simple String Expansion: {var} . . . . . . . . . . . . 20
        3.2.3.  Reserved expansion: {+var} . . . . . . . . . . . . . . 20
        3.2.4.  Fragment expansion: {#var} . . . . . . . . . . . . . . 21
        3.2.5.  Label expansion with dot-prefix: {.var}  . . . . . . . 22
-       3.2.6.  Path segment expansion: {/var} . . . . . . . . . . . . 22
+       3.2.6.  Path segment expansion: {/var} . . . . . . . . . . . . 23
        3.2.7.  Path-style parameter expansion: {;var} . . . . . . . . 23
        3.2.8.  Form-style query expansion: {?var} . . . . . . . . . . 24
-       3.2.9.  Form-style query continuation: {&var}  . . . . . . . . 24
+       3.2.9.  Form-style query continuation: {&var}  . . . . . . . . 25
    4.  Security Considerations  . . . . . . . . . . . . . . . . . . . 25
-   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 25
-   6.  Acknowledgments  . . . . . . . . . . . . . . . . . . . . . . . 25
-   7.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 25
-     7.1.  Normative References . . . . . . . . . . . . . . . . . . . 25
-     7.2.  Informative References . . . . . . . . . . . . . . . . . . 26
+   5.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 26
+   6.  Acknowledgments  . . . . . . . . . . . . . . . . . . . . . . . 26
+   7.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+     7.1.  Normative References . . . . . . . . . . . . . . . . . . . 26
+     7.2.  Informative References . . . . . . . . . . . . . . . . . . 27
    Appendix A.  Implementation Hints  . . . . . . . . . . . . . . . . 27
-   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 29
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 30
 
 
 
@@ -228,8 +228,8 @@ Internet-Draft                URI Template                      Jan 2012
      http://www.example.com/foo
 
    A URI Template may be provided in absolute form, as in the examples
-   above, or in relative form.  A template MUST be expanded before the
-   resulting reference can be resolved from relative to absolute form.
+   above, or in relative form.  A template is expanded before the
+   resulting reference is resolved from relative to absolute form.
 
    Although the URI syntax is used for the result, the template string
    is allowed to contain the broader set of characters that can be found
@@ -798,8 +798,13 @@ Internet-Draft                URI Template                      Jan 2012
    A variable may have a composite value in the form of a list of values
    or an associative array of (name, value) pairs.  Such value types are
    not directly indicated by the template syntax, but do have an impact
-   on the expansion process (Section 3.2.1).  A composite value with
-   zero member values is considered undefined.
+   on the expansion process (Section 3.2.1).
+
+   A variable defined as a list value is considered undefined if the
+   list contains zero members.  A variable defined as an associative
+   array of (name, value) pairs is considered undefined if the array
+   contains zero members or if all member names in the array are
+   associated with undefined values.
 
 2.4.  Value Modifiers
 
@@ -828,11 +833,6 @@ Internet-Draft                URI Template                      Jan 2012
    string.  Note that this numbering is in characters, not octets, in
    order to avoid splitting between the octets of a multi-octet UTF-8
    encoded character or within a pct-encoded triplet.  If the max-length
-   is greater than the length of the variable's value, then the entire
-   value string is used.
-
-
-
 
 
 
@@ -840,6 +840,9 @@ Gregorio, et al.          Expires July 18, 2012                [Page 15]
 
 Internet-Draft                URI Template                      Jan 2012
 
+
+   is greater than the length of the variable's value, then the entire
+   value string is used.
 
    For example,
 
@@ -887,9 +890,6 @@ Internet-Draft                URI Template                      Jan 2012
 
       /mapper{?address*}
 
-   along with some context that defines what the variable named
-   "address" can include, such as by reference to some other standard
-
 
 
 Gregorio, et al.          Expires July 18, 2012                [Page 16]
@@ -897,6 +897,8 @@ Gregorio, et al.          Expires July 18, 2012                [Page 16]
 Internet-Draft                URI Template                      Jan 2012
 
 
+   along with some context that defines what the variable named
+   "address" can include, such as by reference to some other standard
    for addressing (e.g., [UPU-S42]).  A recipient aware of the schema
    can then provide appropriate expansions, such as:
 
@@ -908,6 +910,11 @@ Internet-Draft                URI Template                      Jan 2012
    pairs.  Structures are processed as if they are an associative array
    with names corresponding to the fields in the structure definition
    and "." separators used to indicate name hierarchy in substructures.
+
+   If a variable has a composite structure and only some of the fields
+   in that structure have defined values, then only the defined pairs
+   are present in the expansion.  This can be useful for templates that
+   consist of a large number of potential query terms.
 
 
 3.  Expansion
@@ -937,6 +944,15 @@ Internet-Draft                URI Template                      Jan 2012
    it will be an incompletely expanded template string that is only
    intended for diagnostic use.
 
+
+
+
+
+Gregorio, et al.          Expires July 18, 2012                [Page 17]
+
+Internet-Draft                URI Template                      Jan 2012
+
+
 3.1.  Literal Expansion
 
    If the literal character is allowed anywhere in the URI syntax
@@ -945,13 +961,6 @@ Internet-Draft                URI Template                      Jan 2012
    literal character is copied to the result string by encoding the
    character in UTF-8 (a sequence of octets) and then encoding each
    octet as a pct-encoded triplet.
-
-
-
-Gregorio, et al.          Expires July 18, 2012                [Page 17]
-
-Internet-Draft                URI Template                      Jan 2012
-
 
 3.2.  Expression Expansion
 
@@ -992,15 +1001,6 @@ Internet-Draft                URI Template                      Jan 2012
          x     := "1024"
          y     := "768"
          empty := ""
-         empty_keys  := []
-         undef := null
-
-3.2.1.  Variable Expansion
-
-   A variable that is undefined has no value and is ignored by the
-   expansion process.  A variable defined as a list value is considered
-   undefined if the list contains zero members.  A variable defined as
-   an associative array of (name, value) pairs is considered undefined
 
 
 
@@ -1009,8 +1009,13 @@ Gregorio, et al.          Expires July 18, 2012                [Page 18]
 Internet-Draft                URI Template                      Jan 2012
 
 
-   if the array contains zero members or if all member names in the
-   array have undefined values.  If all of the variables in an
+         empty_keys  := []
+         undef := null
+
+3.2.1.  Variable Expansion
+
+   A variable that is undefined (Section 3.2.1) has no value and is
+   ignored by the expansion process.  If all of the variables in an
    expression are undefined, then the expression's expansion is the
    empty string.
 
@@ -1051,12 +1056,7 @@ Internet-Draft                URI Template                      Jan 2012
    operator by the following table, where NUL is the default expression
    type:
 
-   .-----------------------------------------------------------------.
-   |  operator:  NUL     +      .      /      ;      ?      &     #  |
-   | separator:  ","    ","    "."    "/"    ";"    "&"    "&"   "," |
-   `-----------------------------------------------------------------'
 
-   For a variable that is an associative array, expansion consists of a
 
 
 
@@ -1065,6 +1065,12 @@ Gregorio, et al.          Expires July 18, 2012                [Page 19]
 Internet-Draft                URI Template                      Jan 2012
 
 
+   .-----------------------------------------------------------------.
+   |  operator:  NUL     +      .      /      ;      ?      &     #  |
+   | separator:  ","    ","    "."    "/"    ";"    "&"    "&"   "," |
+   `-----------------------------------------------------------------'
+
+   For a variable that is an associative array, expansion consists of a
    list of either "name,value" (without explode modifier) or
    "name=value" (with explode modifier) pairs, excluding any pairs for
    which the corresponding value is undefined, with a separator string
@@ -1107,12 +1113,6 @@ Internet-Draft                URI Template                      Jan 2012
    Reserved expansion, as indicated by the plus ("+") operator for Level
    2 and above templates, is identical to simple string expansion except
    that the substituted values may also contain pct-encoded triplets and
-   characters in the reserved set.
-
-   For each defined variable in the variable-list, perform variable
-   expansion, as defined in Section 3.2.1, with the allowed characters
-   being those in the set (unreserved / reserved / pct-encoded).  If
-   more than one variable has a defined value, append a comma (",") to
 
 
 
@@ -1121,6 +1121,12 @@ Gregorio, et al.          Expires July 18, 2012                [Page 20]
 Internet-Draft                URI Template                      Jan 2012
 
 
+   characters in the reserved set.
+
+   For each defined variable in the variable-list, perform variable
+   expansion, as defined in Section 3.2.1, with the allowed characters
+   being those in the set (unreserved / reserved / pct-encoded).  If
+   more than one variable has a defined value, append a comma (",") to
    the result string as a separator between variable expansions.
 
      Example Template        Expansion
@@ -1153,6 +1159,24 @@ Internet-Draft                URI Template                      Jan 2012
    except that a crosshatch character (fragment delimiter) is appended
    first to the result string if any of the variables are defined.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gregorio, et al.          Expires July 18, 2012                [Page 21]
+
+Internet-Draft                URI Template                      Jan 2012
+
+
      Example Template     Expansion
 
        {#var}             #value
@@ -1167,15 +1191,6 @@ Internet-Draft                URI Template                      Jan 2012
        {#list*}           #red,green,blue
        {#keys}            #semi,;,dot,.,comma,,
        {#keys*}           #semi=;,dot=.,comma=,
-
-
-
-
-
-Gregorio, et al.          Expires July 18, 2012                [Page 21]
-
-Internet-Draft                URI Template                      Jan 2012
-
 
 3.2.5.  Label expansion with dot-prefix: {.var}
 
@@ -1208,6 +1223,16 @@ Internet-Draft                URI Template                      Jan 2012
        X{.empty_keys}     X
        X{.empty_keys*}    X
 
+
+
+
+
+
+Gregorio, et al.          Expires July 18, 2012                [Page 22]
+
+Internet-Draft                URI Template                      Jan 2012
+
+
 3.2.6.  Path segment expansion: {/var}
 
    Path segment expansion, as indicated by the slash ("/") operator in
@@ -1223,15 +1248,6 @@ Internet-Draft                URI Template                      Jan 2012
    identical to that of label expansion aside from the substitution of
    "/" instead of ".".  However, unlike ".", a "/" is a reserved
    character and will be pct-encoded if found in a value.
-
-
-
-
-
-Gregorio, et al.          Expires July 18, 2012                [Page 22]
-
-Internet-Draft                URI Template                      Jan 2012
-
 
      Example Template     Expansion
 
@@ -1264,6 +1280,15 @@ Internet-Draft                URI Template                      Jan 2012
          string) to the result string;
       *  if the variable's value is not empty, append "=" to the result
          string;
+
+
+
+
+Gregorio, et al.          Expires July 18, 2012                [Page 23]
+
+Internet-Draft                URI Template                      Jan 2012
+
+
    o  perform variable expansion, as defined in Section 3.2.1, with the
       allowed characters being those in the unreserved set.
 
@@ -1281,14 +1306,6 @@ Internet-Draft                URI Template                      Jan 2012
        {;list}            ;list=red,green,blue
        {;list*}           ;red;green;blue
        {;keys}            ;keys=semi,%3B,dot,.,comma,%2C
-
-
-
-Gregorio, et al.          Expires July 18, 2012                [Page 23]
-
-Internet-Draft                URI Template                      Jan 2012
-
-
        {;keys*}           ;semi=%3B;dot=.;comma=%2C
 
 3.2.8.  Form-style query expansion: {?var}
@@ -1320,6 +1337,14 @@ Internet-Draft                URI Template                      Jan 2012
        {?keys}            ?keys=semi,%3B,dot,.,comma,%2C
        {?keys*}           ?semi=%3B&dot=.&comma=%2C
 
+
+
+
+Gregorio, et al.          Expires July 18, 2012                [Page 24]
+
+Internet-Draft                URI Template                      Jan 2012
+
+
 3.2.9.  Form-style query continuation: {&var}
 
    Form-style query continuation, as indicated by the ampersand ("&")
@@ -1335,15 +1360,6 @@ Internet-Draft                URI Template                      Jan 2012
       string; and,
    o  perform variable expansion, as defined in Section 3.2.1, with the
       allowed characters being those in the unreserved set.
-
-
-
-
-
-Gregorio, et al.          Expires July 18, 2012                [Page 24]
-
-Internet-Draft                URI Template                      Jan 2012
-
 
      Example Template     Expansion
 
@@ -1364,10 +1380,40 @@ Internet-Draft                URI Template                      Jan 2012
 
    A URI Template does not contain active or executable content.
    However, it might be possible to craft unanticipated URIs if an
-   attacker is given control of both the template and the variables, or
-   if the expression types used in a template are poorly chosen (e.g.,
-   they do not encode reserved characters appropriate to the portion of
-   the URI they are used within).
+   attacker is given control over the template or over the variable
+   values within an expression that allows reserved characters in the
+   expansion.  In either case, the security considerations are largely
+   determined by who provides the template, who provides the values to
+   use for variables within the template, in what execution context the
+   expansion occurs (client or server), and where the resulting URIs are
+   used.
+
+   This specification does not limit where URI Templates might be used.
+   Current implementations exist within server-side development
+   frameworks and within client-side javascript for computed links or
+   forms.
+
+
+
+
+Gregorio, et al.          Expires July 18, 2012                [Page 25]
+
+Internet-Draft                URI Template                      Jan 2012
+
+
+   Within frameworks, templates usually act as guides for where data
+   might occur within later (request-time) URIs in client requests.
+   Hence, the security concerns are not in the templates themselves, but
+   rather in how the server extracts and processes the user-provided
+   data within a normal Web request.
+
+   Within client-side implementations, a URI template has many of the
+   same properties as HTML forms, except limited to URI characters and
+   possibly included in HTTP header field values instead of just message
+   body content.  Care ought to be taken to ensure that potentially
+   dangerous URI reference strings, such as those beginning with
+   "javascript:", do not appear in the expansion unless both the
+   template and the values are provided by a trusted source.
 
    Other security considerations are the same as those for URIs, as
    described in section 7 of [RFC3986].
@@ -1381,9 +1427,10 @@ Internet-Draft                URI Template                      Jan 2012
 6.  Acknowledgments
 
    The following people made contributions to this specification: Mike
-   Burrows, Michaeljohn Clement, DeWitt Clinton, John Cowan, Robbie
-   Gates, Murray S. Kucherawy, James H. Manger, Marc Portier, and James
-   Snell.
+   Burrows, Michaeljohn Clement, DeWitt Clinton, John Cowan, Stephen
+   Farrell, Robbie Gates, Vijay K. Gurbani, Peter Johanson, Murray S.
+   Kucherawy, James H. Manger, Tom Petch, Marc Portier, James Snell, and
+   Jiankang Yao.
 
 
 7.  References
@@ -1394,13 +1441,6 @@ Internet-Draft                URI Template                      Jan 2012
               Set - 7-bit American Standard Code for Information
               Interchange", ANSI X3.4, 1986.
 
-
-
-Gregorio, et al.          Expires July 18, 2012                [Page 25]
-
-Internet-Draft                URI Template                      Jan 2012
-
-
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119, March 1997.
 
@@ -1409,6 +1449,14 @@ Internet-Draft                URI Template                      Jan 2012
 
    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
               Resource Identifier (URI): Generic Syntax", STD 66,
+
+
+
+Gregorio, et al.          Expires July 18, 2012                [Page 26]
+
+Internet-Draft                URI Template                      Jan 2012
+
+
               RFC 3986, January 2005.
 
    [RFC3987]  Duerst, M. and M. Suignard, "Internationalized Resource
@@ -1449,14 +1497,6 @@ Internet-Draft                URI Template                      Jan 2012
               "Web Services Description Language (WSDL) Version 2.0 Part
               1: Core Language", World Wide Web Consortium
               Recommendation REC-wsdl20-20070626, June 2007,
-
-
-
-Gregorio, et al.          Expires July 18, 2012                [Page 26]
-
-Internet-Draft                URI Template                      Jan 2012
-
-
               <http://www.w3.org/TR/2007/REC-wsdl20-20070626>.
 
 
@@ -1465,6 +1505,14 @@ Appendix A.  Implementation Hints
    The normative sections on expansion describe each operator with a
    separate expansion process for the sake of descriptive clarity.  In
    actual implementations, we expect the expressions to be processed
+
+
+
+Gregorio, et al.          Expires July 18, 2012                [Page 27]
+
+Internet-Draft                URI Template                      Jan 2012
+
+
    left-to-right using a common algorithm that has only minor variations
    in process per operator.  This non-normative appendix describes one
    such algorithm.
@@ -1505,17 +1553,21 @@ Appendix A.  Implementation Hints
    characters to allow unencoded within the value expansion: (U) means
    any character not in the unreserved set will be encoded; (U+R) means
    any character not in the (unreserved / reserved / pct-encoding) set
-
-
-
-Gregorio, et al.          Expires July 18, 2012                [Page 27]
-
-Internet-Draft                URI Template                      Jan 2012
-
-
    will be encoded; and, for both cases, disallowed characters are
    encoded as UTF-8 (a sequence of octets) and then each octet is
    encoded as a pct-encoded triplet.
+
+
+
+
+
+
+
+
+Gregorio, et al.          Expires July 18, 2012                [Page 28]
+
+Internet-Draft                URI Template                      Jan 2012
+
 
    .------------------------------------------------------------------.
    |          NUL     +      .       /       ;      ?      &      #   |
@@ -1559,20 +1611,20 @@ Internet-Draft                URI Template                      Jan 2012
             -  if the value is empty, append the ifemp string to the
                result string and skip to the next varspec;
             -  otherwise, append "=" to the result string; and
-
-
-
-
-
-Gregorio, et al.          Expires July 18, 2012                [Page 28]
-
-Internet-Draft                URI Template                      Jan 2012
-
-
          +  append each defined list member to the result string, after
             encoding any characters that are not in the allow set, with
             a comma (",") appended to the result between each defined
             list member.
+
+
+
+
+
+Gregorio, et al.          Expires July 18, 2012                [Page 29]
+
+Internet-Draft                URI Template                      Jan 2012
+
+
       *  else if an explode modifier is given, then:
          +  append each defined list member to the result string, after
             encoding any characters that are not in the allow set, with
@@ -1615,21 +1667,18 @@ Authors' Addresses
    URI:   http://roy.gbiv.com/
 
 
-
-
-
-
-
-Gregorio, et al.          Expires July 18, 2012                [Page 29]
-
-Internet-Draft                URI Template                      Jan 2012
-
-
    Marc Hadley
    The MITRE Corporation
 
    Email: marc@hadleynet.org
    URI:   http://mitre.org/
+
+
+
+
+Gregorio, et al.          Expires July 18, 2012                [Page 30]
+
+Internet-Draft                URI Template                      Jan 2012
 
 
    Mark Nottingham
@@ -1676,5 +1725,12 @@ Internet-Draft                URI Template                      Jan 2012
 
 
 
-Gregorio, et al.          Expires July 18, 2012                [Page 30]
+
+
+
+
+
+
+
+Gregorio, et al.          Expires July 18, 2012                [Page 31]
 
