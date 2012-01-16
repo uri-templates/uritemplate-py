@@ -763,6 +763,8 @@ Internet-Draft                URI Template                      Jan 2012
    are expected, identifiers for associating values within a template
    processor, and the literal string to use for the name in name=value
    expansions (aside from when exploding an associative array).
+   Variable names are case-sensitive because the name might be expanded
+   within a case-sensitive URI component.
 
      variable-list =  varspec *( "," varspec )
      varspec       =  varname [ modifier ]
@@ -775,8 +777,6 @@ Internet-Draft                URI Template                      Jan 2012
    characters is not the same variable as a varname with those same
    characters decoded.  Applications that provide URI Templates are
    expected to be consistent in their use of pct-encoding within
-   variable names.
-
 
 
 
@@ -784,6 +784,8 @@ Gregorio, et al.          Expires July 18, 2012                [Page 14]
 
 Internet-Draft                URI Template                      Jan 2012
 
+
+   variable names.
 
    An expression MAY reference variables that are unknown to the
    template processor or whose value is set to a special "undefined"
@@ -828,8 +830,6 @@ Internet-Draft                URI Template                      Jan 2012
    encoded character or within a pct-encoded triplet.  If the max-length
    is greater than the length of the variable's value, then the entire
    value string is used.
-
-
 
 
 
@@ -1380,9 +1380,9 @@ Internet-Draft                URI Template                      Jan 2012
 
 6.  Acknowledgments
 
-   The following people made significant contributions to this
-   specification: Mike Burrows, Michaeljohn Clement, DeWitt Clinton,
-   John Cowan, Robbie Gates, James H. Manger, Marc Portier, and James
+   The following people made contributions to this specification: Mike
+   Burrows, Michaeljohn Clement, DeWitt Clinton, John Cowan, Robbie
+   Gates, Murray S. Kucherawy, James H. Manger, Marc Portier, and James
    Snell.
 
 

@@ -967,7 +967,8 @@ Variables</h3>
      what kinds of values are expected, identifiers for associating
      values within a template processor, and the literal string to use
      for the name in name=value expansions (aside from when exploding
-     an associative array).
+     an associative array).  Variable names are case-sensitive because
+     the name might be expanded within a case-sensitive URI component.
     
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   <dfn>variable-list</dfn> =  <cite class='id'>varspec</cite> <span class='rep'>*</span>( "<span class='str'>,</span>" <cite class='id'>varspec</cite> )
@@ -1666,9 +1667,10 @@ IANA Considerations</h3>
 Acknowledgments</h3>
 
 <p>
-    The following people made significant contributions to this
+    The following people made contributions to this
     specification: Mike Burrows, Michaeljohn Clement, DeWitt Clinton,
-    John Cowan, Robbie Gates, James H. Manger, Marc Portier, and James Snell.
+    John Cowan, Robbie Gates, Murray S. Kucherawy, James H. Manger,
+    Marc Portier, and James Snell.
    
 </p>
 <a name="rfc.references"></a><br /><hr />
