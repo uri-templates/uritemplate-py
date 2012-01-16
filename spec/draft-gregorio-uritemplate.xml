@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
- <!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>
- <!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>
- <!ENTITY rfc3987 SYSTEM 'bibxml/reference.RFC.3987.xml'>
- <!ENTITY rfc5234 SYSTEM 'bibxml/reference.RFC.5234.xml'>
- <!ENTITY rfc6365 SYSTEM 'bibxml/reference.RFC.6365.xml'>
- <!ENTITY rfc3629 SYSTEM 'bibxml/reference.RFC.3629.xml'>
- <!ENTITY ASCII   SYSTEM 'bibxml/_reference.ANSI.X3-4.1986.xml'>
- <!ENTITY UNIV6   SYSTEM 'bibxml/univ6.xml'>
- <!ENTITY UTR15   SYSTEM 'bibxml/utr15.xml'>
- <!ENTITY WSDL    SYSTEM 'bibxml/reference.W3C.REC-wsdl20-20070626.xml'>
- <!ENTITY WADL    SYSTEM 'bibxml/reference.W3C.SUB-wadl.xml'>
- ]>
-
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
 <!--<?xml-stylesheet type='text/xsl' href='rfc2629.xslt'/ ?>-->
 
 <?rfc toc="yes" ?>
@@ -70,11 +57,12 @@
   <author initials='D.O.' surname="Orchard" fullname='David Orchard'>
    <organization>Salesforce.com</organization>
    <address>
+    <email>orchard@pacificspirit.com</email>
     <uri>http://www.pacificspirit.com/</uri>
    </address>
   </author>
 
-  <date day="29" month="Nov" year="2011"/>
+  <date day="15" month="Jan" year="2012"/>
   <abstract>
    <t>
     A URI Template is a compact sequence of characters
@@ -86,13 +74,6 @@
     use of URI Templates on the Internet.
    </t>
   </abstract>
-
-  <note title="Editorial Note (to be removed by RFC Editor)">
-   <t>
-    To provide feedback on this Internet-Draft, join the
-    W3C URI mailing list &lt;http://lists.w3.org/Archives/Public/uri/&gt;.
-   </t>
-  </note>
  </front>
 
  <middle>
@@ -473,10 +454,9 @@
    <section title="Design Considerations" anchor="design">
     <t>
      Mechanisms similar to URI Templates have been defined within several
-     specifications, including WSDL <xref target="W3C.REC-wsdl20-20070626"/>,
-     WADL <xref target="W3C.SUB-wadl"/> and OpenSearch <eref
-     target="http://www.opensearch.org/Specifications/OpenSearch/1.1"/>. This
-     specification extends and formally defines the syntax so that URI
+     specifications, including WSDL <xref target="WSDL"/>,
+     WADL <xref target="WADL"/> and OpenSearch <xref target="OpenSearch"/>.
+     This specification extends and formally defines the syntax so that URI
      Templates can be used consistently across multiple Internet applications
      and within Internet message fields, while at the same time retaining
      compatibility with those earlier definitions.
@@ -764,7 +744,7 @@
      An expression MAY reference variables that are unknown to the template
      processor or whose value is set to a special "undefined" value, such as
      undef or null. Such undefined variables are given special treatment by
-     the expansion process; see <xref target="variable-expansion"/>.
+     the expansion process (<xref target="variable-expansion"/>).
     </t>
     <t>
      A variable value that is a string of length zero is not considered
@@ -774,7 +754,7 @@
      A variable may have a composite value in the form of a list of values or
      an associative array of (name, value) pairs. Such value types are not
      directly indicated by the template syntax, but do have an impact on the
-     expansion process (see <xref target="variable-expansion"/>). A composite
+     expansion process (<xref target="variable-expansion"/>). A composite
      value with zero member values is considered undefined.
     </t>
    </section>
@@ -1370,20 +1350,170 @@
 
  <back>
   <references title='Normative References'>
-   &ASCII;
-   &UNIV6;
-   &UTR15;
-   &rfc2119;
-   &rfc6365;
-   &rfc3986;
-   &rfc3987;
-   &rfc3629;
-   &rfc5234;
+
+   <reference anchor="ASCII">
+    <front>
+     <title>Coded Character Set - 7-bit American Standard Code for Information Interchange</title>
+     <author>
+      <organization>American National Standards Institute</organization>
+     </author>
+     <date month="" year="1986" />
+    </front>
+    <seriesInfo name="ANSI" value="X3.4" />
+   </reference>
+
+   <reference anchor='RFC2119'>
+    <front>
+     <title abbrev='RFC Key Words'>Key words for use in RFCs to Indicate Requirement Levels</title>
+     <author initials='S.' surname='Bradner' fullname='Scott Bradner'>
+      <organization /></author>
+     <date year='1997' month='March' />
+     <area>General</area>
+     <keyword>keyword</keyword>
+    </front>
+    <seriesInfo name='BCP' value='14' />
+    <seriesInfo name='RFC' value='2119' />
+   </reference>
+
+   <reference anchor='RFC3629'>
+    <front>
+     <title>UTF-8, a transformation format of ISO 10646</title>
+     <author initials='F.' surname='Yergeau' fullname='F. Yergeau'>
+      <organization /></author>
+     <date year='2003' month='November' />
+    </front>
+    <seriesInfo name='STD' value='63' />
+    <seriesInfo name='RFC' value='3629' />
+   </reference>
+
+   <reference anchor='RFC3986'>
+    <front>
+     <title>Uniform Resource Identifier (URI): Generic Syntax</title>
+     <author initials='T.' surname='Berners-Lee' fullname='T. Berners-Lee'>
+      <organization /></author>
+     <author initials='R.' surname='Fielding' fullname='R. Fielding'>
+      <organization /></author>
+     <author initials='L.' surname='Masinter' fullname='L. Masinter'>
+      <organization /></author>
+     <date year='2005' month='January' />
+    </front>
+    <seriesInfo name='STD' value='66' />
+    <seriesInfo name='RFC' value='3986' />
+   </reference>
+
+   <reference anchor='RFC3987'>
+    <front>
+     <title>Internationalized Resource Identifiers (IRIs)</title>
+     <author initials='M.' surname='Duerst' fullname='M. Duerst'>
+      <organization /></author>
+     <author initials='M.' surname='Suignard' fullname='M. Suignard'>
+      <organization /></author>
+     <date year='2005' month='January' />
+    </front>
+    <seriesInfo name='RFC' value='3987' />
+   </reference>
+
+   <reference anchor='RFC5234'>
+    <front>
+     <title>Augmented BNF for Syntax Specifications: ABNF</title>
+     <author initials='D.' surname='Crocker' fullname='D. Crocker'>
+      <organization /></author>
+     <author initials='P.' surname='Overell' fullname='P. Overell'>
+      <organization /></author>
+     <date year='2008' month='January' />
+    </front>
+    <seriesInfo name='STD' value='68' />
+    <seriesInfo name='RFC' value='5234' />
+   </reference>
+
+   <reference anchor='RFC6365'>
+    <front>
+     <title>Terminology Used in Internationalization in the IETF</title>
+     <author initials='P.' surname='Hoffman' fullname='P. Hoffman'>
+      <organization /></author>
+     <author initials='J.' surname='Klensin' fullname='J. Klensin'>
+      <organization /></author>
+     <date year='2011' month='September' />
+    </front>
+    <seriesInfo name='BCP' value='166' />
+    <seriesInfo name='RFC' value='6365' />
+   </reference>
+
+   <reference anchor="UNIV6"
+              target="http://www.unicode.org/versions/Unicode6.0.0/">
+    <front>
+     <title>The Unicode Standard, Version 6.0.0</title>
+     <author>
+      <organization>The Unicode Consortium</organization>
+      <address><postal>
+       <street>The Unicode Consortium</street>
+       <city>Mountain View</city><region>CA</region></postal>
+      </address>
+     </author>
+     <date month="October" year="2011" />
+    </front>
+    <seriesInfo name="ISBN" value="978-1-936213-01-6" />
+   </reference>
+
+   <reference anchor="UTR15"
+      target='http://www.unicode.org/unicode/reports/tr15/tr15-23.html'>
+   <front>
+    <title>Unicode Normalization Forms</title>
+    <author initials='M.' surname='Davis' fullname='M. Davis'>
+     <organization /></author>
+    <author initials='M.' surname='Duerst' fullname='M. Duerst'>
+     <organization /></author>
+    <date month="April" year="2003" />
+   </front>
+   <seriesInfo name='Unicode Standard Annex #' value='15' />
+  </reference>
+   
   </references>
-  
   <references title="Informative References">
-    &WSDL;
-    &WADL;
+
+   <reference anchor='OpenSearch' target='http://www.opensearch.org/Specifications/OpenSearch'>
+    <front>
+     <title>OpenSearch 1.1</title>
+     <author initials='D.' surname='Clinton' fullname='DeWitt Clinton'>
+      <organization /></author>
+     <date month='December' day='13' year='2011' />
+    </front>
+    <seriesInfo name='Draft' value='5' />
+   </reference>
+
+   <reference anchor='WSDL'
+              target='http://www.w3.org/TR/2007/REC-wsdl20-20070626'>
+    <front>
+     <title>Web Services Description Language (WSDL) Version 2.0 Part 1: Core Language</title>
+     <author initials='S.' surname='Weerawarana' fullname='Sanjiva Weerawarana'>
+         <organization />
+     </author>
+     <author initials='J.' surname='Moreau' fullname='Jean-Jacques Moreau'>
+         <organization />
+     </author>
+     <author initials='A.' surname='Ryman' fullname='Arthur Ryman'>
+         <organization />
+     </author>
+     <author initials='R.' surname='Chinnici' fullname='Roberto Chinnici'>
+         <organization />
+     </author>
+     <date month='June' day='26' year='2007' />
+    </front>
+    <seriesInfo name='World Wide Web Consortium Recommendation' value='REC-wsdl20-20070626' />
+   </reference>
+
+   <reference anchor='WADL'
+              target='http://www.w3.org/Submission/2009/SUBM-wadl-20090831/'>
+    <front>
+     <title>Web Application Description Language</title>
+     <author initials='M.' surname='Hadley' fullname='Marc Hadley'>
+      <organization>Sun Microsystems</organization>
+     </author>
+     <date month='August' day='31' year='2009' />
+    </front>
+    <seriesInfo name='World Wide Web Consortium Member Submission' value='SUBM-wadl-20090831' />
+   </reference>
+
   </references>
 
   <section title="Implementation Hints" anchor="implementation">
