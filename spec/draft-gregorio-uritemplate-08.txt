@@ -897,8 +897,8 @@ Gregorio, et al.          Expires July 18, 2012                [Page 16]
 Internet-Draft                URI Template                      Jan 2012
 
 
-   for addressing (e.g., UPU S42 or AS/NZS 4819:2003).  A recipient
-   aware of the schema can then provide appropriate expansions, such as:
+   for addressing (e.g., [UPU-S42]).  A recipient aware of the schema
+   can then provide appropriate expansions, such as:
 
       /mapper?city=Newport%20Beach&state=CA
 
@@ -1436,6 +1436,10 @@ Internet-Draft                URI Template                      Jan 2012
               Clinton, D., "OpenSearch 1.1", Draft 5, December 2011,
               <http://www.opensearch.org/Specifications/OpenSearch>.
 
+   [UPU-S42]  Universal Postal Union, "International Postal Address
+              Components and Templates", UPU S42-1, November 2002, <http
+              ://www.upu.int/en/activities/addressing/standards.html>.
+
    [WADL]     Hadley, M., "Web Application Description Language", World
               Wide Web Consortium Member Submission SUBM-wadl-20090831,
               August 2009,
@@ -1445,16 +1449,15 @@ Internet-Draft                URI Template                      Jan 2012
               "Web Services Description Language (WSDL) Version 2.0 Part
               1: Core Language", World Wide Web Consortium
               Recommendation REC-wsdl20-20070626, June 2007,
-              <http://www.w3.org/TR/2007/REC-wsdl20-20070626>.
-
-
-
 
 
 
 Gregorio, et al.          Expires July 18, 2012                [Page 26]
 
 Internet-Draft                URI Template                      Jan 2012
+
+
+              <http://www.w3.org/TR/2007/REC-wsdl20-20070626>.
 
 
 Appendix A.  Implementation Hints
@@ -1502,9 +1505,6 @@ Appendix A.  Implementation Hints
    characters to allow unencoded within the value expansion: (U) means
    any character not in the unreserved set will be encoded; (U+R) means
    any character not in the (unreserved / reserved / pct-encoding) set
-   will be encoded; and, for both cases, disallowed characters are
-   encoded as UTF-8 (a sequence of octets) and then each octet is
-   encoded as a pct-encoded triplet.
 
 
 
@@ -1512,6 +1512,10 @@ Gregorio, et al.          Expires July 18, 2012                [Page 27]
 
 Internet-Draft                URI Template                      Jan 2012
 
+
+   will be encoded; and, for both cases, disallowed characters are
+   encoded as UTF-8 (a sequence of octets) and then each octet is
+   encoded as a pct-encoded triplet.
 
    .------------------------------------------------------------------.
    |          NUL     +      .       /       ;      ?      &      #   |
@@ -1555,10 +1559,6 @@ Internet-Draft                URI Template                      Jan 2012
             -  if the value is empty, append the ifemp string to the
                result string and skip to the next varspec;
             -  otherwise, append "=" to the result string; and
-         +  append each defined list member to the result string, after
-            encoding any characters that are not in the allow set, with
-            a comma (",") appended to the result between each defined
-            list member.
 
 
 
@@ -1569,6 +1569,10 @@ Gregorio, et al.          Expires July 18, 2012                [Page 28]
 Internet-Draft                URI Template                      Jan 2012
 
 
+         +  append each defined list member to the result string, after
+            encoding any characters that are not in the allow set, with
+            a comma (",") appended to the result between each defined
+            list member.
       *  else if an explode modifier is given, then:
          +  append each defined list member to the result string, after
             encoding any characters that are not in the allow set, with
@@ -1611,11 +1615,7 @@ Authors' Addresses
    URI:   http://roy.gbiv.com/
 
 
-   Marc Hadley
-   The MITRE Corporation
 
-   Email: marc@hadleynet.org
-   URI:   http://mitre.org/
 
 
 
@@ -1623,6 +1623,13 @@ Authors' Addresses
 Gregorio, et al.          Expires July 18, 2012                [Page 29]
 
 Internet-Draft                URI Template                      Jan 2012
+
+
+   Marc Hadley
+   The MITRE Corporation
+
+   Email: marc@hadleynet.org
+   URI:   http://mitre.org/
 
 
    Mark Nottingham
@@ -1637,13 +1644,6 @@ Internet-Draft                URI Template                      Jan 2012
 
    Email: orchard@pacificspirit.com
    URI:   http://www.pacificspirit.com/
-
-
-
-
-
-
-
 
 
 

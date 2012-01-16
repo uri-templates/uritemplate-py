@@ -851,7 +851,7 @@
      <t>
       along with some context that defines what the variable named
       "address" can include, such as by reference to some other
-      standard for addressing (e.g., UPU S42 or AS/NZS 4819:2003).
+      standard for addressing (e.g., <xref target="UPU-S42"/>).
       A recipient aware of the schema can then provide appropriate
       expansions, such as:
      </t>
@@ -1481,6 +1481,16 @@
      <date month='December' day='13' year='2011' />
     </front>
     <seriesInfo name='Draft' value='5' />
+   </reference>
+
+   <reference anchor='UPU-S42' target='http://www.upu.int/en/activities/addressing/standards.html'>
+    <front>
+     <title>International Postal Address Components and Templates</title>
+     <author>
+      <organization>Universal Postal Union</organization></author>
+     <date month='November' day='4' year='2002' />
+    </front>
+    <seriesInfo name='UPU' value='S42-1' />
    </reference>
 
    <reference anchor='WSDL'
