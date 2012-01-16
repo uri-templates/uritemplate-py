@@ -1662,7 +1662,7 @@
     Lookup the value for the scanned variable name, and then:
     <list style="symbols">
      <t>If the varname is unknown or corresponds to a variable with an
-        undefined value (<xref target="variable-expansion"/>), then skip to
+        undefined value (<xref target="variables"/>), then skip to
         the next varspec.</t>
      <t>If this is the first defined variable for this expression, append
         the first string for this expression type to the result string 
