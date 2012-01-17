@@ -802,36 +802,43 @@ Notational Conventions</h3>
 Character Encoding and Unicode Normalization</h3>
 
 <p>
-     This specification uses the terms "character" and "coded
-     character set" in accordance with the definitions provided
-     in <a class='info' href='#RFC6365'>[RFC6365]<span> (</span><span class='info'>Hoffman, P. and J. Klensin, &ldquo;Terminology Used in Internationalization in the IETF,&rdquo; September&nbsp;2011.</span><span>)</span></a>, and "character encoding" in
-     place of what <a class='info' href='#RFC6365'>[RFC6365]<span> (</span><span class='info'>Hoffman, P. and J. Klensin, &ldquo;Terminology Used in Internationalization in the IETF,&rdquo; September&nbsp;2011.</span><span>)</span></a> refers to as a "charset".
+     This specification uses the terms
+     "character",
+     "character encoding scheme",
+     "code point",
+     "coded character set",
+     "glyph",
+     "non-ASCII",
+     "normalization",
+     "protocol element", and
+     "regular expression"
+     as they are defined in <a class='info' href='#RFC6365'>[RFC6365]<span> (</span><span class='info'>Hoffman, P. and J. Klensin, &ldquo;Terminology Used in Internationalization in the IETF,&rdquo; September&nbsp;2011.</span><span>)</span></a>.
     
 </p>
 <p>
      The ABNF notation defines its terminal values to be
-     non-negative integers (codepoints) that are a superset of the
+     non-negative integers (code points) that are a superset of the
      US-ASCII coded character set <a class='info' href='#ASCII'>[ASCII]<span> (</span><span class='info'>American National Standards Institute, &ldquo;Coded Character Set - 7-bit American Standard Code for Information Interchange,&rdquo; 1986.</span><span>)</span></a>.  This
-     specification defines terminal values as codepoints within the
+     specification defines terminal values as code points within the
      Unicode coded character set <a class='info' href='#UNIV6'>[UNIV6]<span> (</span><span class='info'>The Unicode Consortium, &ldquo;The Unicode Standard, Version 6.0.0,&rdquo; October&nbsp;2011.</span><span>)</span></a>.
     
 </p>
 <p>
      In spite of the syntax and template expansion process being defined
-     in terms of Unicode codepoints, it should be understood that
+     in terms of Unicode code points, it should be understood that
      templates occur in practice as a sequence of characters in
      whatever form or encoding is suitable for the context in which
      they occur, whether that be octets embedded in a network protocol
-     element or paint applied to the side of a bus.
+     element or glyphs painted on the side of a bus.
      This specification does not mandate any particular character encoding
-     for mapping between URI Template characters and the octets used to
+     scheme for mapping between URI Template characters and the octets used to
      store or transmit those characters.
      When a URI Template appears in a protocol element, the character
-     encoding is defined by that protocol; without such a definition,
-     a URI Template is assumed to be in the same character encoding as
+     encoding scheme is defined by that protocol; without such a definition,
+     a URI Template is assumed to be in the same character encoding scheme as
      the surrounding text.  It is only during the process of template
      expansion that a string of characters in a URI Template is REQUIRED
-     to be processed as a sequence of Unicode codepoints.
+     to be processed as a sequence of Unicode code points.
     
 </p>
 <p>
@@ -1294,7 +1301,7 @@ Variable Expansion</h3>
       modifier has no effect.  The prefix modifier limits the expansion to
       the first max-length characters of the decoded value.   If the value
       contains multibyte UTF-8, care must be taken to avoid splitting the
-      value in mid-character: count each Unicode codepoint as one character.
+      value in mid-character: count each Unicode code point as one character.
      
 </p>
 <p>
@@ -1905,12 +1912,12 @@ Implementation Hints</h3>
             less than the value string length in number of Unicode
             characters, append that number of characters from the
             beginning of the value string to the result string, after
-            encoding any characters that are not in the allow set, while
+            pct-encoding any characters that are not in the allow set, while
             taking care not to split multi-octet or pct-encoded triplet
-            characters that represent a single Unicode codepoint;
+            characters that represent a single Unicode code point;
 </li>
 <li>otherwise, append the value to the result string after
-            encoding any characters that are not in the allow set.
+            pct-encoding any characters that are not in the allow set.
 </li>
 </ul>
      
@@ -1933,8 +1940,8 @@ Implementation Hints</h3>
 </ul>
              
 </li>
-<li>append each defined list member to the result string,
-                after encoding any characters that are not in the allow set,
+<li>append each defined list member to the result string, after
+                pct-encoding any characters that are not in the allow set,
                 with a comma (",") appended to the result between each
                 defined list member.
 </li>
@@ -1944,8 +1951,8 @@ Implementation Hints</h3>
 <li>else if an explode modifier is given, then:
             
 <ul class="text">
-<li>append each defined list member to the result string,
-                after encoding any characters that are not in the allow set,
+<li>append each defined list member to the result string, after
+                pct-encoding any characters that are not in the allow set,
                 with the sep string appended to the result between each
                 defined list member.
 </li>
@@ -1975,9 +1982,9 @@ Implementation Hints</h3>
              
 </li>
 <li>append each pair with a defined value to the result string
-                as "name,value", after encoding any characters that are not
-                in the allow set, with a comma (",") appended to the result
-                between each defined pair.
+                as "name,value", after pct-encoding any characters that are
+                not in the allow set, with a comma (",") appended to the
+                result between each defined pair.
 </li>
 </ul>
          
@@ -1986,9 +1993,9 @@ Implementation Hints</h3>
             
 <ul class="text">
 <li>append each pair with a defined value to the result string
-                as "name=value", after encoding any characters that are not
-                in the allow set, with the sep string appended to the result
-                between each defined pair.
+                as "name=value", after pct-encoding any characters that are
+                not in the allow set, with the sep string appended to the
+                result between each defined pair.
 </li>
 </ul>
          

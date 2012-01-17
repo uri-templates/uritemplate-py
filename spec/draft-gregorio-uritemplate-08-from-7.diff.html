@@ -374,34 +374,36 @@
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">1.6.  Character Encoding and Unicode Normalization</td><td> </td><td class="right">1.6.  Character Encoding and Unicode Normalization</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left">   This specification uses the terms "character" and "coded character</td><td> </td><td class="right">   This specification uses the terms "character" and "coded character</td><td class="lineno" valign="top"></td></tr>
       <tr><td><a name="diff0022" /></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="lblock">   set" in accordance with the definitions provided in <span class="delete">[RFC2978],</span> and</td><td> </td><td class="rblock">   set" in accordance with the definitions provided in <span class="insert">[RFC6365],</span> and</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="lblock">   "character encoding" in place of what <span class="delete">[RFC2978]</span> refers to as a</td><td> </td><td class="rblock">   "character encoding" in place of what <span class="insert">[RFC6365]</span> refers to as a</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left">   "charset".</td><td> </td><td class="right">   "charset".</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   This specification uses the terms <span class="delete">"character" and</span> "coded character</td><td> </td><td class="rblock">   This specification uses the terms <span class="insert">"character", "character encoding</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   <span class="delete">set" in accordance with the definitions provided in [RFC2978],</span> and</td><td> </td><td class="rblock"><span class="insert">   scheme", "code point",</span> "coded character <span class="insert">set", "glyph", "non-ASCII",</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   <span class="delete">"character encoding" in place of what [RFC2978] refers to</span> as <span class="delete">a</span></td><td> </td><td class="rblock"><span class="insert">   "normalization", "protocol element",</span> and <span class="insert">"regular expression"</span> as <span class="insert">they</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">   "charset".</span></td><td> </td><td class="rblock"><span class="insert">   are defined in [RFC6365].</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   The ABNF notation defines its terminal values to be non-negative</td><td> </td><td class="right">   The ABNF notation defines its terminal values to be non-negative</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   integers (codepoints) that are a superset of the US-ASCII coded</td><td> </td><td class="right">   integers (codepoints) that are a superset of the US-ASCII coded</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   character set [ASCII].  This specification defines terminal values as</td><td> </td><td class="right">   character set [ASCII].  This specification defines terminal values as</td><td class="lineno" valign="top"></td></tr>
       <tr><td><a name="diff0023" /></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="lblock">   codepoints within the Unicode coded character set [UNIV<span class="delete">4</span>].</td><td> </td><td class="rblock">   codepoints within the Unicode coded character set [UNIV<span class="insert">6</span>].</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   code<span class="delete">points within the Unicode coded character set [UNIV4</span>].</td><td> </td><td class="rblock">   code<span class="insert"> points within the Unicode coded character set [UNIV6</span>].</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   In spite of the syntax and template expansion process being defined</td><td> </td><td class="right">   In spite of the syntax and template expansion process being defined</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   in terms of Unicode codepoints, it should be understood that</td><td> </td><td class="right">   in terms of Unicode codepoints, it should be understood that</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   templates occur in practice as a sequence of characters in whatever</td><td> </td><td class="right">   templates occur in practice as a sequence of characters in whatever</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   form or encoding is suitable for the context in which they occur,</td><td> </td><td class="right">   form or encoding is suitable for the context in which they occur,</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   whether that be octets embedded in a network protocol element or</td><td> </td><td class="right">   whether that be octets embedded in a network protocol element or</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left">   paint applied to the side of a bus.  This specification does not</td><td> </td><td class="right">   paint applied to the side of a bus.  This specification does not</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left">   mandate any particular character encoding for mapping between URI</td><td> </td><td class="right">   mandate any particular character encoding for mapping between URI</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left">   Template characters and the octets used to store or transmit those</td><td> </td><td class="right">   Template characters and the octets used to store or transmit those</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left">   characters.  When a URI Template appears in a protocol element, the</td><td> </td><td class="right">   characters.  When a URI Template appears in a protocol element, the</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left">   character encoding is defined by that protocol; without such a</td><td> </td><td class="right">   character encoding is defined by that protocol; without such a</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left">   definition, a URI Template is assumed to be in the same character</td><td> </td><td class="right">   definition, a URI Template is assumed to be in the same character</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left">   encoding as the surrounding text.  It is only during the process of</td><td> </td><td class="right">   encoding as the surrounding text.  It is only during the process of</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left">   template expansion that a string of characters in a URI Template is</td><td> </td><td class="right">   template expansion that a string of characters in a URI Template is</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left">   REQUIRED to be processed as a sequence of Unicode codepoints.</td><td> </td><td class="right">   REQUIRED to be processed as a sequence of Unicode codepoints.</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td><a name="diff0024" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   <span class="delete">paint applied to</span> the side of a bus.  This specification does not</td><td> </td><td class="rblock">   <span class="insert">glyphs painted on</span> the side of a bus.  This specification does not</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   mandate any particular character encoding for mapping between URI</td><td> </td><td class="rblock">   mandate any particular character encoding <span class="insert">scheme</span> for mapping between</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   Template characters and the octets used to store or transmit those</td><td> </td><td class="rblock">   URI Template characters and the octets used to store or transmit</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   characters.  When a URI Template appears in a protocol element, the</td><td> </td><td class="rblock">   those characters.  When a URI Template appears in a protocol element,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   character encoding is defined by that protocol; without such a</td><td> </td><td class="rblock">   the character encoding <span class="insert">scheme</span> is defined by that protocol; without</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   definition, a URI Template is assumed to be in the same character</td><td> </td><td class="rblock">   such a definition, a URI Template is assumed to be in the same</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   encoding as the surrounding text.  It is only during the process of</td><td> </td><td class="rblock">   character encoding <span class="insert">scheme</span> as the surrounding text.  It is only during</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   template expansion that a string of characters in a URI Template is</td><td> </td><td class="rblock">   the process of template expansion that a string of characters in a</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">   REQUIRED to be processed as a sequence of Unicode <span class="delete">codepoints.</span></td><td> </td><td class="rblock">   URI Template is REQUIRED to be processed as a sequence of Unicode</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">   <span class="insert">code points.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0025" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   The Unicode Standard [UNIV<span class="delete">4</span>] defines various equivalences between</td><td> </td><td class="rblock">   The Unicode Standard [UNIV<span class="insert">6</span>] defines various equivalences between</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   sequences of characters for various purposes.  Unicode Standard Annex</td><td> </td><td class="right">   sequences of characters for various purposes.  Unicode Standard Annex</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   #15 [UTR15] defines various Normalization Forms for these</td><td> </td><td class="right">   #15 [UTR15] defines various Normalization Forms for these</td><td class="lineno" valign="top"></td></tr>
@@ -425,7 +427,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   allowed, copied to the URI-reference in its UTF-8 pct-encoded form.</td><td> </td><td class="right">   allowed, copied to the URI-reference in its UTF-8 pct-encoded form.</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">     literals      =  %x21 / %x23-24 / %x26 / %x28-3B / %x3D / %x3F-5B</td><td> </td><td class="right">     literals      =  %x21 / %x23-24 / %x26 / %x28-3B / %x3D / %x3F-5B</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0025" /></td></tr>
+      <tr><td><a name="diff0026" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">                   /  %x5D<span class="delete">-</span>5F / %x61-7A / %x7E / ucschar / iprivate</td><td> </td><td class="rblock">                   /  %x5D<span class="insert"> / %x</span>5F / %x61-7A / %x7E / ucschar / iprivate</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">                   /  pct-encoded</td><td> </td><td class="right">                   /  pct-encoded</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">                        ; any Unicode character except: CTL, SP,</td><td> </td><td class="right">                        ; any Unicode character except: CTL, SP,</td><td class="lineno" valign="top"></td></tr>
@@ -449,13 +451,13 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   are expected, identifiers for associating values within a template</td><td> </td><td class="right">   are expected, identifiers for associating values within a template</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   processor, and the literal string to use for the name in name=value</td><td> </td><td class="right">   processor, and the literal string to use for the name in name=value</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   expansions (aside from when exploding an associative array).</td><td> </td><td class="right">   expansions (aside from when exploding an associative array).</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0026" /></td></tr>
+      <tr><td><a name="diff0027" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">   <span class="insert">Variable names are case-sensitive because the name might be expanded</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">   within a case-sensitive URI component.</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">     variable-list =  varspec *( "," varspec )</td><td> </td><td class="right">     variable-list =  varspec *( "," varspec )</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">     varspec       =  varname [ modifier ]</td><td> </td><td class="right">     varspec       =  varname [ modifier ]</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0027" /></td></tr>
+      <tr><td><a name="diff0028" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">     varname       =  varchar *( <span class="delete">varchar / "."</span> )</td><td> </td><td class="rblock">     varname       =  varchar *( <span class="insert">["."] varchar</span> )</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">     varchar       =  ALPHA / DIGIT / "_" / pct-encoded</td><td> </td><td class="right">     varchar       =  ALPHA / DIGIT / "_" / pct-encoded</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
@@ -470,7 +472,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   An expression MAY reference variables that are unknown to the</td><td> </td><td class="right">   An expression MAY reference variables that are unknown to the</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   template processor or whose value is set to a special "undefined"</td><td> </td><td class="right">   template processor or whose value is set to a special "undefined"</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   value, such as undef or null.  Such undefined variables are given</td><td> </td><td class="right">   value, such as undef or null.  Such undefined variables are given</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0028" /></td></tr>
+      <tr><td><a name="diff0029" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   special treatment by the expansion process.</td><td> </td><td class="rblock">   special treatment by the expansion process<span class="insert"> (Section 3.2.1)</span>.</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   A variable value that is a string of length zero is not considered</td><td> </td><td class="right">   A variable value that is a string of length zero is not considered</td><td class="lineno" valign="top"></td></tr>
@@ -479,7 +481,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   A variable may have a composite value in the form of a list of values</td><td> </td><td class="right">   A variable may have a composite value in the form of a list of values</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   or an associative array of (name, value) pairs.  Such value types are</td><td> </td><td class="right">   or an associative array of (name, value) pairs.  Such value types are</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   not directly indicated by the template syntax, but do have an impact</td><td> </td><td class="right">   not directly indicated by the template syntax, but do have an impact</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0029" /></td></tr>
+      <tr><td><a name="diff0030" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   on the expansion <span class="delete">process.</span>  A <span class="delete">composite</span> value <span class="delete">with</span> zero <span class="delete">member values</span></td><td> </td><td class="rblock">   on the expansion <span class="insert">process (Section 3.2.1).</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   is considered <span class="delete">undefined.</span></td><td> </td><td class="rblock">                                                                         </td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">   A <span class="insert">variable defined as a list</span> value <span class="insert">is considered undefined if the</span></td><td class="lineno" valign="top"></td></tr>
@@ -509,7 +511,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   modifiers are not applicable to variables that have composite values.</td><td> </td><td class="right">   modifiers are not applicable to variables that have composite values.</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">     prefix        =  ":" max-length</td><td> </td><td class="right">     prefix        =  ":" max-length</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0030" /></td></tr>
+      <tr><td><a name="diff0031" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">     max-length    =  %x31-39 <span class="delete">*DIGIT   ; positive integer</span></td><td> </td><td class="rblock">     max-length    =  %x31-39 <span class="insert">0*3DIGIT   ; positive integer &lt; 10000</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   The max-length is a positive integer that refers to a maximum number</td><td> </td><td class="right">   The max-length is a positive integer that refers to a maximum number</td><td class="lineno" valign="top"></td></tr>
@@ -533,11 +535,11 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   simple template that makes use of an explode modifier, as in</td><td> </td><td class="right">   simple template that makes use of an explode modifier, as in</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">      /mapper{?address*}</td><td> </td><td class="right">      /mapper{?address*}</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0031" /></td></tr>
+      <tr><td><a name="diff0032" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">                                                                         </span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   along with some context that defines what the variable named</td><td> </td><td class="right">   along with some context that defines what the variable named</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   "address" can include, such as by reference to some other standard</td><td> </td><td class="right">   "address" can include, such as by reference to some other standard</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0032" /></td></tr>
+      <tr><td><a name="diff0033" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   for addressing (e.g., <span class="delete">UPU S42 or AS/NZS 4819:2003).</span>  A recipient</td><td> </td><td class="rblock">   for addressing (e.g., <span class="insert">[UPU-S42]).</span>  A recipient aware of the schema</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   aware of the schema can then provide appropriate expansions, such as:</td><td> </td><td class="rblock">   can then provide appropriate expansions, such as:</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
@@ -550,7 +552,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   with names corresponding to the fields in the structure definition</td><td> </td><td class="right">   with names corresponding to the fields in the structure definition</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   and "." separators used to indicate name hierarchy in substructures.</td><td> </td><td class="right">   and "." separators used to indicate name hierarchy in substructures.</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0033" /></td></tr>
+      <tr><td><a name="diff0034" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">   <span class="insert">If a variable has a composite structure and only some of the fields</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">   in that structure have defined values, then only the defined pairs</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">   are present in the expansion.  This can be useful for templates that</span></td><td class="lineno" valign="top"></td></tr>
@@ -568,7 +570,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   grammar are defined in this section.  A non-normative algorithm for</td><td> </td><td class="right">   grammar are defined in this section.  A non-normative algorithm for</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   the expansion process as a whole is provided in Appendix A.</td><td> </td><td class="right">   the expansion process as a whole is provided in Appendix A.</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0034" /></td></tr>
+      <tr><td><a name="diff0035" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   If a template processor encounters <span class="delete">an error outside of an expression,</span></td><td> </td><td class="rblock">   If a template processor encounters a character sequence <span class="insert">outside an</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">   such as</span> a character sequence that does not match the &lt;URI-Template&gt;</td><td> </td><td class="rblock"><span class="insert">   expression</span> that does not match the &lt;URI-Template&gt; grammar, then</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   grammar, then processing of the template SHOULD cease, the <span class="delete">URI-</span></td><td> </td><td class="rblock">   processing of the template SHOULD cease, the <span class="insert">URI-reference</span> result</td><td class="lineno" valign="top"></td></tr>
@@ -600,7 +602,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left">3.2.  Expression Expansion</td><td> </td><td class="right">3.2.  Expression Expansion</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   Each expression is indicated by an opening brace ("{") character and</td><td> </td><td class="right">   Each expression is indicated by an opening brace ("{") character and</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0035" /></td></tr>
+      <tr><td><a name="diff0036" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   continues until the next closing brace ("}").  <span class="delete">The</span> expression is</td><td> </td><td class="rblock">   continues until the next closing brace ("}").  <span class="insert">Expressions cannot be</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   expanded by determining <span class="delete">the</span> expression type and then following that</td><td> </td><td class="rblock"><span class="insert">   nested.</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   type's expansion process for each comma-separated varspec in the</td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno" valign="top"></td></tr>
@@ -632,7 +634,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">3.2.1.  Variable Expansion</td><td> </td><td class="right">3.2.1.  Variable Expansion</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0036" /></td></tr>
+      <tr><td><a name="diff0037" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   A variable that is undefined has no value and is ignored by the</td><td> </td><td class="rblock">   A variable that is undefined <span class="insert">(Section 2.3)</span> has no value and is</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   expansion process.  <span class="delete">A variable defined as a list value is considered</span></td><td> </td><td class="rblock">   ignored by the expansion process.  If all of the variables in an</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">   undefined if the list contains zero members.  A variable defined as</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
@@ -661,7 +663,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">4.  Security Considerations</td><td> </td><td class="right">4.  Security Considerations</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0037" /></td></tr>
+      <tr><td><a name="diff0038" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   A URI Template does not contain active or executable content.  Other</td><td> </td><td class="rblock">   A URI Template does not contain active or executable content.</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   security considerations are the same as those for URIs, as described</td><td> </td><td class="rblock">   <span class="insert">However, it might be possible to craft unanticipated URIs if an</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   in section 7 of [RFC3986].</td><td> </td><td class="rblock"><span class="insert">   attacker is given control over the template or over the variable</span></td><td class="lineno" valign="top"></td></tr>
@@ -700,14 +702,14 @@
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">6.  Acknowledgments</td><td> </td><td class="right">6.  Acknowledgments</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0038" /></td></tr>
+      <tr><td><a name="diff0039" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   The following people made <span class="delete">significant</span> contributions to this</td><td> </td><td class="rblock">   The following people made contributions to this specification: Mike</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   specification: Mike Burrows, Michaeljohn Clement, DeWitt Clinton,</td><td> </td><td class="rblock">   Burrows, Michaeljohn Clement, DeWitt Clinton, John Cowan, <span class="insert">Stephen</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   John Cowan, Robbie Gates, James H. Manger, Marc Portier, <span class="delete">and</span> James</td><td> </td><td class="rblock"><span class="insert">   Farrell,</span> Robbie Gates, <span class="insert">Vijay K. Gurbani, Peter Johanson, Murray S.</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   <span class="delete">Snell.</span></td><td> </td><td class="rblock"><span class="insert">   Kucherawy,</span> James H. Manger, <span class="insert">Tom Petch,</span> Marc Portier, <span class="insert">Pete Resnick,</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">   James <span class="insert">Snell, and Jiankang Yao.</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0039" /></td></tr>
+      <tr><td><a name="diff0040" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">7.  Normative References</td><td> </td><td class="rblock">7.  <span class="insert">References</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">7.1.</span>  Normative References</td><td class="lineno" valign="top"></td></tr>
@@ -719,7 +721,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate</td><td> </td><td class="right">   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">              Requirement Levels", BCP 14, RFC 2119, March 1997.</td><td> </td><td class="right">              Requirement Levels", BCP 14, RFC 2119, March 1997.</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0040" /></td></tr>
+      <tr><td><a name="diff0041" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   <span class="delete">[RFC2978]  Freed, N. and J. Postel, "IANA Charset Registration</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">              Procedures", BCP 19, RFC 2978, October 2000.</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">                                                                         </td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
@@ -736,7 +738,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   [RFC5234]  Crocker, D. and P. Overell, "Augmented BNF for Syntax</td><td> </td><td class="right">   [RFC5234]  Crocker, D. and P. Overell, "Augmented BNF for Syntax</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">              Specifications: ABNF", STD 68, RFC 5234, January 2008.</td><td> </td><td class="right">              Specifications: ABNF", STD 68, RFC 5234, January 2008.</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0041" /></td></tr>
+      <tr><td><a name="diff0042" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   <span class="delete">[UNIV4]</span>    The Unicode Consortium, "The Unicode Standard, Version</td><td> </td><td class="rblock">   <span class="insert">[RFC6365]  Hoffman, P. and J. Klensin, "Terminology Used in</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">              <span class="delete">4.0.1, defined by: The Unicode Standard, Version 4.0</span></td><td> </td><td class="rblock"><span class="insert">              Internationalization in the IETF", BCP 166, RFC 6365,</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">              (Reading, MA, Addison-Wesley, 2003.</span> ISBN <span class="delete">0-321-18578-1),</span></td><td> </td><td class="rblock"><span class="insert">              September 2011.</span></td><td class="lineno" valign="top"></td></tr>
@@ -746,12 +748,12 @@
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">              &lt;http://www.unicode.org/versions/Unicode6.0.0/&gt;.</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   [UTR15]    Davis, M. and M. Duerst, "Unicode Normalization Forms",</td><td> </td><td class="right">   [UTR15]    Davis, M. and M. Duerst, "Unicode Normalization Forms",</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0042" /></td></tr>
+      <tr><td><a name="diff0043" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">              Unicode Standard Annex # 15, April <span class="delete">2003.</span></td><td> </td><td class="rblock">              Unicode Standard Annex # 15, April <span class="insert">2003,</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">              &lt;http://www.unicode.org/unicode/reports/tr15/</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">              tr15-23.html&gt;.</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0043" /></td></tr>
+      <tr><td><a name="diff0044" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   <span class="delete">[1]  &lt;http://lists.w3.org/Archives/Public/uri/&gt;</span></td><td> </td><td class="rblock"><span class="insert">7.2.  Informative References</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">   [OpenSearch]</span></td><td class="lineno" valign="top"></td></tr>
@@ -779,14 +781,14 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   separate expansion process for the sake of descriptive clarity.  In</td><td> </td><td class="right">   separate expansion process for the sake of descriptive clarity.  In</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   actual implementations, we expect the expressions to be processed</td><td> </td><td class="right">   actual implementations, we expect the expressions to be processed</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   left-to-right using a common algorithm that has only minor variations</td><td> </td><td class="right">   left-to-right using a common algorithm that has only minor variations</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0044" /></td></tr>
+      <tr><td><a name="diff0045" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   in process per operator.  This appendix describes one such algorithm.</td><td> </td><td class="rblock">   in process per operator.  This <span class="insert">non-normative</span> appendix describes one</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">   such algorithm.</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   Initialize an empty result string and its non-error state.</td><td> </td><td class="right">   Initialize an empty result string and its non-error state.</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   Scan the template and copy literals to the result string (as in</td><td> </td><td class="right">   Scan the template and copy literals to the result string (as in</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0045" /></td></tr>
+      <tr><td><a name="diff0046" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   Section 3.1) until an expression is indicated by a <span class="delete">"{"</span> or the</td><td> </td><td class="rblock">   Section 3.1) until an expression is indicated by a <span class="insert">"{", an error is</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   template ends.  When it ends, return the result string and its</td><td> </td><td class="rblock"><span class="insert">   indicated by the presence of a non-literals character other than "{",</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">   or the template ends.  When it ends, return the result string and its</td><td class="lineno" valign="top"></td></tr>
@@ -799,7 +801,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   Examine the first character of the extracted expression for an</td><td> </td><td class="right">   Examine the first character of the extracted expression for an</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   operator.</td><td> </td><td class="right">   operator.</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0046" /></td></tr>
+      <tr><td><a name="diff0047" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">                                                                         </span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   o  If the expression ended (i.e., is "{}"), an operator is found that</td><td> </td><td class="right">   o  If the expression ended (i.e., is "{}"), an operator is found that</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">      is unknown or unimplemented, or the character is not in the</td><td> </td><td class="right">      is unknown or unimplemented, or the character is not in the</td><td class="lineno" valign="top"></td></tr>
@@ -823,7 +825,7 @@
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   With the above table in mind, process the variable-list as follows:</td><td> </td><td class="right">   With the above table in mind, process the variable-list as follows:</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0047" /></td></tr>
+      <tr><td><a name="diff0048" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   For each varspec, extract the varname and <span class="delete">optional</span> modifier, <span class="delete">lookup</span></td><td> </td><td class="rblock">   For each varspec, extract <span class="insert">a variable name and optional modifier from</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   the value for <span class="delete">that variable,</span> and then:</td><td> </td><td class="rblock"><span class="insert">   the expression by scanning the variable-list until a character not in</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">   the varname <span class="insert">set is found or the end of the expression is reached.</span></td><td class="lineno" valign="top"></td></tr>
@@ -844,13 +846,13 @@
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">      template.</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">   Lookup</span> the value for <span class="insert">the scanned variable name,</span> and then:</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   o  If the varname is unknown or corresponds to a variable with an</td><td> </td><td class="right">   o  If the varname is unknown or corresponds to a variable with an</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0048" /></td></tr>
+      <tr><td><a name="diff0049" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">      undefined value (Section <span class="delete">3.2.1</span>), then skip to the next varspec.</td><td> </td><td class="rblock">      undefined value (Section <span class="insert">2.3</span>), then skip to the next varspec.</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   o  If this is the first defined variable for this expression, append</td><td> </td><td class="right">   o  If this is the first defined variable for this expression, append</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">      the first string for this expression type to the result string and</td><td> </td><td class="right">      the first string for this expression type to the result string and</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">      remember that it has been done.  Otherwise, append the sep string</td><td> </td><td class="right">      remember that it has been done.  Otherwise, append the sep string</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">      to the result string.</td><td> </td><td class="right">      to the result string.</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0049" /></td></tr>
+      <tr><td><a name="diff0050" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">                                                                         </span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   o  If this variable's value is a string, then:</td><td> </td><td class="right">   o  If this variable's value is a string, then:</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">      *  if named is true, append the varname to the result string using</td><td> </td><td class="right">      *  if named is true, append the varname to the result string using</td><td class="lineno" valign="top"></td></tr>
@@ -861,9 +863,63 @@
       <tr><td class="lineno" valign="top"></td><td class="left">      *  if a prefix modifier is present and the prefix length is less</td><td> </td><td class="right">      *  if a prefix modifier is present and the prefix length is less</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">         than the value string length in number of Unicode characters,</td><td> </td><td class="right">         than the value string length in number of Unicode characters,</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">         append that number of characters from the beginning of the</td><td> </td><td class="right">         append that number of characters from the beginning of the</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno" valign="top"></td><td class="left">         value string to the result string, after encoding any</td><td> </td><td class="right">         value string to the result string, after encoding any</td><td class="lineno" valign="top"></td></tr>
-      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
-      <tr bgcolor="gray" ><td></td><th><a name="part-l16" /><small>skipping to change at</small><em> page 29, line 25</em></th><th> </th><th><a name="part-r16" /><small>skipping to change at</small><em> page 31, line 42</em></th><td></td></tr>
+      <tr><td><a name="diff0051" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">         value string to the result string, after encoding any</td><td> </td><td class="rblock">         value string to the result string, after <span class="insert">pct-</span>encoding any</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">         characters that are not in the allow set, while taking care not</td><td> </td><td class="right">         characters that are not in the allow set, while taking care not</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">         to split multi-octet or pct-encoded triplet characters that</td><td> </td><td class="right">         to split multi-octet or pct-encoded triplet characters that</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">         represent a single Unicode codepoint;</td><td> </td><td class="right">         represent a single Unicode codepoint;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0052" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">      *  otherwise, append the value to the result string after encoding</td><td> </td><td class="rblock">      *  otherwise, append the value to the result string after <span class="insert">pct-</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">         any characters that are not in the allow set.</td><td> </td><td class="rblock">         encoding any characters that are not in the allow set.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   o  If this variable's value is a list, then:</td><td> </td><td class="right">   o  If this variable's value is a list, then:</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">      *  if no explode modifier is given, then:</td><td> </td><td class="right">      *  if no explode modifier is given, then:</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">         +  if named is true, append the varname to the result string</td><td> </td><td class="right">         +  if named is true, append the varname to the result string</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">            using the same encoding process as for literals, and</td><td> </td><td class="right">            using the same encoding process as for literals, and</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">            -  if the value is empty, append the ifemp string to the</td><td> </td><td class="right">            -  if the value is empty, append the ifemp string to the</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">               result string and skip to the next varspec;</td><td> </td><td class="right">               result string and skip to the next varspec;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">            -  otherwise, append "=" to the result string; and</td><td> </td><td class="right">            -  otherwise, append "=" to the result string; and</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">         +  append each defined list member to the result string, after</td><td> </td><td class="right">         +  append each defined list member to the result string, after</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0053" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">            <span class="delete">encoding</span> any characters that are not in the allow set, with</td><td> </td><td class="rblock">            <span class="insert">pct-encoding</span> any characters that are not in the allow set,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">            a comma (",") appended to the result between each defined</td><td> </td><td class="rblock">            with a comma (",") appended to the result between each</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">            list member.</td><td> </td><td class="rblock">            defined list member.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">      *  else if an explode modifier is given, then:</td><td> </td><td class="right">      *  else if an explode modifier is given, then:</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">         +  append each defined list member to the result string, after</td><td> </td><td class="right">         +  append each defined list member to the result string, after</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0054" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">            <span class="delete">encoding</span> any characters that are not in the allow set, with</td><td> </td><td class="rblock">            <span class="insert">pct-encoding</span> any characters that are not in the allow set,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">            the sep string appended to the result between each defined</td><td> </td><td class="rblock">            with the sep string appended to the result between each</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">            list member.</td><td> </td><td class="rblock">            defined list member.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">                                                                         </td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   o  If this variable's value is an associative array or any other form</td><td> </td><td class="right">   o  If this variable's value is an associative array or any other form</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">      of paired (name, value) structure, then:</td><td> </td><td class="right">      of paired (name, value) structure, then:</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">      *  if no explode modifier is given, then:</td><td> </td><td class="right">      *  if no explode modifier is given, then:</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">         +  if named is true, append the varname to the result string</td><td> </td><td class="right">         +  if named is true, append the varname to the result string</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">            using the same encoding process as for literals, and</td><td> </td><td class="right">            using the same encoding process as for literals, and</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">            -  if the value is empty, append the ifemp string to the</td><td> </td><td class="right">            -  if the value is empty, append the ifemp string to the</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">               result string and skip to the next varspec;</td><td> </td><td class="right">               result string and skip to the next varspec;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">            -  otherwise, append "=" to the result string; and</td><td> </td><td class="right">            -  otherwise, append "=" to the result string; and</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">         +  append each pair with a defined value to the result string</td><td> </td><td class="right">         +  append each pair with a defined value to the result string</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0055" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">            as "name,value", after <span class="delete">encoding</span> any characters that are not</td><td> </td><td class="rblock">            as "name,value", after <span class="insert">pct-encoding</span> any characters that are</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">            in the allow set, with a comma (",") appended to the result</td><td> </td><td class="rblock">            not in the allow set, with a comma (",") appended to the</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">            between each defined pair.</td><td> </td><td class="rblock">            result between each defined pair.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">      *  else if an explode modifier is given, then:</td><td> </td><td class="right">      *  else if an explode modifier is given, then:</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">         +  append each pair with a defined value to the result string</td><td> </td><td class="right">         +  append each pair with a defined value to the result string</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0056" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">            as "name=value", after <span class="delete">encoding</span> any characters that are not</td><td> </td><td class="rblock">            as "name=value", after <span class="insert">pct-encoding</span> any characters that are</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">            in the allow set, with the sep string appended to the result</td><td> </td><td class="rblock">            not in the allow set, with the sep string appended to the</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">            between each defined pair.</td><td> </td><td class="rblock">            result between each defined pair.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">                                                                         </td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   When the variable-list for this expression is exhausted, go back to</td><td> </td><td class="right">   When the variable-list for this expression is exhausted, go back to</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   scan the remainder of the template.</td><td> </td><td class="right">   scan the remainder of the template.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">Authors' Addresses</td><td> </td><td class="right">Authors' Addresses</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   Joe Gregorio</td><td> </td><td class="right">   Joe Gregorio</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   Google</td><td> </td><td class="right">   Google</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   Email: joe@bitworking.org</td><td> </td><td class="right">   Email: joe@bitworking.org</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   URI:   http://bitworking.org/</td><td> </td><td class="right">   URI:   http://bitworking.org/</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   Roy T. Fielding</td><td> </td><td class="right">   Roy T. Fielding</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   Adobe Systems Incorporated</td><td> </td><td class="right">   Adobe Systems Incorporated</td><td class="lineno" valign="top"></td></tr>
@@ -874,10 +930,10 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   Marc Hadley</td><td> </td><td class="right">   Marc Hadley</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   The MITRE Corporation</td><td> </td><td class="right">   The MITRE Corporation</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0050" /></td></tr>
+      <tr><td><a name="diff0057" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock">   Email: m<span class="delete">hadley@mitre</span>.org</td><td> </td><td class="rblock">   Email: m<span class="insert">arc@hadleynet</span>.org</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   URI:   http://mitre.org/</td><td> </td><td class="right">   URI:   http://mitre.org/</td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0051" /></td></tr>
+      <tr><td><a name="diff0058" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">                                                                         </span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   Mark Nottingham</td><td> </td><td class="right">   Mark Nottingham</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   Rackspace</td><td> </td><td class="right">   Rackspace</td><td class="lineno" valign="top"></td></tr>
@@ -888,13 +944,13 @@
       <tr><td class="lineno" valign="top"></td><td class="left">   David Orchard</td><td> </td><td class="right">   David Orchard</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   Salesforce.com</td><td> </td><td class="right">   Salesforce.com</td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
-      <tr><td><a name="diff0052" /></td></tr>
+      <tr><td><a name="diff0059" /></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">   Email: orchard@pacificspirit.com</span></td><td class="lineno" valign="top"></td></tr>
       <tr><td class="lineno" valign="top"></td><td class="left">   URI:   http://www.pacificspirit.com/</td><td> </td><td class="right">   URI:   http://www.pacificspirit.com/</td><td class="lineno" valign="top"></td></tr>
 
      <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
-     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 52 change blocks.&nbsp;</a></th></tr>
-     <tr class="stats"><td></td><th><i>116 lines changed or deleted</i></th><th><i> </i></th><th><i>201 lines changed or added</i></th><td></td></tr>
+     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 59 change blocks.&nbsp;</a></th></tr>
+     <tr class="stats"><td></td><th><i>143 lines changed or deleted</i></th><th><i> </i></th><th><i>229 lines changed or added</i></th><td></td></tr>
      <tr><td colspan="5" align="center" class="small"><br/>This html diff was produced by rfcdiff 1.34. The latest version is available from <a href="http://www.tools.ietf.org/tools/rfcdiff/" >http://tools.ietf.org/tools/rfcdiff/</a> </td></tr>
    </table>
    </body>
