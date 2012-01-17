@@ -244,10 +244,7 @@ Internet-Draft                URI Template                      Jan 2012
    process.  The default expression type is simple string expansion,
    wherein a single named variable is replaced by its value as a string
    after UTF-8 encoding the characters and then pct-encoding any octets
-   that are not in the unreserved set.
-
-   Note that reserved and unreserved are formally defined in
-   Section 1.5, using the same definitions that appear in [RFC3986].
+   that are not in the set of unreserved URI characters (Section 1.5).
 
    Since most template processors implemented prior to this
    specification have only implemented the default expression type, we
@@ -269,8 +266,11 @@ Internet-Draft                URI Template                      Jan 2012
    `-----------------------------------------------------------------'
 
    Level 2 templates add the plus ("+") operator, for expansion of
-   values that are allowed to include reserved characters, and the
-   crosshatch ("#") operator for expansion of fragment identifiers.
+   values that are allowed to include reserved URI characters
+   (Section 1.5), and the crosshatch ("#") operator for expansion of
+   fragment identifiers.
+
+
 
 
 
@@ -304,11 +304,12 @@ Internet-Draft                URI Template                      Jan 2012
    |     |    X{#hello}             X#Hello%20World!                 |
    `-----------------------------------------------------------------'
 
-   Level 3 templates add more complex operators for lists of comma-
-   separated values, dot-prefixed labels, slash-prefixed path segments,
-   semicolon-prefixed path parameters, and the forms-style construction
-   of a query syntax consisting of name=value pairs that are separated
-   by an ampersand character.
+   Level 3 templates allow multiple variables per expression, each
+   separated by a comma, and add more complex operators for dot-prefixed
+   labels, slash-prefixed path segments, semicolon-prefixed path
+   parameters, and the forms-style construction of a query syntax
+   consisting of name=value pairs that are separated by an ampersand
+   character.
 
    .-----------------------------------------------------------------.
    | Level 3 examples, with variables having values of               |
@@ -328,7 +329,6 @@ Internet-Draft                URI Template                      Jan 2012
    |     |    map?{x,y}             map?1024,768                     |
    |     |    {x,hello,y}           1024,Hello%20World%21,768        |
    |     |                                                           |
-   |-----+-----------------------------------------------------------|
 
 
 
@@ -337,6 +337,7 @@ Gregorio, et al.          Expires July 19, 2012                 [Page 6]
 Internet-Draft                URI Template                      Jan 2012
 
 
+   |-----+-----------------------------------------------------------|
    |  +  | Reserved expansion with multiple variables    (Sec 3.2.3) |
    |     |                                                           |
    |     |    {+x,hello,y}          1024,Hello%20World!,768          |
@@ -380,11 +381,10 @@ Internet-Draft                URI Template                      Jan 2012
    |     |                                                           |
    `-----------------------------------------------------------------'
 
-   Finally, Level 4 templates add the ability to specify value modifiers
-   as a suffix to the variable name.  The prefix modifier (":")
-   indicates that only a limited number of characters from the beginning
-   of the value are used by the expansion.  The explode ("*") modifier
-   (Section 2.4.2) indicates that the variable is to be treated as a
+   Finally, Level 4 templates add value modifiers as an optional suffix
+   to each variable name.  A prefix modifier (":") indicates that only a
+   limited number of characters from the beginning of the value are used
+   by the expansion (Section 2.4.1).  An explode ("*") modifier
 
 
 
@@ -393,9 +393,10 @@ Gregorio, et al.          Expires July 19, 2012                 [Page 7]
 Internet-Draft                URI Template                      Jan 2012
 
 
-   composite value, consisting of either a list of names or an
-   associative array of (name, value) pairs, that is expanded as if each
-   member were a separate variable.
+   indicates that the variable is to be treated as a composite value,
+   consisting of either a list of names or an associative array of
+   (name, value) pairs, that is expanded as if each member were a
+   separate variable (Section 2.4.2).
 
    .-----------------------------------------------------------------.
    | Level 4 examples, with variables having values of               |
@@ -440,7 +441,6 @@ Internet-Draft                URI Template                      Jan 2012
    |     |                                                           |
    |     |    X{.var:3}             X.val                            |
    |     |    X{.list}              X.red,green,blue                 |
-   |     |    X{.list*}             X.red.green.blue                 |
 
 
 
@@ -449,6 +449,7 @@ Gregorio, et al.          Expires July 19, 2012                 [Page 8]
 Internet-Draft                URI Template                      Jan 2012
 
 
+   |     |    X{.list*}             X.red.green.blue                 |
    |     |    X{.keys}              X.semi,%3B,dot,.,comma,%2C       |
    |     |    X{.keys*}             X.semi=%3B.dot=..comma=%2C       |
    |     |                                                           |
@@ -496,7 +497,6 @@ Internet-Draft                URI Template                      Jan 2012
    Mechanisms similar to URI Templates have been defined within several
    specifications, including WSDL [WSDL], WADL [WADL] and OpenSearch
    [OpenSearch].  This specification extends and formally defines the
-   syntax so that URI Templates can be used consistently across multiple
 
 
 
@@ -505,6 +505,7 @@ Gregorio, et al.          Expires July 19, 2012                 [Page 9]
 Internet-Draft                URI Template                      Jan 2012
 
 
+   syntax so that URI Templates can be used consistently across multiple
    Internet applications and within Internet message fields, while at
    the same time retaining compatibility with those earlier definitions.
 
@@ -552,7 +553,6 @@ Internet-Draft                URI Template                      Jan 2012
    user data-entry for those values.
 
    URI Templates are not URIs: they do not identify an abstract or
-   physical resource, they are not parsed as URIs, and should not be
 
 
 
@@ -561,6 +561,7 @@ Gregorio, et al.          Expires July 19, 2012                [Page 10]
 Internet-Draft                URI Template                      Jan 2012
 
 
+   physical resource, they are not parsed as URIs, and should not be
    used in places where a URI would be expected unless the template
    expressions will be expanded by a template processor prior to use.
    Distinct field, element, or attribute names should be used to
@@ -606,7 +607,6 @@ Internet-Draft                URI Template                      Jan 2012
                     /  %xD0000-DFFFD / %xE1000-EFFFD
 
      iprivate       =  %xE000-F8FF / %xF0000-FFFFD / %x100000-10FFFD
-
 
 
 

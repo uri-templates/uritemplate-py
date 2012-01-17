@@ -439,11 +439,7 @@ Levels and Expression Types</h3>
      process.  The default expression type is simple string expansion, wherein
      a single named variable is replaced by its value as a string after UTF-8
      encoding the characters and then pct-encoding any octets that are
-     not in the unreserved set.
-    
-</p>
-<p>
-     Note that reserved and unreserved are formally defined in <a class='info' href='#notation'>Section&nbsp;1.5<span> (</span><span class='info'>Notational Conventions</span><span>)</span></a>, using the same definitions that appear in <a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;Uniform Resource Identifier (URI): Generic Syntax,&rdquo; January&nbsp;2005.</span><span>)</span></a>.
+     not in the set of unreserved URI characters (<a class='info' href='#notation'>Section&nbsp;1.5<span> (</span><span class='info'>Notational Conventions</span><span>)</span></a>).
     
 </p>
 <p>     
@@ -469,8 +465,9 @@ Levels and Expression Types</h3>
 </pre></div>
 <p>     
      Level 2 templates add the plus ("+") operator, for expansion of
-     values that are allowed to include reserved characters, and the
-     crosshatch ("#") operator for expansion of fragment identifiers.  
+     values that are allowed to include reserved URI characters
+     (<a class='info' href='#notation'>Section&nbsp;1.5<span> (</span><span class='info'>Notational Conventions</span><span>)</span></a>), and the crosshatch ("#") operator
+     for expansion of fragment identifiers.  
     
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
 .-----------------------------------------------------------------.
@@ -497,11 +494,13 @@ Levels and Expression Types</h3>
 `-----------------------------------------------------------------'
 </pre></div>
 <p>     
-     Level 3 templates add more complex operators for lists of
-     comma-separated values, dot-prefixed labels, slash-prefixed path
-     segments, semicolon-prefixed path parameters, and the forms-style
-     construction of a query syntax consisting of name=value pairs that
-     are separated by an ampersand character.  
+     Level 3 templates allow multiple variables per expression,
+     each separated by a comma, and add more complex operators for
+     dot-prefixed labels,
+     slash-prefixed path segments,
+     semicolon-prefixed path parameters, and
+     the forms-style construction of a query syntax consisting of
+     name=value pairs that are separated by an ampersand character.  
     
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
 .-----------------------------------------------------------------.
@@ -567,13 +566,14 @@ Levels and Expression Types</h3>
 `-----------------------------------------------------------------'
 </pre></div>
 <p>     
-     Finally, Level 4 templates add the ability to specify value modifiers as
-     a suffix to the variable name. The prefix modifier (":") indicates that
+     Finally, Level 4 templates add value modifiers as an optional suffix
+     to each variable name.  A prefix modifier (":") indicates that
      only a limited number of characters from the beginning of the value are
-     used by the expansion. The explode ("*") modifier (<a class='info' href='#composite-values'>Section&nbsp;2.4.2<span> (</span><span class='info'>Composite Values</span><span>)</span></a>) indicates that the variable is to be treated
+     used by the expansion (<a class='info' href='#prefix-values'>Section&nbsp;2.4.1<span> (</span><span class='info'>Prefix Values</span><span>)</span></a>).
+     An explode ("*") modifier indicates that the variable is to be treated
      as a composite value, consisting of either a list of names or an
      associative array of (name, value) pairs, that is expanded as if each
-     member were a separate variable.
+     member were a separate variable (<a class='info' href='#composite-values'>Section&nbsp;2.4.2<span> (</span><span class='info'>Composite Values</span><span>)</span></a>).
     
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
 .-----------------------------------------------------------------.
