@@ -62,7 +62,7 @@
    </address>
   </author>
 
-  <date day="16" month="Jan" year="2012"/>
+  <date day="25" month="Jan" year="2012"/>
   <abstract>
    <t>
     A URI Template is a compact sequence of characters
@@ -367,7 +367,7 @@
 |             var   := "value"                                    |
 |             hello := "Hello World!"                             |
 |             path  := "/foo/bar"                                 |
-|             list  := [ "red", "green", "blue" ]                 |
+|             list  := ("red", "green", "blue")                   |
 |             keys  := [("semi",";"),("dot","."),("comma",",")]   |
 |                                                                 |
 | Op       Expression            Expansion                        |
@@ -423,7 +423,7 @@
 |     |                                                           |
 |     |    {;hello:5}            ;hello=Hello                     |
 |     |    {;list}               ;list=red,green,blue             |
-|     |    {;list*}              ;red;green;blue                  |
+|     |    {;list*}              ;list=red;list=green;list=blue   |
 |     |    {;keys}               ;keys=semi,%3B,dot,.,comma,%2C   |
 |     |    {;keys*}              ;semi=%3B;dot=.;comma=%2C        |
 |     |                                                           |
@@ -432,7 +432,7 @@
 |     |                                                           |
 |     |    {?var:3}              ?var=val                         |
 |     |    {?list}               ?list=red,green,blue             |
-|     |    {?list*}              ?red&amp;green&amp;blue                  |
+|     |    {?list*}              ?list=red&amp;list=green&amp;list=blue   |
 |     |    {?keys}               ?keys=semi,%3B,dot,.,comma,%2C   |
 |     |    {?keys*}              ?semi=%3B&amp;dot=.&amp;comma=%2C        |
 |     |                                                           |
@@ -441,7 +441,7 @@
 |     |                                                           |
 |     |    {&amp;var:3}              &amp;var=val                         |
 |     |    {&amp;list}               &amp;list=red,green,blue             |
-|     |    {&amp;list*}              &amp;red&amp;green&amp;blue                  |
+|     |    {&amp;list*}              &amp;list=red&amp;list=green&amp;list=blue   |
 |     |    {&amp;keys}               &amp;keys=semi,%3B,dot,.,comma,%2C   |
 |     |    {&amp;keys*}              &amp;semi=%3B&amp;dot=.&amp;comma=%2C        |
 |     |                                                           |
@@ -681,10 +681,10 @@
     </t>
     <figure><artwork type="abnf">
   expression    =  "{" [ operator ] variable-list "}"
-  operator      =  "+" / "#" / "." / "/" / ";" / "?" / "&amp;"
-                /  op-reserve
+  operator      =  op-level2 / op-level3 / op-reserve
+  op-level2     =  "+" / "#"
+  op-level3     =  "." / "/" / ";" / "?" / "&amp;"
   op-reserve    =  "=" / "," / "!" / "@" / "|"
-                       ; reserved for local use: "$" / "(" / ")"
     </artwork></figure>
     <t> 
      The operator characters have been chosen to reflect each of their roles
@@ -715,8 +715,10 @@
     <t>
      The expression syntax specifically excludes use of the dollar ("$")
      and parentheses ["(" and ")"] characters so that they remain
-     available for local language extensions outside the scope of this
-     specification.
+     available for use outside the scope of this specification.
+     For example, a macro language might use these characters to apply
+     macro substitution to a string prior to that string being processed
+     as a URI Template.
     </t>
    </section>
 
@@ -733,7 +735,7 @@
     </t>
     <figure><artwork type="abnf">
   variable-list =  varspec *( "," varspec )
-  varspec       =  varname [ modifier ]
+  varspec       =  varname [ modifier-level4 ]
   varname       =  varchar *( ["."] varchar )
   varchar       =  ALPHA / DIGIT / "_" / pct-encoded
     </artwork></figure>
@@ -757,10 +759,11 @@
      undefined; it has the defined value of an empty string.
     </t>
     <t>
-     A variable may have a composite value in the form of a list of values or
-     an associative array of (name, value) pairs. Such value types are not
-     directly indicated by the template syntax, but do have an impact on the
-     expansion process (<xref target="variable-expansion"/>).
+     In Level 4 templates, a variable may have a composite value in the
+     form of a list of values or an associative array of (name, value) pairs.
+     Such value types are not directly indicated by the template syntax, but
+     do have an impact on the expansion process
+     (<xref target="variable-expansion"/>).
     </t>
     <t>
      A variable defined as a list value
@@ -780,7 +783,7 @@
      an associative array of (name, value) pairs.
     </t>
     <figure><artwork type="abnf">
-  modifier      =  prefix / explode
+  modifier-level4 =  prefix / explode
     </artwork></figure>
 
     <section title="Prefix Values" anchor="prefix-values">
@@ -826,7 +829,7 @@
     <section title="Composite Values" anchor="composite-values">
      <t>
       An explode ("*") modifier indicates that the variable is to be treated
-      as a composite value consisting of either a list of names or an
+      as a composite value consisting of either a list of values or an
       associative array of (name, value) pairs.  Hence, the expansion
       process is applied to each member of the composite as if it were
       listed as a separate variable.  This kind of variable specification
@@ -884,6 +887,24 @@
       are present in the expansion.  This can be useful for templates that
       consist of a large number of potential query terms.
      </t>
+     <t>
+      An explode modifier applied to a list variable causes the expansion
+      to iterate over the list's member values.  For path and query parameter
+      expansions, each member value is paired with the variable's name as a
+      (varname, value) pair.  This allows path and query parameters to be
+      repeated for multiple values, as in 
+     </t>
+     <figure><artwork>
+  Given the variable assignments
+   
+    year  := ("1965", "2000", "2012")
+    dom   := ("example", "com")
+
+  Example Template     Expansion
+   
+    find{?year*}       find?year=1965&amp;year=2000&amp;year=2012
+    www{.dom*}         www.example.com
+     </artwork></figure>
     </section>
     
    </section>
@@ -965,7 +986,8 @@
     <figure><preamble>The examples in the subsections below use
     the following definitions for variable values:</preamble><artwork>
 
-      dom   := "example.com"
+      count := ("one", "two", "three")
+      dom   := ("example", "com")
       dub   := "me/too"
       hello := "Hello World!"
       half  := "50%"
@@ -973,7 +995,7 @@
       who   := "fred"
       base  := "http://example.com/home/"
       path  := "/foo/bar"
-      list  := [ "red", "green", "blue" ]
+      list  := ("red", "green", "blue")
       keys  := [("semi",";"),("dot","."),("comma",",")]
       v     := "6"   
       x     := "1024"
@@ -1015,36 +1037,65 @@
      </t>
      <t>
       For a variable that is a simple string value, expansion consists
-      of appending the encoded value to the result string.  The explode
-      modifier has no effect.  The prefix modifier limits the expansion to
+      of appending the encoded value to the result string.  An explode
+      modifier has no effect.  A prefix modifier limits the expansion to
       the first max-length characters of the decoded value.   If the value
       contains multibyte UTF-8, care must be taken to avoid splitting the
       value in mid-character: count each Unicode code point as one character.
      </t>
      <t>
-      For a variable that is a list of values, expansion consists of
-      concatenating the defined member string values, encoded as above,
-      with a separator string inserted between those values.
-      If no explode modifier is given, the separator string is a comma (",").
-      If an explode modifier is given, the separator string is defined per
-      operator by the following table, where NUL is the default expression
-      type:
-   </t>
-   <figure><artwork>
-.-----------------------------------------------------------------.
-|  operator:  NUL     +      .      /      ;      ?      &amp;     #  |
-| separator:  ","    ","    "."    "/"    ";"    "&amp;"    "&amp;"   "," |
-`-----------------------------------------------------------------'
-   </artwork></figure>
-     <t>
-      For a variable that is an associative array, expansion consists of a
-      list of either "name,value" (without explode modifier) or "name=value"
-      (with explode modifier) pairs, excluding any pairs for which the
-      corresponding value is undefined, with a separator string inserted
-      between defined pairs.  The separator string is defined in the same
-      way as for list variables above.  Both the name and value strings are
-      encoded in the same way as simple string values.
+      For a variable that is an associative array, expansion depends on
+      both the expression type and the presence of an explode modifier.
+      If there is no explode modifier, expansion consists of appending a
+      comma-separated concatenation of each (name, value) pair that has a
+      defined value.
+      If there is an explode modifier, expansion consists of appending
+      each pair that has a defined value as either "name=value" or,
+      if the value is the empty string and the expression type does not
+      indicate form-style parameters (i.e., not a "?" or "&amp;" type),
+      simply "name".
+      Both name and value strings are encoded in the same way as simple
+      string values.
+      A separator string is appended between defined pairs according to
+      the expression type, as defined by the following table:
      </t>
+     <figure><artwork>
+   Type    Separator
+              ","     (default)
+     +        ","
+     #        ","
+     .        "."
+     /        "/"
+     ;        ";"
+     ?        "&amp;"
+     &amp;        "&amp;"
+     </artwork></figure>
+     <t>
+      For a variable that is a list of values, expansion depends on both the
+      expression type and the presence of an explode modifier.
+      If there is no explode modifier, the expansion consists of a
+      comma-separated concatenation of the defined member string values.
+      If there is an explode modifier and the expression type expands named
+      parameters (";", "?", or "&amp;"), then the list is expanded
+      as if it were an associative array in which each member value is
+      paired with the list's varname.
+      Otherwise, the value will be expanded as if it were a list of separate
+      variable values, each value separated by the expression type's
+      associated separator as defined by the table above.
+     </t>
+     <figure><artwork>
+  Example Template     Expansion
+   
+    {count}            one,two,three
+    {count*}           one,two,three
+    {/count}           /one,two,three
+    {/count*}          /one/two/three
+    {;count}           ;count=one,two,three
+    {;count*}          ;count=one;count=two;count=three
+    {?count}           ?count=one,two,three
+    {?count*}          ?count=one&amp;count=two&amp;count=three
+    {&amp;count*}          &amp;count=one&amp;count=two&amp;count=three
+     </artwork></figure>
     </section>
 
     <section title='Simple String Expansion: {var}' anchor="op-simple">
@@ -1170,7 +1221,7 @@
     {.who}             .fred
     {.who,who}         .fred.fred
     {.half,who}        .50%25.fred
-    www{.dom}          www.example.com
+    www{.dom*}         www.example.com
     X{.var}            X.value
     X{.empty}          X.
     X{.undef}          X
@@ -1259,7 +1310,7 @@
     {;x,y,undef}       ;x=1024;y=768
     {;hello:5}         ;hello=Hello
     {;list}            ;list=red,green,blue
-    {;list*}           ;red;green;blue
+    {;list*}           ;list=red;list=green;list=blue
     {;keys}            ;keys=semi,%3B,dot,.,comma,%2C
     {;keys*}           ;semi=%3B;dot=.;comma=%2C
      </artwork></figure>
@@ -1295,7 +1346,7 @@
     {?x,y,undef}       ?x=1024&amp;y=768
     {?var:3}           ?var=val
     {?list}            ?list=red,green,blue
-    {?list*}           ?red&amp;green&amp;blue
+    {?list*}           ?list=red&amp;list=green&amp;list=blue
     {?keys}            ?keys=semi,%3B,dot,.,comma,%2C
     {?keys*}           ?semi=%3B&amp;dot=.&amp;comma=%2C
      </artwork></figure>
@@ -1331,7 +1382,7 @@
     
     {&amp;var:3}           &amp;var=val
     {&amp;list}            &amp;list=red,green,blue
-    {&amp;list*}           &amp;red&amp;green&amp;blue
+    {&amp;list*}           &amp;list=red&amp;list=green&amp;list=blue
     {&amp;keys}            &amp;keys=semi,%3B,dot,.,comma,%2C
     {&amp;keys*}           &amp;semi=%3B&amp;dot=.&amp;comma=%2C
      </artwork></figure>
@@ -1664,7 +1715,7 @@
         the result string, remember that the result is in an error state,
         and then go back to scan the remainder of the template.</t>
     </list>
-    Lookup the value for the scanned variable name, and then:
+    Lookup the value for the scanned variable name, and then
     <list style="symbols">
      <t>If the varname is unknown or corresponds to a variable with an
         undefined value (<xref target="variables"/>), then skip to
@@ -1673,7 +1724,7 @@
         the first string for this expression type to the result string 
         and remember that it has been done.  Otherwise, append the
         sep string to the result string.</t>
-     <t>If this variable's value is a string, then:
+     <t>If this variable's value is a string, then
         <list style="symbols">
          <t>if named is true, append the varname to the result string using
             the same encoding process as for literals, and
@@ -1694,58 +1745,56 @@
             pct-encoding any characters that are not in the allow set.</t>
         </list>
      </t>
-     <t>If this variable's value is a list, then:
+     <t>else if no explode modifier is given, then
         <list style="symbols">
-         <t>if no explode modifier is given, then:
+         <t>if named is true, append the varname to the result string
+            using the same encoding process as for literals, and
             <list style="symbols">
-             <t>if named is true, append the varname to the result string
-                using the same encoding process as for literals, and
-                <list style="symbols">
-                 <t>if the value is empty, append the ifemp string to the
-                    result string and skip to the next varspec;</t>
-                 <t>otherwise, append "=" to the result string; and</t>
-                </list>
-             </t>
-             <t>append each defined list member to the result string, after
-                pct-encoding any characters that are not in the allow set,
-                with a comma (",") appended to the result between each
-                defined list member.</t>
+             <t>if the value is empty, append the ifemp string to the
+                result string and skip to the next varspec;</t>
+             <t>otherwise, append "=" to the result string; and</t>
             </list>
          </t>
-         <t>else if an explode modifier is given, then:
-            <list style="symbols">
-             <t>append each defined list member to the result string, after
-                pct-encoding any characters that are not in the allow set,
-                with the sep string appended to the result between each
-                defined list member.</t>
-            </list>
-         </t>
+         <t>if this variable's value is a list, append each defined list
+            member to the result string, after pct-encoding any characters
+            that are not in the allow set, with a comma (",") appended to
+            the result between each defined list member;</t>
+         <t>if this variable's value is an associative array or any other
+            form of paired (name, value) structure, append each pair with
+            a defined value to the result string as "name,value", after
+            pct-encoding any characters that are not in the allow set,
+            with a comma (",") appended to the result between each defined
+            pair.</t>
         </list>
      </t>
-     <t>If this variable's value is an associative array or any other form
-        of paired (name, value) structure, then:
+     <t>else if an explode modifier is given, then
         <list style="symbols">
-         <t>if no explode modifier is given, then:
+         <t>if named is true, then for each defined list member or array
+            (name, value) pair with a defined value, do:
+             <list style="symbols">
+              <t>if this is not the first defined member/value, append the
+                 sep string to the result string;</t>
+              <t>if this is a list, append the varname to the result string
+                 using the same encoding process as for literals;</t>
+              <t>if this is a pair, append the name to the result string
+                 using the same encoding process as for literals;</t>
+              <t>if the member/value is empty, append the ifemp
+                 string to the result string; otherwise, append "=" and
+                 the member/value to the result string, after
+                 pct-encoding any member/value characters that are not in the
+                 allow set.</t>
+             </list></t>
+         <t>else if named is false, then
             <list style="symbols">
-             <t>if named is true, append the varname to the result string
-                using the same encoding process as for literals, and
-                <list style="symbols">
-                 <t>if the value is empty, append the ifemp string to the
-                    result string and skip to the next varspec;</t>
-                 <t>otherwise, append "=" to the result string; and</t>
-                </list>
-             </t>
-             <t>append each pair with a defined value to the result string
-                as "name,value", after pct-encoding any characters that are
-                not in the allow set, with a comma (",") appended to the
-                result between each defined pair.</t>
-            </list>
-         </t>
-         <t>else if an explode modifier is given, then:
-            <list style="symbols">
-             <t>append each pair with a defined value to the result string
-                as "name=value", after pct-encoding any characters that are
-                not in the allow set, with the sep string appended to the
+             <t>if this is a list,
+                append each defined list member to the result string,
+                after pct-encoding any characters that are not in the
+                allow set, with the sep string appended to the
+                result between each defined list member.</t>
+             <t>if this is an array of (name, value) pairs, append each pair
+                with a defined value to the result string as "name=value",
+                after pct-encoding any characters that are not in the
+                allow set, with the sep string appended to the
                 result between each defined pair.</t>
             </list>
          </t>
