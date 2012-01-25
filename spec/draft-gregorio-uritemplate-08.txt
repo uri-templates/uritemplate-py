@@ -1756,7 +1756,7 @@ Authors' Addresses
    Marc Hadley
    The MITRE Corporation
 
-   Email: marc@hadleynet.org
+   Email: mhadley@mitre.org
    URI:   http://mitre.org/
 
 
