@@ -144,14 +144,14 @@
 <tr><td class="header">Network Working Group</td><td class="header">J. Gregorio</td></tr>
 <tr><td class="header">Internet-Draft</td><td class="header">Google</td></tr>
 <tr><td class="header">Intended status: Standards Track</td><td class="header">R. Fielding</td></tr>
-<tr><td class="header">Expires: July 28, 2012</td><td class="header">Adobe</td></tr>
+<tr><td class="header">Expires: July 29, 2012</td><td class="header">Adobe</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">M. Hadley</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">MITRE</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">M. Nottingham</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">Rackspace</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">D. Orchard</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">Salesforce.com</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">Jan 25, 2012</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">Jan 26, 2012</td></tr>
 </table></td></tr></table>
 <h1><br />URI Template<br />draft-gregorio-uritemplate-08</h1>
 
@@ -182,7 +182,7 @@ and may be updated, replaced, or obsoleted by other documents at any time.
 It is inappropriate to use Internet-Drafts as reference material or to cite
 them other than as &ldquo;work in progress.&rdquo;</p>
 <p>
-This Internet-Draft will expire on July 28, 2012.</p>
+This Internet-Draft will expire on July 29, 2012.</p>
 
 <h3>Copyright Notice</h3>
 <p>
@@ -213,7 +213,7 @@ Design Considerations<br />
 Limitations<br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#notation">1.5.</a>&nbsp;
 Notational Conventions<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#unicode-normal">1.6.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#character-encoding">1.6.</a>&nbsp;
 Character Encoding and Unicode Normalization<br />
 <a href="#syntax">2.</a>&nbsp;
 Syntax<br />
@@ -437,8 +437,8 @@ Levels and Expression Types</h3>
      URI Templates are similar to a macro language with a fixed set of
      macro definitions: the expression type determines the expansion
      process.  The default expression type is simple string expansion, wherein
-     a single named variable is replaced by its value as a string after UTF-8
-     encoding the characters and then pct-encoding any octets that are
+     a single named variable is replaced by its value as a string after
+     pct-encoding any characters
      not in the set of unreserved URI characters (<a class='info' href='#notation'>Section&nbsp;1.5<span> (</span><span class='info'>Notational Conventions</span><span>)</span></a>).
     
 </p>
@@ -796,7 +796,7 @@ Notational Conventions</h3>
 
   <dfn>iprivate</dfn>       =  <span class='val'>%xE000-F8FF</span> / <span class='val'>%xF0000-FFFFD</span> / <span class='val'>%x100000-10FFFD</span>
 </pre></div>
-<a name="unicode-normal"></a><br /><hr />
+<a name="character-encoding"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.1.6"></a><h3>1.6.&nbsp;
 Character Encoding and Unicode Normalization</h3>
@@ -897,8 +897,9 @@ Literals</h3>
      The characters outside of expressions in a URI Template string
      are intended to be copied literally to the URI-reference if the
      character is allowed in a URI (reserved / unreserved / pct-encoded)
-     or, if not allowed, copied to the URI-reference in its UTF-8
-     pct-encoded form.
+     or, if not allowed, copied to the URI-reference as the sequence of
+     pct-encoded triplets corresponding to that character's encoding
+     in UTF-8 <a class='info' href='#RFC3629'>[RFC3629]<span> (</span><span class='info'>Yergeau, F., &ldquo;UTF-8, a transformation format of ISO 10646,&rdquo; November&nbsp;2003.</span><span>)</span></a>.
     
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
   <dfn>literals</dfn>      =  <span class='val'>%x21</span> / <span class='val'>%x23-24</span> / <span class='val'>%x26</span> / <span class='val'>%x28-3B</span> / <span class='val'>%x3D</span> / <span class='val'>%x3F-5B</span>
@@ -1061,7 +1062,7 @@ Prefix Values</h3>
       of characters from the beginning of the variable's value as a
       Unicode string.
       Note that this numbering is in characters, not octets, in order to
-      avoid splitting between the octets of a multi-octet UTF-8 encoded
+      avoid splitting between the octets of a multi-octet encoded
       character or within a pct-encoded triplet.
       If the max-length is greater than the length of the variable's
       value, then the entire value string is used.
@@ -1223,9 +1224,9 @@ Literal Expansion</h3>
      If the literal character is allowed anywhere in the URI
      syntax (unreserved / reserved / pct-encoded ), then it is copied
      directly to the result string.  Otherwise, the pct-encoded equivalent
-     of the literal character is copied to the result string by
-     encoding the character in UTF-8 (a sequence of octets) and
-     then encoding each octet as a pct-encoded triplet.
+     of the literal character is copied to the result string by first
+     encoding the character as its sequence of octets in UTF-8 and
+     then encoding each such octet as a pct-encoded triplet.
     
 </p>
 <a name="expression-expansion"></a><br /><hr />
@@ -1294,17 +1295,30 @@ Variable Expansion</h3>
 </p>
 <p>
       Variable expansion of a defined, non-empty value results in a
-      substring of allowed URI characters.  A template processor MUST
-      encode the value string as UTF-8 and transform each octet that
-      is not in the allowed set into the corresponding pct-encoded triplet.
-      The allowed set depends on the expression type: reserved ("+")
-      and fragment ("#") expansions allow the set of characters in
-      ( unreserved / reserved / pct-encoded ) to be passed through without
-      pct-encoding, whereas all other expression types allow only unreserved
-      characters to be passed through without pct-encoding.  Note that
-      the percent character ("%") is only allowed as part of a pct-encoded
-      triplet and only for reserved/fragment expansion: in all other cases,
-      a value of "%" MUST be pct-encoded as "%25" by variable expansion.
+      substring of allowed URI characters.  As described in
+      <a class='info' href='#character-encoding'>Section&nbsp;1.6<span> (</span><span class='info'>Character Encoding and Unicode Normalization</span><span>)</span></a>, the expansion process is defined
+      in terms of Unicode code points in order to ensure that non-ASCII
+      characters are consistently pct-encoded in the resulting URI reference.
+      One way for a template processor to obtain a consistent expansion is to
+      transcode the value string to UTF-8 (if it is not already in UTF-8)
+      and then transform each octet that is not in the allowed set into the
+      corresponding pct-encoded triplet.  Another is to map directly from
+      the value's native character encoding to the set of allowed URI
+      characters, with any remaining disallowed characters mapping to the
+      sequence of pct-encoded triplets that correspond to the octet(s)
+      of that character when encoded as UTF-8 <a class='info' href='#RFC3629'>[RFC3629]<span> (</span><span class='info'>Yergeau, F., &ldquo;UTF-8, a transformation format of ISO 10646,&rdquo; November&nbsp;2003.</span><span>)</span></a>.
+     
+</p>
+<p>
+      The allowed set for a given expansion depends on the expression type:
+      reserved ("+") and fragment ("#") expansions allow the set of
+      characters in the union of ( unreserved / reserved / pct-encoded )
+      to be passed through without pct-encoding, whereas all other expression
+      types allow only unreserved characters to be passed through without
+      pct-encoding.  Note that the percent character ("%") is only allowed as
+      part of a pct-encoded triplet and only for reserved/fragment expansion:
+      in all other cases, a value character of "%" MUST be pct-encoded as
+      "%25" by variable expansion.
      
 </p>
 <p>
@@ -1322,8 +1336,9 @@ Variable Expansion</h3>
       of appending the encoded value to the result string.  An explode
       modifier has no effect.  A prefix modifier limits the expansion to
       the first max-length characters of the decoded value.   If the value
-      contains multibyte UTF-8, care must be taken to avoid splitting the
-      value in mid-character: count each Unicode code point as one character.
+      contains multi-octet or pct-encoded characters, care must be taken to
+      avoid splitting the value in mid-character: count each Unicode code
+      point as one character.
      
 </p>
 <p>
@@ -1887,10 +1902,10 @@ Implementation Hints</h3>
     The entry for "allow" indicates what characters to allow unencoded
     within the value expansion: (U) means any character not in the
     unreserved set will be encoded; (U+R) means any character not in
-    the (unreserved / reserved / pct-encoding) set will be encoded; and,
-    for both cases, disallowed characters are encoded as UTF-8 (a
-    sequence of octets) and then each octet is encoded as a pct-encoded
-    triplet.
+    the union of (unreserved / reserved / pct-encoding) will be encoded; and,
+    for both cases, each disallowed character is first encoded as its
+    sequence of octets in UTF-8 and then each such octet is encoded as a
+    pct-encoded triplet.
    
 </p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
 .------------------------------------------------------------------.

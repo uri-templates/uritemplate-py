@@ -62,7 +62,7 @@
    </address>
   </author>
 
-  <date day="25" month="Jan" year="2012"/>
+  <date day="26" month="Jan" year="2012"/>
   <abstract>
    <t>
     A URI Template is a compact sequence of characters
@@ -223,8 +223,8 @@
      URI Templates are similar to a macro language with a fixed set of
      macro definitions: the expression type determines the expansion
      process.  The default expression type is simple string expansion, wherein
-     a single named variable is replaced by its value as a string after UTF-8
-     encoding the characters and then pct-encoding any octets that are
+     a single named variable is replaced by its value as a string after
+     pct-encoding any characters
      not in the set of unreserved URI characters (<xref target="notation"/>).
     </t>
     <t>     
@@ -570,7 +570,7 @@
    </section>
 
    <section title='Character Encoding and Unicode Normalization'
-            anchor="unicode-normal">
+            anchor="character-encoding">
     <t>
      This specification uses the terms
      "character",
@@ -657,8 +657,9 @@
      The characters outside of expressions in a URI Template string
      are intended to be copied literally to the URI-reference if the
      character is allowed in a URI (reserved / unreserved / pct-encoded)
-     or, if not allowed, copied to the URI-reference in its UTF-8
-     pct-encoded form.
+     or, if not allowed, copied to the URI-reference as the sequence of
+     pct-encoded triplets corresponding to that character's encoding
+     in UTF-8 <xref target="RFC3629"/>.
     </t>
     <figure><artwork type="abnf">
   literals      =  %x21 / %x23-24 / %x26 / %x28-3B / %x3D / %x3F-5B
@@ -805,7 +806,7 @@
       of characters from the beginning of the variable's value as a
       Unicode string.
       Note that this numbering is in characters, not octets, in order to
-      avoid splitting between the octets of a multi-octet UTF-8 encoded
+      avoid splitting between the octets of a multi-octet encoded
       character or within a pct-encoded triplet.
       If the max-length is greater than the length of the variable's
       value, then the entire value string is used.
@@ -954,9 +955,9 @@
      If the literal character is allowed anywhere in the URI
      syntax (unreserved / reserved / pct-encoded ), then it is copied
      directly to the result string.  Otherwise, the pct-encoded equivalent
-     of the literal character is copied to the result string by
-     encoding the character in UTF-8 (a sequence of octets) and
-     then encoding each octet as a pct-encoded triplet.
+     of the literal character is copied to the result string by first
+     encoding the character as its sequence of octets in UTF-8 and
+     then encoding each such octet as a pct-encoded triplet.
     </t>
    </section>
 
@@ -1014,17 +1015,29 @@
      </t>
      <t>
       Variable expansion of a defined, non-empty value results in a
-      substring of allowed URI characters.  A template processor MUST
-      encode the value string as UTF-8 and transform each octet that
-      is not in the allowed set into the corresponding pct-encoded triplet.
-      The allowed set depends on the expression type: reserved ("+")
-      and fragment ("#") expansions allow the set of characters in
-      ( unreserved / reserved / pct-encoded ) to be passed through without
-      pct-encoding, whereas all other expression types allow only unreserved
-      characters to be passed through without pct-encoding.  Note that
-      the percent character ("%") is only allowed as part of a pct-encoded
-      triplet and only for reserved/fragment expansion: in all other cases,
-      a value of "%" MUST be pct-encoded as "%25" by variable expansion.
+      substring of allowed URI characters.  As described in
+      <xref target="character-encoding"/>, the expansion process is defined
+      in terms of Unicode code points in order to ensure that non-ASCII
+      characters are consistently pct-encoded in the resulting URI reference.
+      One way for a template processor to obtain a consistent expansion is to
+      transcode the value string to UTF-8 (if it is not already in UTF-8)
+      and then transform each octet that is not in the allowed set into the
+      corresponding pct-encoded triplet.  Another is to map directly from
+      the value's native character encoding to the set of allowed URI
+      characters, with any remaining disallowed characters mapping to the
+      sequence of pct-encoded triplets that correspond to the octet(s)
+      of that character when encoded as UTF-8 <xref target="RFC3629"/>.
+     </t>
+     <t>
+      The allowed set for a given expansion depends on the expression type:
+      reserved ("+") and fragment ("#") expansions allow the set of
+      characters in the union of ( unreserved / reserved / pct-encoded )
+      to be passed through without pct-encoding, whereas all other expression
+      types allow only unreserved characters to be passed through without
+      pct-encoding.  Note that the percent character ("%") is only allowed as
+      part of a pct-encoded triplet and only for reserved/fragment expansion:
+      in all other cases, a value character of "%" MUST be pct-encoded as
+      "%25" by variable expansion.
      </t>
      <t>
       If a variable appears more than once in an expression or
@@ -1040,8 +1053,9 @@
       of appending the encoded value to the result string.  An explode
       modifier has no effect.  A prefix modifier limits the expansion to
       the first max-length characters of the decoded value.   If the value
-      contains multibyte UTF-8, care must be taken to avoid splitting the
-      value in mid-character: count each Unicode code point as one character.
+      contains multi-octet or pct-encoded characters, care must be taken to
+      avoid splitting the value in mid-character: count each Unicode code
+      point as one character.
      </t>
      <t>
       For a variable that is an associative array, expansion depends on
@@ -1676,10 +1690,10 @@
     The entry for "allow" indicates what characters to allow unencoded
     within the value expansion: (U) means any character not in the
     unreserved set will be encoded; (U+R) means any character not in
-    the (unreserved / reserved / pct-encoding) set will be encoded; and,
-    for both cases, disallowed characters are encoded as UTF-8 (a
-    sequence of octets) and then each octet is encoded as a pct-encoded
-    triplet.
+    the union of (unreserved / reserved / pct-encoding) will be encoded; and,
+    for both cases, each disallowed character is first encoded as its
+    sequence of octets in UTF-8 and then each such octet is encoded as a
+    pct-encoded triplet.
    </t>
    <figure><artwork>
 .------------------------------------------------------------------.
