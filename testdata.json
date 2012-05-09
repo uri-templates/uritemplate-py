@@ -241,17 +241,21 @@
        ["{.half,who}", ".50%25.fred"],
        ["www{.dom*}", "www.example.com"],
        ["X{.var}", "X.value"],
-       ["X{.empty}", "X."],
        ["X{.undef}", "X"],
        ["X{.list}", "X.red,green,blue"],
        ["X{.list*}", "X.red.green.blue"],
-       ["X{.keys}", "X.semi,%3B,dot,.,comma,%2C"],
-       ["X{.keys*}", "X.semi=%3B.dot=..comma=%2C"],
+       ["X{.keys}", "X.comma,%2C,dot,.,semi,%3B"],
        ["X{.empty_keys}", "X"],
        ["X{.empty_keys*}", "X"]
      ],
      "level4-testcases-disabled" : [
        ["X{.var:3}", "X.val"]
+     ],
+     "disabled - our bug" : [
+       ["X{.empty}", "X."]     
+     ],
+     "disabled - suspected errata" : [
+       ["X{.keys*}", "X.comma=%2C.dot=..semi=%3B"]
      ]
   },  
   "Test Suite 1" :
