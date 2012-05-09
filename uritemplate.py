@@ -8,7 +8,7 @@ OPERATOR = "+#./;?&|!@"
 EXPLODE = "*+"
 MODIFIER = ":^"
 TEMPLATE = re.compile("{([^\}]+)}")
-
+  
 def _tostring(varname, value, explode, operator, safe=""):
   if type(value) == type([]):
     if explode in ["+", "#"]:
@@ -18,6 +18,9 @@ def _tostring(varname, value, explode, operator, safe=""):
   if type(value) == type({}):
     keys = value.keys()
     keys.sort()
+    if explode == "*":
+      return ",".join([urllib.quote(key, safe) + "," + \
+                       urllib.quote(value[key], safe) for key in keys])
     if explode in ["+", "#"]:
       return ",".join([varname + "." + urllib.quote(key, safe) + "," + \
                        urllib.quote(value[key], safe) for key in keys])
@@ -96,7 +99,7 @@ def _tostring_semi(varname, value, explode, operator, safe=""):
                           urllib.quote(value[key], safe) for key in keys \
                           if key != None])
     else:
-      return ",".join([urllib.quote(key, safe) + "," + \
+      return varname + "=" + ",".join([urllib.quote(key, safe) + "," + \
                        urllib.quote(value[key], safe) for key in keys \
                        if key != None])
   else:

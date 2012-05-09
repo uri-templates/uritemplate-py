@@ -328,11 +328,9 @@
         ["{;x,y,undef}", ";x=1024;y=768"],
         ["{;list}", ";list=red,green,blue"],
         ["{;list*}", ";list=red;list=green;list=blue"],
-        ["{;keys*}", ";comma=%2C;dot=.;semi=%3B"]        
+        ["{;keys}", ";keys=comma,%2C,dot,.,semi,%3B"],
+        ["{;keys*}", ";comma=%2C;dot=.;semi=%3B"]
      ],
-     "disabled - suspected errata" : [
-        ["{;keys}", ";keys=comma,%2C,dot,.,semi,%3B"]
-     ], 
      "level4-testcases-disabled" : [
         ["{;hello:5}", ";hello=Hello"]
      ]
@@ -366,11 +364,9 @@
         ["{?x,y,undef}", "?x=1024&y=768"],
         ["{?list}", "?list=red,green,blue"],
         ["{?list*}", "?list=red&list=green&list=blue"],
-        ["{?keys}", "?keys=comma,%2C,dot,.,semi,%3B"]
+        ["{?keys}", "?keys=comma,%2C,dot,.,semi,%3B"],
+        ["{?keys*}", "?comma=%2C&dot=.&semi=%3B"]
      ],
-     "disabled - suspected errata" : [
-        ["{?keys*}", "?semi=%3B&dot=.&comma=%2C"]
-     ], 
      "level4-testcases-disabled" : [
         ["{?var:3}", "?var=val"]
      ]
@@ -404,10 +400,8 @@
           ["{&x,y,undef}", "&x=1024&y=768"],
           ["{&list}", "&list=red,green,blue"],
           ["{&list*}", "&list=red&list=green&list=blue"],
-          ["{&keys}", "&keys=comma,%2C,dot,.,semi,%3B"]
-     ],
-     "disabled - suspected errata" : [
-          ["{&keys*}", "&semi=%3B&dot=.&comma=%2C"]
+          ["{&keys}", "&keys=comma,%2C,dot,.,semi,%3B"],
+          ["{&keys*}", "&comma=%2C&dot=.&semi=%3B"]
      ],
      "level4-testcases-disabled" : [
           ["{&var:3}", "&var=val"]
@@ -457,7 +451,7 @@
         ["{;list}", ";list=val1,val2,val3"],
         ["{;list*}", ";list=val1;list=val2;list=val3"],
         ["{;list+}", ";list=val1;list=val2;list=val3"],
-        ["{;keys}", ";key1,val1,key2,val2"],
+        ["{;keys}", ";keys=key1,val1,key2,val2"],
         ["{;keys*}", ";key1=val1;key2=val2"],
         ["{;keys+}", ";keys.key1=val1;keys.key2=val2"],
         ["{?x,y}", "?x=1024&y=768"],
