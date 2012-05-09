@@ -101,7 +101,7 @@
         ["{;keys*}", ";key1=val1;key2=val2"],
         ["{;keys+}", ";keys.key1=val1;keys.key2=val2"],
         ["{?x,y}", "?x=1024&y=768"],
-        ["{?x,y,empty}", "?x=1024&y=768&empty"],
+        ["{?x,y,empty}", "?x=1024&y=768&empty="],
         ["{?x,y,undef}", "?x=1024&y=768"],
         ["{?list}", "?list=val1,val2,val3"],
         ["{?list*}", "?val1&val2&val3"],
