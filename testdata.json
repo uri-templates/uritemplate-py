@@ -81,7 +81,7 @@
         ["O{empty}X", "OX"],
         ["O{undef}X", "OX"],
         ["{x,y}", "1024,768"],
-        ["{x,hello,y}", "1024,Hello%20WOrld%21,768"],
+        ["{x,hello,y}", "1024,Hello%20World%21,768"],
         ["?{x,empty}", "?1024,"],
         ["?{x,undef}", "?1024"],
         ["?{undef,y}", "?768"],
