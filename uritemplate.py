@@ -106,7 +106,7 @@ def _tostring_query(varname, value, explode, operator, safe=""):
     if value:
       return varname + "=" + urllib.quote(value, safe)
     else:
-      return varname 
+      return varname  + "="
 
 TOSTRING = {
     "" : _tostring,
