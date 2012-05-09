@@ -4,21 +4,21 @@ import re
 import urllib
 
 RESERVED = ":/?#[]@!$&'()*+,;="
-OPERATOR = "+./;?|!@"
+OPERATOR = "+#./;?|!@"
 EXPLODE = "*+"
 MODIFIER = ":^"
 TEMPLATE = re.compile("{([^\}]+)}")
 
 def _tostring(varname, value, explode, operator, safe=""):
   if type(value) == type([]):
-    if explode == "+":
+    if explode in ["+", "#"]:
       return ",".join([varname + "." + urllib.quote(x, safe) for x in value])
     else:
       return ",".join([urllib.quote(x, safe) for x in value])
   if type(value) == type({}):
     keys = value.keys()
     keys.sort()
-    if explode == "+":
+    if explode in ["+", "#"]:
       return ",".join([varname + "." + urllib.quote(key, safe) + "," + urllib.quote(value[key], safe) for key in keys])
     else:
       return ",".join([urllib.quote(key, safe) + "," + urllib.quote(value[key], safe) for key in keys])
@@ -111,6 +111,7 @@ def _tostring_query(varname, value, explode, operator, safe=""):
 TOSTRING = {
     "" : _tostring,
     "+": _tostring,
+    "#": _tostring,
     ";": _tostring_semi,
     "?": _tostring_query,
     "/": _tostring_path,
@@ -130,7 +131,7 @@ def expand(template, vars):
 
     safe = ""
     explode = ""
-    if operator == '+':
+    if operator in ["+", "#"]:
       safe = RESERVED
     varspecs = varlist.split(",")
     varnames = []
@@ -153,6 +154,8 @@ def expand(template, vars):
     prefix = operator
     if operator == "+":
       prefix = ""
+      joiner = ","
+    if operator == "#":
       joiner = ","
     if operator == "?":
       joiner = "&"
