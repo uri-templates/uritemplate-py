@@ -85,12 +85,14 @@
         ["?{x,empty}", "?1024,"],
         ["?{x,undef}", "?1024"],
         ["?{undef,y}", "?768"],
-        ["{var:3}", "val"],
-        ["{var:30}", "value"],
         ["{list}", "red,green,blue"],
         ["{list*}", "red,green,blue"],
         ["{keys}", "semi,%3B,dot,.,comma,%2C"],
         ["{keys*}", "semi=%3B,dot=.,comma=%2C"]
+     ],
+     "level4-testcases-disabled" : [
+        ["{var:3}", "val"],
+        ["{var:30}", "value"]
      ]
   },  
   "Test Suite 1" :
