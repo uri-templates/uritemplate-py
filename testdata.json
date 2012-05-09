@@ -87,12 +87,14 @@
         ["?{undef,y}", "?768"],
         ["{list}", "red,green,blue"],
         ["{list*}", "red,green,blue"],
-        ["{keys}", "semi,%3B,dot,.,comma,%2C"],
-        ["{keys*}", "semi=%3B,dot=.,comma=%2C"]
+        ["{keys}", "comma,%2C,dot,.,semi,%3B"]
      ],
      "level4-testcases-disabled" : [
         ["{var:3}", "val"],
         ["{var:30}", "value"]
+     ],
+     "possibly-bad-tests?" : [
+        ["{keys*}", "comma=%2C,dot=.,semi=%3B"]
      ]
   },  
   "Test Suite 1" :
