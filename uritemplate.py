@@ -22,6 +22,8 @@ def _tostring(varname, value, explode, operator, safe=""):
       return ",".join([varname + "." + urllib.quote(key, safe) + "," + urllib.quote(value[key], safe) for key in keys])
     else:
       return ",".join([urllib.quote(key, safe) + "," + urllib.quote(value[key], safe) for key in keys])
+  elif value == None:
+    return ""
   else:
     return urllib.quote(value, safe)
 
