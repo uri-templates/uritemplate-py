@@ -8,6 +8,7 @@ OPERATOR = "+#./;?&|!@"
 EXPLODE = "*+"
 MODIFIER = ":^"
 TEMPLATE = re.compile("{([^\}]+)}")
+
   
 def _tostring(varname, value, explode, operator, safe=""):
   if type(value) == type([]):
@@ -19,7 +20,7 @@ def _tostring(varname, value, explode, operator, safe=""):
     keys = value.keys()
     keys.sort()
     if explode == "*":
-      return ",".join([urllib.quote(key, safe) + "," + \
+      return ",".join([urllib.quote(key, safe) + "=" + \
                        urllib.quote(value[key], safe) for key in keys])
     if explode in ["+", "#"]:
       return ",".join([varname + "." + urllib.quote(key, safe) + "," + \
@@ -56,7 +57,7 @@ def _tostring_path(varname, value, explode, operator, safe=""):
              urllib.quote(value[key], safe) for key in keys \
              if value[key] != None]
     elif explode == "*":
-      out = [urllib.quote(key, safe) + joiner + \
+      out = [urllib.quote(key, safe) + "=" + \
              urllib.quote(value[key], safe) for key in keys \
              if value[key] != None]
     else:

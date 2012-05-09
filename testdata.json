@@ -120,14 +120,12 @@
         ["?{undef,y}", "?768"],
         ["{list}", "red,green,blue"],
         ["{list*}", "red,green,blue"],
-        ["{keys}", "comma,%2C,dot,.,semi,%3B"]
+        ["{keys}", "comma,%2C,dot,.,semi,%3B"],
+        ["{keys*}", "comma=%2C,dot=.,semi=%3B"]
      ],
      "level4-testcases-disabled" : [
         ["{var:3}", "val"],
         ["{var:30}", "value"]
-     ],
-     "disabled - suspected errata" : [
-        ["{keys*}", "comma=%2C,dot=.,semi=%3B"]
      ]
   },  
   "3.2.3 Reserved Expansion" : 
@@ -166,13 +164,11 @@
         ["{+path,x}/here", "/foo/bar,1024/here"],
         ["{+list}", "red,green,blue"],
         ["{+list*}", "red,green,blue"],
-        ["{+keys}", "comma,,,dot,.,semi,;"]
+        ["{+keys}", "comma,,,dot,.,semi,;"],
+        ["{+keys*}", "comma=,,dot=.,semi=;"]
      ],
      "level4-testcases-disabled" : [
         ["{+path:6}/here", "/foo/b/here"]
-     ],
-     "disabled - suspected errata" : [
-        ["{+keys*}", "semi=;,dot=.,comma=,"]
      ]
   },  
   "3.2.4 Fragment Expansion" : 
@@ -244,14 +240,12 @@
        ["X{.list}", "X.red,green,blue"],
        ["X{.list*}", "X.red.green.blue"],
        ["X{.keys}", "X.comma,%2C,dot,.,semi,%3B"],
+       ["X{.keys*}", "X.comma=%2C.dot=..semi=%3B"],
        ["X{.empty_keys}", "X"],
        ["X{.empty_keys*}", "X"]
      ],
      "level4-testcases-disabled" : [
        ["X{.var:3}", "X.val"]
-     ],
-     "disabled - suspected errata" : [
-       ["X{.keys*}", "X.comma=%2C.dot=..semi=%3B"]
      ]
   },  
   "3.2.6 Path Segment Expansion" : 
@@ -286,14 +280,12 @@
        ["{/var,x}/here", "/value/1024/here"],
        ["{/list}", "/red,green,blue"],
        ["{/list*}", "/red/green/blue"],
-       ["{/keys}", "/comma,%2C,dot,.,semi,%3B"]
+       ["{/keys}", "/comma,%2C,dot,.,semi,%3B"],
+       ["{/keys*}", "/comma=%2C/dot=./semi=%3B"]
      ],     
      "level4-testcases-disabled" : [
        ["{/var:1,var}", "/v/value"],
        ["{/list*,path:4}", "/red/green/blue/%2Ffoo"]
-     ],
-     "disabled - possible errata" : [
-       ["{/keys*}", "/semi=%3B/dot=./comma=%2C"]
      ]
   },   
   "3.2.7 Path-Style Parameter Expansion" : 
@@ -430,7 +422,7 @@
         ["{list*}", "val1,val2,val3"],
         ["{list+}", "list.val1,list.val2,list.val3"],
         ["{keys}", "key1,val1,key2,val2"],
-        ["{keys*}", "key1,val1,key2,val2"],
+        ["{keys*}", "key1=val1,key2=val2"],
         ["{keys+}", "keys.key1,val1,keys.key2,val2"],
         ["{+var}", "value"],
         ["{+hello}", "Hello%20World!"],
@@ -443,7 +435,7 @@
         ["{+list*}", "val1,val2,val3"],
         ["{+list+}", "list.val1,list.val2,list.val3"],
         ["{+keys}", "key1,val1,key2,val2"],
-        ["{+keys*}", "key1,val1,key2,val2"],
+        ["{+keys*}", "key1=val1,key2=val2"],
         ["{+keys+}", "keys.key1,val1,keys.key2,val2"],
         ["{;x,y}", ";x=1024;y=768"],
         ["{;x,y,empty}", ";x=1024;y=768;empty"],
@@ -471,7 +463,7 @@
         ["{/list*,x}", "/val1/val2/val3/1024"],
         ["{/list+}", "/list.val1/list.val2/list.val3"],
         ["{/keys}", "/key1,val1,key2,val2"],
-        ["{/keys*}", "/key1/val1/key2/val2"],
+        ["{/keys*}", "/key1=val1/key2=val2"],
         ["{/keys+}", "/keys.key1/val1/keys.key2/val2"],
         ["X{.var}", "X.value"],
         ["X{.empty}", "X."],
@@ -481,7 +473,7 @@
         ["X{.list*,x}", "X.val1.val2.val3.1024"],
         ["X{.list+}", "X.list.val1.list.val2.list.val3"],
         ["X{.keys}", "X.key1,val1,key2,val2"],
-        ["X{.keys*}", "X.key1.val1.key2.val2"],
+        ["X{.keys*}", "X.key1=val1.key2=val2"],
         ["X{.keys+}", "X.keys.key1.val1.keys.key2.val2"]
      ]
   },
