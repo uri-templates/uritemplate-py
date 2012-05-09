@@ -258,6 +258,50 @@
        ["X{.keys*}", "X.comma=%2C.dot=..semi=%3B"]
      ]
   },  
+  "3.2.6 Path Segment Expansion" : 
+  {
+    "variables": {
+       "count"      : ["one", "two", "three"],
+       "dom"        : ["example", "com"],
+       "dub"        : "me/too",
+       "hello"      : "Hello World!",
+       "half"       : "50%",
+       "var"        : "value", 
+       "who"        : "fred",
+       "base"       : "http://example.com/home/",
+       "path"       : "/foo/bar",
+       "list"       : ["red", "green", "blue"],
+       "keys"       : { "semi" : ";", "dot" : ".", "comma" : ","},
+       "v"          : "6",
+       "x"          : "1024",
+       "y"          : "768",
+       "empty"      : "",
+       "empty_keys" : [],
+       "undef"      : null
+     },
+     "testcases" : [
+       ["{/who}", "/fred"],
+       ["{/who,who}", "/fred/fred"],
+       ["{/half,who}", "/50%25/fred"],
+       ["{/who,dub}", "/fred/me%2Ftoo"],
+       ["{/var}", "/value"],
+       ["{/var,empty}", "/value/"],
+       ["{/var,x}/here", "/value/1024/here"],
+       ["{/list}", "/red,green,blue"],
+       ["{/list*}", "/red/green/blue"],
+       ["{/keys}", "/comma,%2C,dot,.,semi,%3B"]
+     ],     
+     "level4-testcases-disabled" : [
+       ["{/var:1,var}", "/v/value"],
+       ["{/list*,path:4}", "/red/green/blue/%2Ffoo"]
+     ],
+     "disabled - our bug" : [
+       ["{/var,undef}", "/value"]
+     ],
+     "disabled - possible errata" : [
+       ["{/keys*}", "/semi=%3B/dot=./comma=%2C"]
+     ]
+  },   
   "Test Suite 1" :
   {
     "variables": {
