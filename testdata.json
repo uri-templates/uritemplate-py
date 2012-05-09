@@ -53,7 +53,40 @@
         ["{&x,y,empty}", "&x=1024&y=768&empty="]
      ]
   },
-  "Simple String Expansion" : 
+  "3.2.1 Variable Expansion" : 
+  {
+    "variables": {
+       "count"      : ["one", "two", "three"],
+       "dom"        : ["example", "com"],
+       "dub"        : "me/too",
+       "hello"      : "Hello World!",
+       "half"       : "50%",
+       "var"        : "value", 
+       "who"        : "fred",
+       "base"       : "http://example.com/home",
+       "path"       : "/foo/bar",
+       "list"       : ["red", "green", "blue"],
+       "keys"       : { "semi" : ";", "dot" : ".", "comma" : ","},
+       "v"          : "6",
+       "x"          : "1024",
+       "y"          : "768",
+       "empty"      : "",
+       "empty_keys" : [],
+       "undef"      : null
+     },
+     "testcases" : [
+        ["{count}", "one,two,three"],
+        ["{count*}", "one,two,three"],
+        ["{/count}", "/one,two,three"],
+        ["{/count*}", "/one/two/three"],
+        ["{;count}", ";count=one,two,three"],
+        ["{;count*}", ";count=one;count=two;count=three"],
+        ["{?count}", "?count=one,two,three"],
+        ["{?count*}", "?count=one&count=two&count=three"],
+        ["{&count*}", "&count=one&count=two&count=three"]
+      ]
+  },  
+  "3.2.2 Simple String Expansion" : 
   {
     "variables": {
        "count"      : ["one", "two", "three"],
@@ -138,8 +171,8 @@
         ["{;x,y}", ";x=1024;y=768"],
         ["{;x,y,empty}", ";x=1024;y=768;empty"],
         ["{;x,y,undef}", ";x=1024;y=768"],
-        ["{;list}", ";val1,val2,val3"],
-        ["{;list*}", ";val1;val2;val3"],
+        ["{;list}", ";list=val1,val2,val3"],
+        ["{;list*}", ";list=val1;list=val2;list=val3"],
         ["{;list+}", ";list=val1;list=val2;list=val3"],
         ["{;keys}", ";key1,val1,key2,val2"],
         ["{;keys*}", ";key1=val1;key2=val2"],
@@ -148,7 +181,7 @@
         ["{?x,y,empty}", "?x=1024&y=768&empty="],
         ["{?x,y,undef}", "?x=1024&y=768"],
         ["{?list}", "?list=val1,val2,val3"],
-        ["{?list*}", "?val1&val2&val3"],
+        ["{?list*}", "?list=val1&list=val2&list=val3"],
         ["{?list+}", "?list=val1&list=val2&list=val3"],
         ["{?keys}", "?keys=key1,val1,key2,val2"],
         ["{?keys*}", "?key1=val1&key2=val2"],

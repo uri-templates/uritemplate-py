@@ -61,9 +61,9 @@ def _tostring_semi(varname, value, explode, operator, safe=""):
     if explode == "+":
       return joiner.join([varname + "=" + urllib.quote(x, safe) for x in value])
     elif explode == "*":
-      return joiner.join([urllib.quote(x, safe) for x in value])
+      return joiner.join([varname + "=" + urllib.quote(x, safe) for x in value])
     else:
-      return ",".join([urllib.quote(x, safe) for x in value])
+      return varname + "=" + ",".join([urllib.quote(x, safe) for x in value])
   elif type(value) == type({}):
     keys = value.keys()
     keys.sort()
@@ -90,7 +90,7 @@ def _tostring_query(varname, value, explode, operator, safe=""):
     if explode == "+":
       return joiner.join([varname + "=" + urllib.quote(x, safe) for x in value])
     elif explode == "*":
-      return joiner.join([urllib.quote(x, safe) for x in value])
+      return joiner.join([varname + "=" + urllib.quote(x, safe) for x in value])
     else:
       return varname + "=" + ",".join([urllib.quote(x, safe) for x in value])
   elif type(value) == type({}):
