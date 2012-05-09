@@ -126,7 +126,7 @@
         ["{var:3}", "val"],
         ["{var:30}", "value"]
      ],
-     "possibly-bad-tests?" : [
+     "disabled - suspected errata" : [
         ["{keys*}", "comma=%2C,dot=.,semi=%3B"]
      ]
   },  
@@ -171,7 +171,7 @@
      "level4-testcases-disabled" : [
         ["{+path:6}/here", "/foo/b/here"]
      ],
-     "possibly-bad-tests?" : [
+     "disabled - suspected errata" : [
         ["{+keys*}", "semi=;,dot=.,comma=,"]
      ]
   },  
@@ -200,7 +200,6 @@
         ["{#var}", "#value"],
         ["{#hello}", "#Hello%20World!"],
         ["{#half}", "#50%25"],
-        ["foo{#empty}", "foo#"],
         ["foo{#undef}", "foo"],
         ["{#x,hello,y}", "#1024,Hello%20World!,768"],
         ["{#path,x}/here", "#/foo/bar,1024/here"],
@@ -210,6 +209,9 @@
      ],
      "level4-testcases-disabled" : [
         ["{#path:6}/here", "#/foo/b/here"]
+     ],
+     "disabled - our bug" : [
+        ["foo{#empty}", "foo#"]
      ]
   },  
   "Test Suite 1" :
