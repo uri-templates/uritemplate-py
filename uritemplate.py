@@ -4,7 +4,7 @@ import re
 import urllib
 
 RESERVED = ":/?#[]@!$&'()*+,;="
-OPERATOR = "+#./;?|!@"
+OPERATOR = "+#./;?&|!@"
 EXPLODE = "*+"
 MODIFIER = ":^"
 TEMPLATE = re.compile("{([^\}]+)}")
@@ -80,7 +80,7 @@ def _tostring_semi(varname, value, explode, operator, safe=""):
 
 def _tostring_query(varname, value, explode, operator, safe=""):
   joiner = operator
-  if operator == "?":
+  if operator in ["?", "&"]:
     joiner = "&"
   if type(value) == type([]):
     if 0 == len(value):
@@ -114,6 +114,7 @@ TOSTRING = {
     "#": _tostring,
     ";": _tostring_semi,
     "?": _tostring_query,
+    "&": _tostring_query,
     "/": _tostring_path,
     ".": _tostring_path,
     }
@@ -159,6 +160,8 @@ def expand(template, vars):
       joiner = ","
     if operator == "?":
       joiner = "&"
+    if operator == "&":
+      prefix = "&"
     if operator == "":
       joiner = ","
     for varname, explode in varnames:
