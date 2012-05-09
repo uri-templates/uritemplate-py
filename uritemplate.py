@@ -47,7 +47,7 @@ def _tostring_path(varname, value, explode, operator, safe=""):
     else:
       return ",".join([urllib.quote(key, safe) + "," + urllib.quote(value[key], safe) for key in keys])
   else:
-    if value:
+    if value == None:
       return urllib.quote(value, safe)
     else:
       return ""
