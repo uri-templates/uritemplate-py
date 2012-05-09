@@ -19,9 +19,11 @@ def _tostring(varname, value, explode, operator, safe=""):
     keys = value.keys()
     keys.sort()
     if explode in ["+", "#"]:
-      return ",".join([varname + "." + urllib.quote(key, safe) + "," + urllib.quote(value[key], safe) for key in keys])
+      return ",".join([varname + "." + urllib.quote(key, safe) + "," + \
+                       urllib.quote(value[key], safe) for key in keys])
     else:
-      return ",".join([urllib.quote(key, safe) + "," + urllib.quote(value[key], safe) for key in keys])
+      return ",".join([urllib.quote(key, safe) + "," + \
+                       urllib.quote(value[key], safe) for key in keys])
   elif value == None:
     return
   else:
@@ -32,25 +34,40 @@ def _tostring_path(varname, value, explode, operator, safe=""):
   joiner = operator
   if type(value) == type([]):
     if explode == "+":
-      return joiner.join([varname + "." + urllib.quote(x, safe) for x in value])
+      out = [varname + "." + urllib.quote(x, safe) for x in value \
+             if value != None]
     elif explode == "*":
-      return joiner.join([urllib.quote(x, safe) for x in value])
+      out = [urllib.quote(x, safe) for x in value if value != None]
     else:
-      return ",".join([urllib.quote(x, safe) for x in value])
+      joiner = ","
+      out = [urllib.quote(x, safe) for x in value if value != None]
+    if out:
+      return joiner.join(out)
+    else:
+      return
   elif type(value) == type({}):
     keys = value.keys()
     keys.sort()
     if explode == "+":
-      return joiner.join([varname + "." + urllib.quote(key, safe) + joiner + urllib.quote(value[key], safe) for key in keys])
+      out = [varname + "." + urllib.quote(key, safe) + joiner + \
+             urllib.quote(value[key], safe) for key in keys \
+             if value[key] != None]
     elif explode == "*":
-      return joiner.join([urllib.quote(key, safe) + joiner + urllib.quote(value[key], safe) for key in keys])
+      out = [urllib.quote(key, safe) + joiner + \
+             urllib.quote(value[key], safe) for key in keys \
+             if value[key] != None]
     else:
-      return ",".join([urllib.quote(key, safe) + "," + urllib.quote(value[key], safe) for key in keys])
+      joiner = ","
+      out = [urllib.quote(key, safe) + "," + urllib.quote(value[key], safe) \
+             for key in keys if value[key] != None]
+    if out:
+      return joiner.join(out)
+    else:
+      return
+  elif value == None:
+    return
   else:
-    if value:
-      return urllib.quote(value, safe)
-    else:
-      return ""
+    return urllib.quote(value, safe)
 
 
 def _tostring_semi(varname, value, explode, operator, safe=""):
@@ -58,26 +75,37 @@ def _tostring_semi(varname, value, explode, operator, safe=""):
   if operator == "?":
     joiner = "&"
   if type(value) == type([]):
-    if explode == "+":
-      return joiner.join([varname + "=" + urllib.quote(x, safe) for x in value])
-    elif explode == "*":
-      return joiner.join([varname + "=" + urllib.quote(x, safe) for x in value])
+    if explode in ["+", "*"]:
+      out = [varname + "=" + urllib.quote(x, safe) \
+             for x in value if x != None]
+      if out:
+        return joiner.join(out)
+      else:
+        return             
     else:
       return varname + "=" + ",".join([urllib.quote(x, safe) for x in value])
   elif type(value) == type({}):
     keys = value.keys()
     keys.sort()
     if explode == "+":
-      return joiner.join([varname + "." + urllib.quote(key, safe) + "=" + urllib.quote(value[key], safe) for key in keys])
+      return joiner.join([varname + "." + urllib.quote(key, safe) + "=" + \
+                          urllib.quote(value[key], safe) for key in keys \
+                          if key != None])
     elif explode == "*":
-      return joiner.join([urllib.quote(key, safe) + "=" + urllib.quote(value[key], safe) for key in keys])
+      return joiner.join([urllib.quote(key, safe) + "=" + \
+                          urllib.quote(value[key], safe) for key in keys \
+                          if key != None])
     else:
-      return ",".join([urllib.quote(key, safe) + "," + urllib.quote(value[key], safe) for key in keys])
+      return ",".join([urllib.quote(key, safe) + "," + \
+                       urllib.quote(value[key], safe) for key in keys \
+                       if key != None])
   else:
-    if value:
+    if value == None:
+      return
+    elif value:
       return varname + "=" + urllib.quote(value, safe)
     else:
-      return varname 
+      return varname
 
 
 def _tostring_query(varname, value, explode, operator, safe=""):
@@ -86,29 +114,38 @@ def _tostring_query(varname, value, explode, operator, safe=""):
     joiner = "&"
   if type(value) == type([]):
     if 0 == len(value):
-      return ""
+      return None
     if explode == "+":
-      return joiner.join([varname + "=" + urllib.quote(x, safe) for x in value])
+      return joiner.join([varname + "=" + urllib.quote(x, safe) \
+                          for x in value])
     elif explode == "*":
-      return joiner.join([varname + "=" + urllib.quote(x, safe) for x in value])
+      return joiner.join([varname + "=" + urllib.quote(x, safe) \
+                          for x in value])
     else:
       return varname + "=" + ",".join([urllib.quote(x, safe) for x in value])
   elif type(value) == type({}):
     if 0 == len(value):
-      return ""
+      return None
     keys = value.keys()
     keys.sort()
     if explode == "+":
-      return joiner.join([varname + "." + urllib.quote(key, safe) + "=" + urllib.quote(value[key], safe) for key in keys])
+      return joiner.join([varname + "." + urllib.quote(key, safe) + "=" + \
+                          urllib.quote(value[key], safe) for key in keys])
     elif explode == "*":
-      return joiner.join([urllib.quote(key, safe) + "=" + urllib.quote(value[key], safe) for key in keys])
+      return joiner.join([urllib.quote(key, safe) + "=" + \
+                          urllib.quote(value[key], safe) for key in keys])
     else:
-      return varname + "=" + ",".join([urllib.quote(key, safe) + "," + urllib.quote(value[key], safe) for key in keys])
+      return varname + "=" + \
+             ",".join([urllib.quote(key, safe) + "," + \
+                       urllib.quote(value[key], safe) for key in keys])
   else:
-    if value:
+    if value == None:
+      return
+    elif value:
       return varname + "=" + urllib.quote(value, safe)
     else:
       return varname  + "="
+
 
 TOSTRING = {
     "" : _tostring,
@@ -176,10 +213,11 @@ def expand(template, vars):
         value = defaults[varname]
       else:
         continue
-      expanded = TOSTRING[operator](varname, value, explode, operator, safe=safe)
+      expanded = TOSTRING[operator](
+        varname, value, explode, operator, safe=safe)
       if expanded != None:
         retval.append(expanded)
-    if "".join(retval):
+    if len(retval) > 0:
       return prefix + joiner.join(retval)
     else:
       return ""

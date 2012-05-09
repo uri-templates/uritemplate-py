@@ -200,6 +200,7 @@
         ["{#var}", "#value"],
         ["{#hello}", "#Hello%20World!"],
         ["{#half}", "#50%25"],
+        ["foo{#empty}", "foo#"],
         ["foo{#undef}", "foo"],
         ["{#x,hello,y}", "#1024,Hello%20World!,768"],
         ["{#path,x}/here", "#/foo/bar,1024/here"],
@@ -209,9 +210,6 @@
      ],
      "level4-testcases-disabled" : [
         ["{#path:6}/here", "#/foo/b/here"]
-     ],
-     "disabled - our bug" : [
-        ["foo{#empty}", "foo#"]
      ]
   },  
   "3.2.5 Label Expansion with Dot-Prefix" : 
@@ -241,6 +239,7 @@
        ["{.half,who}", ".50%25.fred"],
        ["www{.dom*}", "www.example.com"],
        ["X{.var}", "X.value"],
+       ["X{.empty}", "X."],
        ["X{.undef}", "X"],
        ["X{.list}", "X.red,green,blue"],
        ["X{.list*}", "X.red.green.blue"],
@@ -250,9 +249,6 @@
      ],
      "level4-testcases-disabled" : [
        ["X{.var:3}", "X.val"]
-     ],
-     "disabled - our bug" : [
-       ["X{.empty}", "X."]     
      ],
      "disabled - suspected errata" : [
        ["X{.keys*}", "X.comma=%2C.dot=..semi=%3B"]
@@ -286,6 +282,7 @@
        ["{/who,dub}", "/fred/me%2Ftoo"],
        ["{/var}", "/value"],
        ["{/var,empty}", "/value/"],
+       ["{/var,undef}", "/value"],
        ["{/var,x}/here", "/value/1024/here"],
        ["{/list}", "/red,green,blue"],
        ["{/list*}", "/red/green/blue"],
@@ -294,9 +291,6 @@
      "level4-testcases-disabled" : [
        ["{/var:1,var}", "/v/value"],
        ["{/list*,path:4}", "/red/green/blue/%2Ffoo"]
-     ],
-     "disabled - our bug" : [
-       ["{/var,undef}", "/value"]
      ],
      "disabled - possible errata" : [
        ["{/keys*}", "/semi=%3B/dot=./comma=%2C"]
@@ -331,12 +325,12 @@
         ["{;v,bar,who}", ";v=6;who=fred"],
         ["{;x,y}", ";x=1024;y=768"],
         ["{;x,y,empty}", ";x=1024;y=768;empty"],
+        ["{;x,y,undef}", ";x=1024;y=768"],
         ["{;list}", ";list=red,green,blue"],
         ["{;list*}", ";list=red;list=green;list=blue"],
         ["{;keys*}", ";comma=%2C;dot=.;semi=%3B"]        
      ],
-     "disabled - our bug" : [
-        ["{;x,y,undef}", ";x=1024;y=768"],
+     "disabled - suspected errata" : [
         ["{;keys}", ";keys=comma,%2C,dot,.,semi,%3B"]
      ], 
      "level4-testcases-disabled" : [
@@ -369,12 +363,12 @@
         ["{?half}", "?half=50%25"],
         ["{?x,y}", "?x=1024&y=768"],
         ["{?x,y,empty}", "?x=1024&y=768&empty="],
+        ["{?x,y,undef}", "?x=1024&y=768"],
         ["{?list}", "?list=red,green,blue"],
         ["{?list*}", "?list=red&list=green&list=blue"],
         ["{?keys}", "?keys=comma,%2C,dot,.,semi,%3B"]
      ],
-     "disabled - our bug" : [
-        ["{?x,y,undef}", "?x=1024&y=768"],
+     "disabled - suspected errata" : [
         ["{?keys*}", "?semi=%3B&dot=.&comma=%2C"]
      ], 
      "level4-testcases-disabled" : [
@@ -407,12 +401,12 @@
           ["{&half}", "&half=50%25"],
           ["?fixed=yes{&x}", "?fixed=yes&x=1024"],
           ["{&x,y,empty}", "&x=1024&y=768&empty="],
+          ["{&x,y,undef}", "&x=1024&y=768"],
           ["{&list}", "&list=red,green,blue"],
           ["{&list*}", "&list=red&list=green&list=blue"],
           ["{&keys}", "&keys=comma,%2C,dot,.,semi,%3B"]
      ],
-     "disabled - our bug" : [
-          ["{&x,y,undef}", "&x=1024&y=768"],
+     "disabled - suspected errata" : [
           ["{&keys*}", "&semi=%3B&dot=.&comma=%2C"]
      ],
      "level4-testcases-disabled" : [
@@ -486,7 +480,7 @@
         ["{/keys*}", "/key1/val1/key2/val2"],
         ["{/keys+}", "/keys.key1/val1/keys.key2/val2"],
         ["X{.var}", "X.value"],
-        ["X{.empty}", "X"],
+        ["X{.empty}", "X."],
         ["X{.undef}", "X"],
         ["X{.list}", "X.val1,val2,val3"],
         ["X{.list*}", "X.val1.val2.val3"],
