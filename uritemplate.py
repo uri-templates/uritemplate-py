@@ -169,7 +169,7 @@ TOSTRING = {
     }
 
 
-def expand(template, vars):
+def expand(template, variables):
     def _sub(match):
         expression = match.group(1)
         operator = ""
@@ -214,8 +214,8 @@ def expand(template, vars):
         if operator == "":
             joiner = ","
         for varname, explode in varnames:
-            if varname in vars:
-                value = vars[varname]
+            if varname in variables:
+                value = variables[varname]
                 #if not value and (type(value) == type({}) or type(value) == type([])) and varname in defaults:
                 if not value and value != "" and varname in defaults:
                     value = defaults[varname]
