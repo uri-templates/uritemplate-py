@@ -23,7 +23,7 @@ def _tostring(varname, value, explode, operator, safe=""):
     else:
       return ",".join([urllib.quote(key, safe) + "," + urllib.quote(value[key], safe) for key in keys])
   elif value == None:
-    return ""
+    return
   else:
     return urllib.quote(value, safe)
 
@@ -176,7 +176,9 @@ def expand(template, vars):
         value = defaults[varname]
       else:
         continue
-      retval.append(TOSTRING[operator](varname, value, explode, operator, safe=safe))
+      expanded = TOSTRING[operator](varname, value, explode, operator, safe=safe)
+      if expanded != None:
+        retval.append(expanded)
     if "".join(retval):
       return prefix + joiner.join(retval)
     else:
