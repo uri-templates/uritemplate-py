@@ -5,7 +5,7 @@ uritemplate
    :alt: build status
    :target: http://travis-ci.org/uri-templates/uritemplate-py
 
-This is a Python implementation of `RFC6570`_, URI Template.
+This is a Python implementation of `RFC6570`_, URI Template, and can expand templates up to and including Level 4 in that specification.
 
 It exposes one method, "expand". For example:
 
