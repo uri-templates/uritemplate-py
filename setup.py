@@ -10,7 +10,7 @@ setup(
   version = uritemplate.__version__,
   description = 'URI Templates',
   author = 'Joe Gregorio',
-  author_email = 'mnot@mnot.net',
+  author_email = 'joe@bitworking.org',
   url = base_url,
   download_url = \
     '%s/tarball/uri-template-py-%s' % (base_url, uritemplate.__version__),
