@@ -164,6 +164,9 @@ TOSTRING = {
 
 
 def expand(template, variables):
+    """
+    Expand template as a URI Template using variables.
+    """
     def _sub(match):
         expression = match.group(1)
         operator = ""
