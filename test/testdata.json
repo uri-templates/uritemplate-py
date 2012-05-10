@@ -1,0 +1,531 @@
+{
+  "Level 1 Examples" : 
+  {
+    "variables": {
+       "var"   : "value",
+       "hello" : "Hello World!"
+     },
+     "testcases" : [
+        ["{var}", "value"],
+        ["{hello}", "Hello%20World%21"]
+     ]
+  },
+  "Level 2 Examples" : 
+  {
+    "variables": {
+       "var"   : "value",
+       "hello" : "Hello World!",
+       "path"  : "/foo/bar"
+     },
+     "testcases" : [
+        ["{+var}", "value"],
+        ["{+hello}", "Hello%20World!"],
+        ["{+path}/here", "/foo/bar/here"],
+        ["here?ref={+path}", "here?ref=/foo/bar"]
+     ]
+  },
+  "Level 3 Examples" : 
+  {
+    "variables": {
+       "var"   : "value",
+       "hello" : "Hello World!",
+       "empty" : "",
+       "path"  : "/foo/bar",
+       "x"     : "1024",
+       "y"     : "768"
+     },
+     "testcases" : [
+        ["map?{x,y}", "map?1024,768"],
+        ["{x,hello,y}", "1024,Hello%20World%21,768"],
+        ["{+x,hello,y}", "1024,Hello%20World!,768"],
+        ["{+path,x}/here", "/foo/bar,1024/here"],
+        ["{#x,hello,y}", "#1024,Hello%20World!,768"],
+        ["{#path,x}/here", "#/foo/bar,1024/here"],
+        ["X{.var}", "X.value"],
+        ["X{.x,y}", "X.1024.768"],
+        ["{/var}", "/value"],
+        ["{/var,x}/here", "/value/1024/here"],
+        ["{;x,y}", ";x=1024;y=768"],
+        ["{;x,y,empty}", ";x=1024;y=768;empty"],
+        ["{?x,y}", "?x=1024&y=768"],
+        ["{?x,y,empty}", "?x=1024&y=768&empty="],
+        ["?fixed=yes{&x}", "?fixed=yes&x=1024"],
+        ["{&x,y,empty}", "&x=1024&y=768&empty="]
+     ]
+  },
+  "3.2.1 Variable Expansion" : 
+  {
+    "variables": {
+       "count"      : ["one", "two", "three"],
+       "dom"        : ["example", "com"],
+       "dub"        : "me/too",
+       "hello"      : "Hello World!",
+       "half"       : "50%",
+       "var"        : "value", 
+       "who"        : "fred",
+       "base"       : "http://example.com/home/",
+       "path"       : "/foo/bar",
+       "list"       : ["red", "green", "blue"],
+       "keys"       : { "semi" : ";", "dot" : ".", "comma" : ","},
+       "v"          : "6",
+       "x"          : "1024",
+       "y"          : "768",
+       "empty"      : "",
+       "empty_keys" : [],
+       "undef"      : null
+     },
+     "testcases" : [
+        ["{count}", "one,two,three"],
+        ["{count*}", "one,two,three"],
+        ["{/count}", "/one,two,three"],
+        ["{/count*}", "/one/two/three"],
+        ["{;count}", ";count=one,two,three"],
+        ["{;count*}", ";count=one;count=two;count=three"],
+        ["{?count}", "?count=one,two,three"],
+        ["{?count*}", "?count=one&count=two&count=three"],
+        ["{&count*}", "&count=one&count=two&count=three"]
+      ]
+  },  
+  "3.2.2 Simple String Expansion" : 
+  {
+    "variables": {
+       "count"      : ["one", "two", "three"],
+       "dom"        : ["example", "com"],
+       "dub"        : "me/too",
+       "hello"      : "Hello World!",
+       "half"       : "50%",
+       "var"        : "value", 
+       "who"        : "fred",
+       "base"       : "http://example.com/home/",
+       "path"       : "/foo/bar",
+       "list"       : ["red", "green", "blue"],
+       "keys"       : { "semi" : ";", "dot" : ".", "comma" : ","},
+       "v"          : "6",
+       "x"          : "1024",
+       "y"          : "768",
+       "empty"      : "",
+       "empty_keys" : [],
+       "undef"      : null
+     },
+     "testcases" : [
+        ["{var}", "value"],
+        ["{hello}", "Hello%20World%21"],
+        ["{half}", "50%25"],
+        ["O{empty}X", "OX"],
+        ["O{undef}X", "OX"],
+        ["{x,y}", "1024,768"],
+        ["{x,hello,y}", "1024,Hello%20World%21,768"],
+        ["?{x,empty}", "?1024,"],
+        ["?{x,undef}", "?1024"],
+        ["?{undef,y}", "?768"],
+        ["{list}", "red,green,blue"],
+        ["{list*}", "red,green,blue"],
+        ["{keys}", "comma,%2C,dot,.,semi,%3B"],
+        ["{keys*}", "comma=%2C,dot=.,semi=%3B"]
+     ],
+     "level4-testcases-disabled" : [
+        ["{var:3}", "val"],
+        ["{var:30}", "value"]
+     ]
+  },  
+  "3.2.3 Reserved Expansion" : 
+  {
+    "variables": {
+       "count"      : ["one", "two", "three"],
+       "dom"        : ["example", "com"],
+       "dub"        : "me/too",
+       "hello"      : "Hello World!",
+       "half"       : "50%",
+       "var"        : "value", 
+       "who"        : "fred",
+       "base"       : "http://example.com/home/",
+       "path"       : "/foo/bar",
+       "list"       : ["red", "green", "blue"],
+       "keys"       : { "semi" : ";", "dot" : ".", "comma" : ","},
+       "v"          : "6",
+       "x"          : "1024",
+       "y"          : "768",
+       "empty"      : "",
+       "empty_keys" : [],
+       "undef"      : null
+     },
+     "testcases" : [
+        ["{+var}", "value"],
+        ["{+hello}", "Hello%20World!"],
+        ["{+half}", "50%25"],
+        ["{base}index", "http%3A%2F%2Fexample.com%2Fhome%2Findex"],
+        ["{+base}index", "http://example.com/home/index"],
+        ["O{+empty}X", "OX"],
+        ["O{+undef}X", "OX"],
+        ["{+path}/here", "/foo/bar/here"],
+        ["here?ref={+path}", "here?ref=/foo/bar"],
+        ["up{+path}{var}/here", "up/foo/barvalue/here"],
+        ["{+x,hello,y}", "1024,Hello%20World!,768"],
+        ["{+path,x}/here", "/foo/bar,1024/here"],
+        ["{+list}", "red,green,blue"],
+        ["{+list*}", "red,green,blue"],
+        ["{+keys}", "comma,,,dot,.,semi,;"],
+        ["{+keys*}", "comma=,,dot=.,semi=;"]
+     ],
+     "level4-testcases-disabled" : [
+        ["{+path:6}/here", "/foo/b/here"]
+     ]
+  },  
+  "3.2.4 Fragment Expansion" : 
+  {
+    "variables": {
+       "count"      : ["one", "two", "three"],
+       "dom"        : ["example", "com"],
+       "dub"        : "me/too",
+       "hello"      : "Hello World!",
+       "half"       : "50%",
+       "var"        : "value", 
+       "who"        : "fred",
+       "base"       : "http://example.com/home/",
+       "path"       : "/foo/bar",
+       "list"       : ["red", "green", "blue"],
+       "keys"       : { "semi" : ";", "dot" : ".", "comma" : ","},
+       "v"          : "6",
+       "x"          : "1024",
+       "y"          : "768",
+       "empty"      : "",
+       "empty_keys" : [],
+       "undef"      : null
+     },
+     "testcases" : [
+        ["{#var}", "#value"],
+        ["{#hello}", "#Hello%20World!"],
+        ["{#half}", "#50%25"],
+        ["foo{#empty}", "foo#"],
+        ["foo{#undef}", "foo"],
+        ["{#x,hello,y}", "#1024,Hello%20World!,768"],
+        ["{#path,x}/here", "#/foo/bar,1024/here"],
+        ["{#list}", "#red,green,blue"],
+        ["{#list*}", "#red,green,blue"],
+        ["{#keys}", "#comma,,,dot,.,semi,;"]
+     ],
+     "level4-testcases-disabled" : [
+        ["{#path:6}/here", "#/foo/b/here"]
+     ]
+  },  
+  "3.2.5 Label Expansion with Dot-Prefix" : 
+  {
+    "variables": {
+       "count"      : ["one", "two", "three"],
+       "dom"        : ["example", "com"],
+       "dub"        : "me/too",
+       "hello"      : "Hello World!",
+       "half"       : "50%",
+       "var"        : "value", 
+       "who"        : "fred",
+       "base"       : "http://example.com/home/",
+       "path"       : "/foo/bar",
+       "list"       : ["red", "green", "blue"],
+       "keys"       : { "semi" : ";", "dot" : ".", "comma" : ","},
+       "v"          : "6",
+       "x"          : "1024",
+       "y"          : "768",
+       "empty"      : "",
+       "empty_keys" : [],
+       "undef"      : null
+     },
+     "testcases" : [
+       ["{.who}", ".fred"],
+       ["{.who,who}", ".fred.fred"],
+       ["{.half,who}", ".50%25.fred"],
+       ["www{.dom*}", "www.example.com"],
+       ["X{.var}", "X.value"],
+       ["X{.empty}", "X."],
+       ["X{.undef}", "X"],
+       ["X{.list}", "X.red,green,blue"],
+       ["X{.list*}", "X.red.green.blue"],
+       ["X{.keys}", "X.comma,%2C,dot,.,semi,%3B"],
+       ["X{.keys*}", "X.comma=%2C.dot=..semi=%3B"],
+       ["X{.empty_keys}", "X"],
+       ["X{.empty_keys*}", "X"]
+     ],
+     "level4-testcases-disabled" : [
+       ["X{.var:3}", "X.val"]
+     ]
+  },  
+  "3.2.6 Path Segment Expansion" : 
+  {
+    "variables": {
+       "count"      : ["one", "two", "three"],
+       "dom"        : ["example", "com"],
+       "dub"        : "me/too",
+       "hello"      : "Hello World!",
+       "half"       : "50%",
+       "var"        : "value", 
+       "who"        : "fred",
+       "base"       : "http://example.com/home/",
+       "path"       : "/foo/bar",
+       "list"       : ["red", "green", "blue"],
+       "keys"       : { "semi" : ";", "dot" : ".", "comma" : ","},
+       "v"          : "6",
+       "x"          : "1024",
+       "y"          : "768",
+       "empty"      : "",
+       "empty_keys" : [],
+       "undef"      : null
+     },
+     "testcases" : [
+       ["{/who}", "/fred"],
+       ["{/who,who}", "/fred/fred"],
+       ["{/half,who}", "/50%25/fred"],
+       ["{/who,dub}", "/fred/me%2Ftoo"],
+       ["{/var}", "/value"],
+       ["{/var,empty}", "/value/"],
+       ["{/var,undef}", "/value"],
+       ["{/var,x}/here", "/value/1024/here"],
+       ["{/list}", "/red,green,blue"],
+       ["{/list*}", "/red/green/blue"],
+       ["{/keys}", "/comma,%2C,dot,.,semi,%3B"],
+       ["{/keys*}", "/comma=%2C/dot=./semi=%3B"]
+     ],     
+     "level4-testcases-disabled" : [
+       ["{/var:1,var}", "/v/value"],
+       ["{/list*,path:4}", "/red/green/blue/%2Ffoo"]
+     ]
+  },   
+  "3.2.7 Path-Style Parameter Expansion" : 
+  {
+    "variables": {
+       "count"      : ["one", "two", "three"],
+       "dom"        : ["example", "com"],
+       "dub"        : "me/too",
+       "hello"      : "Hello World!",
+       "half"       : "50%",
+       "var"        : "value", 
+       "who"        : "fred",
+       "base"       : "http://example.com/home/",
+       "path"       : "/foo/bar",
+       "list"       : ["red", "green", "blue"],
+       "keys"       : { "semi" : ";", "dot" : ".", "comma" : ","},
+       "v"          : "6",
+       "x"          : "1024",
+       "y"          : "768",
+       "empty"      : "",
+       "empty_keys" : [],
+       "undef"      : null
+     },
+     "testcases" : [
+        ["{;who}", ";who=fred"],
+        ["{;half}", ";half=50%25"],
+        ["{;empty}", ";empty"],
+        ["{;v,empty,who}", ";v=6;empty;who=fred"],
+        ["{;v,bar,who}", ";v=6;who=fred"],
+        ["{;x,y}", ";x=1024;y=768"],
+        ["{;x,y,empty}", ";x=1024;y=768;empty"],
+        ["{;x,y,undef}", ";x=1024;y=768"],
+        ["{;list}", ";list=red,green,blue"],
+        ["{;list*}", ";list=red;list=green;list=blue"],
+        ["{;keys}", ";keys=comma,%2C,dot,.,semi,%3B"],
+        ["{;keys*}", ";comma=%2C;dot=.;semi=%3B"]
+     ],
+     "level4-testcases-disabled" : [
+        ["{;hello:5}", ";hello=Hello"]
+     ]
+  },
+  "3.2.8 Form-Style Query Expansion" : 
+  {
+    "variables": {
+       "count"      : ["one", "two", "three"],
+       "dom"        : ["example", "com"],
+       "dub"        : "me/too",
+       "hello"      : "Hello World!",
+       "half"       : "50%",
+       "var"        : "value", 
+       "who"        : "fred",
+       "base"       : "http://example.com/home/",
+       "path"       : "/foo/bar",
+       "list"       : ["red", "green", "blue"],
+       "keys"       : { "semi" : ";", "dot" : ".", "comma" : ","},
+       "v"          : "6",
+       "x"          : "1024",
+       "y"          : "768",
+       "empty"      : "",
+       "empty_keys" : [],
+       "undef"      : null
+     },
+     "testcases" : [
+        ["{?who}", "?who=fred"],
+        ["{?half}", "?half=50%25"],
+        ["{?x,y}", "?x=1024&y=768"],
+        ["{?x,y,empty}", "?x=1024&y=768&empty="],
+        ["{?x,y,undef}", "?x=1024&y=768"],
+        ["{?list}", "?list=red,green,blue"],
+        ["{?list*}", "?list=red&list=green&list=blue"],
+        ["{?keys}", "?keys=comma,%2C,dot,.,semi,%3B"],
+        ["{?keys*}", "?comma=%2C&dot=.&semi=%3B"]
+     ],
+     "level4-testcases-disabled" : [
+        ["{?var:3}", "?var=val"]
+     ]
+  },
+  "3.2.9 Form-Style Query Continuation" : 
+  {
+    "variables": {
+       "count"      : ["one", "two", "three"],
+       "dom"        : ["example", "com"],
+       "dub"        : "me/too",
+       "hello"      : "Hello World!",
+       "half"       : "50%",
+       "var"        : "value", 
+       "who"        : "fred",
+       "base"       : "http://example.com/home/",
+       "path"       : "/foo/bar",
+       "list"       : ["red", "green", "blue"],
+       "keys"       : { "semi" : ";", "dot" : ".", "comma" : ","},
+       "v"          : "6",
+       "x"          : "1024",
+       "y"          : "768",
+       "empty"      : "",
+       "empty_keys" : [],
+       "undef"      : null
+     },
+     "testcases" : [
+          ["{&who}", "&who=fred"],
+          ["{&half}", "&half=50%25"],
+          ["?fixed=yes{&x}", "?fixed=yes&x=1024"],
+          ["{&x,y,empty}", "&x=1024&y=768&empty="],
+          ["{&x,y,undef}", "&x=1024&y=768"],
+          ["{&list}", "&list=red,green,blue"],
+          ["{&list*}", "&list=red&list=green&list=blue"],
+          ["{&keys}", "&keys=comma,%2C,dot,.,semi,%3B"],
+          ["{&keys*}", "&comma=%2C&dot=.&semi=%3B"]
+     ],
+     "level4-testcases-disabled" : [
+          ["{&var:3}", "&var=val"]
+     ]
+  },  
+  "Test Suite 1" :
+  {
+    "variables": {
+       "var"   : "value",
+       "hello" : "Hello World!",
+       "empty" : "",
+       "list"  : [ "val1", "val2", "val3" ],
+       "keys"  : {"key1": "val1", "key2": "val2"},
+       "path"  : "/foo/bar",
+       "x"     : "1024",
+       "y"     : "768"
+     },
+     "testcases" : [
+        ["{var}", "value"],
+        ["{hello}", "Hello%20World%21"],
+        ["{path}/here", "%2Ffoo%2Fbar/here"],
+        ["{x,y}", "1024,768"],
+        ["{var=default}", "value"],
+        ["{undef=default}", "default"],
+        ["{list}", "val1,val2,val3"],
+        ["{list*}", "val1,val2,val3"],
+        ["{list+}", "list.val1,list.val2,list.val3"],
+        ["{keys}", "key1,val1,key2,val2"],
+        ["{keys*}", "key1=val1,key2=val2"],
+        ["{keys+}", "keys.key1,val1,keys.key2,val2"],
+        ["{+var}", "value"],
+        ["{+hello}", "Hello%20World!"],
+        ["{+path}/here", "/foo/bar/here"],
+        ["{+path,x}/here", "/foo/bar,1024/here"],
+        ["{+path}{x}/here", "/foo/bar1024/here"],
+        ["{+empty}/here", "/here"],
+        ["{+undef}/here", "/here"],
+        ["{+list}", "val1,val2,val3"],
+        ["{+list*}", "val1,val2,val3"],
+        ["{+list+}", "list.val1,list.val2,list.val3"],
+        ["{+keys}", "key1,val1,key2,val2"],
+        ["{+keys*}", "key1=val1,key2=val2"],
+        ["{+keys+}", "keys.key1,val1,keys.key2,val2"],
+        ["{;x,y}", ";x=1024;y=768"],
+        ["{;x,y,empty}", ";x=1024;y=768;empty"],
+        ["{;x,y,undef}", ";x=1024;y=768"],
+        ["{;list}", ";list=val1,val2,val3"],
+        ["{;list*}", ";list=val1;list=val2;list=val3"],
+        ["{;list+}", ";list=val1;list=val2;list=val3"],
+        ["{;keys}", ";keys=key1,val1,key2,val2"],
+        ["{;keys*}", ";key1=val1;key2=val2"],
+        ["{;keys+}", ";keys.key1=val1;keys.key2=val2"],
+        ["{?x,y}", "?x=1024&y=768"],
+        ["{?x,y,empty}", "?x=1024&y=768&empty="],
+        ["{?x,y,undef}", "?x=1024&y=768"],
+        ["{?list}", "?list=val1,val2,val3"],
+        ["{?list*}", "?list=val1&list=val2&list=val3"],
+        ["{?list+}", "?list=val1&list=val2&list=val3"],
+        ["{?keys}", "?keys=key1,val1,key2,val2"],
+        ["{?keys*}", "?key1=val1&key2=val2"],
+        ["{?keys+}", "?keys.key1=val1&keys.key2=val2"],
+        ["{/var}", "/value"],
+        ["{/var,empty}", "/value/"],
+        ["{/var,undef}", "/value"],
+        ["{/list}", "/val1,val2,val3"],
+        ["{/list*}", "/val1/val2/val3"],
+        ["{/list*,x}", "/val1/val2/val3/1024"],
+        ["{/list+}", "/list.val1/list.val2/list.val3"],
+        ["{/keys}", "/key1,val1,key2,val2"],
+        ["{/keys*}", "/key1=val1/key2=val2"],
+        ["{/keys+}", "/keys.key1/val1/keys.key2/val2"],
+        ["X{.var}", "X.value"],
+        ["X{.empty}", "X."],
+        ["X{.undef}", "X"],
+        ["X{.list}", "X.val1,val2,val3"],
+        ["X{.list*}", "X.val1.val2.val3"],
+        ["X{.list*,x}", "X.val1.val2.val3.1024"],
+        ["X{.list+}", "X.list.val1.list.val2.list.val3"],
+        ["X{.keys}", "X.key1,val1,key2,val2"],
+        ["X{.keys*}", "X.key1=val1.key2=val2"],
+        ["X{.keys+}", "X.keys.key1.val1.keys.key2.val2"]
+     ]
+  },
+  "Test Suite 2" :
+  {
+    "variables": {
+       "var"        : "value",
+       "empty"      : "",
+       "name"       : [ "Fred", "Wilma", "Pebbles" ],
+       "favs"       : {"color":"red", "volume": "high"},
+       "empty_list" : [],
+       "empty_keys" : {} 
+     },
+     "testcases" : [
+        ["{var=default}", "value"],
+        ["{undef=default}", "default"],
+        ["x{empty}y", "xy"],
+        ["x{empty=_}y", "xy"],
+        ["x{undef}y", "xy"],
+        ["x{undef=_}y", "x_y"],
+        ["x{empty_list}y", "xy"],
+        ["x{empty_list=_}y", "x_y"],
+        ["x{empty_list*}y", "xy"],
+        ["x{empty_list*=_}y", "x_y"],
+        ["x{empty_list+}y", "xy"],
+        ["x{empty_list+=_}y", "x_y"],
+        ["x{empty_keys}y", "xy"],
+        ["x{empty_keys=_}y", "x_y"],
+        ["x{empty_keys*}y", "xy"],
+        ["x{empty_keys*=_}y", "x_y"],
+        ["x{empty_keys+}y", "xy"],
+        ["x{empty_keys+=_}y", "x_y"],
+        ["x{?name=none}", "x?name=Fred,Wilma,Pebbles"],
+        ["x{?favs=none}", "x?favs=color,red,volume,high"],
+        ["x{?favs*=none}", "x?color=red&volume=high"],
+        ["x{?favs+=none}", "x?favs.color=red&favs.volume=high"],
+        ["x{?undef}", "x"],
+        ["x{?undef=none}", "x?undef=none"],
+        ["x{?empty}", "x?empty="],
+        ["x{?empty=none}", "x?empty="],
+        ["x{?empty_list}", "x"],
+        ["x{?empty_list=none}", "x?empty_list=none"],
+        ["x{?empty_list*}", "x"],
+        ["x{?empty_list*=none}", "x?empty_list=none"],
+        ["x{?empty_list+}", "x"],
+        ["x{?empty_list+=none}", "x?empty_list=none"],
+        ["x{?empty_keys}", "x"],
+        ["x{?empty_keys=none}", "x?empty_keys=none"],
+        ["x{?empty_keys*}", "x"],
+        ["x{?empty_keys*=none}", "x?empty_keys=none"],
+        ["x{?empty_keys+}", "x"],
+        ["x{?empty_keys+=none}", "x?empty_keys=none"]
+     ]
+  }
+}
