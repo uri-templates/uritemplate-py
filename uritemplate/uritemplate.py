@@ -25,7 +25,6 @@ import urllib
 
 RESERVED = ":/?#[]@!$&'()*+,;="
 OPERATOR = "+#./;?&|!@"
-EXPLODE = "*"
 MODIFIER = ":^"
 TEMPLATE = re.compile("{([^\}]+)}")
 
@@ -187,7 +186,7 @@ def expand(template, variables):
                 varname, default = tuple(varspec.split("=", 1))
             else:
                 varname = varspec
-            if varname[-1] in EXPLODE:
+            if varname[-1] == "*":
                 explode = True
                 varname = varname[:-1]
             if default:
