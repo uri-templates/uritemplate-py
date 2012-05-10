@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+
+from distutils.core import setup
+import uritemplate
+
+base_url = "http://github.com/uri-templates/uri-template-py/"
+
+setup(
+  name = 'uritemplate',
+  version = uritemplate.__version__,
+  description = 'URI Templates',
+  author = 'Joe Gregorio',
+  author_email = 'mnot@mnot.net',
+  url = base_url,
+  download_url = \
+    '%s/tarball/uri-template-py-%s' % (base_url, uritemplate.__version__),
+  packages = ['uritemplate'],
+  provides = ['uritemplate'],
+  long_description=open("README.rst").read(),
+  classifiers = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: Apache Software License',
+    'Programming Language :: Python',
+    'Operating System :: POSIX',
+    'Topic :: Internet :: WWW/HTTP',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+  ]
+)
