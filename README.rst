@@ -20,7 +20,7 @@ It exposes one method, "expand". For example:
 Requirements
 ------------
 
-uritemplate requires Python version ??? and simplejson to be installed.
+uritemplate requires Python 2.5+ and simplejson to be installed.
 
 
 License
