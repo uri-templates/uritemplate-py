@@ -29,7 +29,7 @@ MODIFIER = ":^"
 TEMPLATE = re.compile("{([^\}]+)}")
 
 
-def _tostring(varname, value, explode, operator, safe=""):
+def _tostring(varname, value, explode, prefix, operator, safe=""):
     if type(value) == type([]):
         return ",".join([quote(x, safe) for x in value])
     if type(value) == type({}):
@@ -44,10 +44,10 @@ def _tostring(varname, value, explode, operator, safe=""):
     elif value == None:
         return
     else:
-        return quote(value, safe)
+        return quote(value[:prefix], safe)
 
 
-def _tostring_path(varname, value, explode, operator, safe=""):
+def _tostring_path(varname, value, explode, prefix, operator, safe=""):
     joiner = operator
     if type(value) == type([]):
         if explode:
@@ -78,10 +78,10 @@ def _tostring_path(varname, value, explode, operator, safe=""):
     elif value == None:
         return
     else:
-        return quote(value, safe)
+        return quote(value[:prefix], safe)
 
 
-def _tostring_semi(varname, value, explode, operator, safe=""):
+def _tostring_semi(varname, value, explode, prefix, operator, safe=""):
     joiner = operator
     if operator == "?":
         joiner = "&"
@@ -111,12 +111,12 @@ def _tostring_semi(varname, value, explode, operator, safe=""):
         if value == None:
             return
         elif value:
-            return varname + "=" + quote(value, safe)
+            return (varname + "=" + quote(value[:prefix], safe))
         else:
             return varname
 
 
-def _tostring_query(varname, value, explode, operator, safe=""):
+def _tostring_query(varname, value, explode, prefix, operator, safe=""):
     joiner = operator
     if operator in ["?", "&"]:
         joiner = "&"
@@ -127,8 +127,8 @@ def _tostring_query(varname, value, explode, operator, safe=""):
             return joiner.join([varname + "=" + quote(x, safe) \
                                 for x in value])
         else:
-            return varname + "=" + ",".join([quote(x, safe) \
-                                             for x in value])
+            return (varname + "=" + ",".join([quote(x, safe) \
+                                             for x in value]))
     elif type(value) == type({}):
         if 0 == len(value):
             return None
@@ -146,9 +146,9 @@ def _tostring_query(varname, value, explode, operator, safe=""):
         if value == None:
             return
         elif value:
-            return varname + "=" + quote(value, safe)
+            return (varname + "=" + quote(value[:prefix], safe))
         else:
-            return varname  + "="
+            return (varname  + "=")
 
 
 TOSTRING = {
@@ -174,7 +174,6 @@ def expand(template, variables):
             varlist = expression
 
         safe = ""
-        explode = False
         if operator in ["+", "#"]:
             safe = RESERVED
         varspecs = varlist.split(",")
@@ -182,6 +181,8 @@ def expand(template, variables):
         defaults = {}
         for varspec in varspecs:
             default = None
+            explode = False
+            prefix = None
             if "=" in varspec:
                 varname, default = tuple(varspec.split("=", 1))
             else:
@@ -189,25 +190,32 @@ def expand(template, variables):
             if varname[-1] == "*":
                 explode = True
                 varname = varname[:-1]
+            elif ":" in varname:
+                try:
+                    prefix = int(varname[varname.index(":")+1:])
+                except ValueError:
+                    raise ValueError, "non-integer prefix '%s'" \
+                                      % varname[varname.index(":")+1:]
+                varname = varname[:varname.index(":")]
             if default:
                 defaults[varname] = default
-            varnames.append((varname, explode))
+            varnames.append((varname, explode, prefix))
 
         retval = []
         joiner = operator
-        prefix = operator
+        start = operator
         if operator == "+":
-            prefix = ""
+            start = ""
             joiner = ","
         if operator == "#":
             joiner = ","
         if operator == "?":
             joiner = "&"
         if operator == "&":
-            prefix = "&"
+            start = "&"
         if operator == "":
             joiner = ","
-        for varname, explode in varnames:
+        for varname, explode, prefix in varnames:
             if varname in variables:
                 value = variables[varname]
                 if not value and value != "" and varname in defaults:
@@ -217,11 +225,11 @@ def expand(template, variables):
             else:
                 continue
             expanded = TOSTRING[operator](
-              varname, value, explode, operator, safe=safe)
+              varname, value, explode, prefix, operator, safe=safe)
             if expanded != None:
                 retval.append(expanded)
         if len(retval) > 0:
-            return prefix + joiner.join(retval)
+            return start + joiner.join(retval)
         else:
             return ""
 

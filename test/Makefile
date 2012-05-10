@@ -1,2 +1,2 @@
 test:
-	PYTHONPATH=..:$(PYTHONPATH) python uritemplate_test.py cases/spec-examples.json 3
+	PYTHONPATH=..:$(PYTHONPATH) python uritemplate_test.py cases/spec-examples.json 4
