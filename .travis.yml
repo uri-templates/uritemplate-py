@@ -3,6 +3,6 @@ python:
   - "2.6"
   - "2.7"
 # dependencies
-install: pip install -r simplejson --use-mirrors
+install: pip install simplejson --use-mirrors
 # command to run tests
 script: "cd test; make"
