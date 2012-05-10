@@ -17,6 +17,11 @@ It exposes one method, "expand". For example:
 
 .. _RFC6570: http://tools.ietf.org/html/rfc6570
 
+Requirements
+------------
+
+uritemplate requires Python version ??? and simplejson to be installed.
+
 
 License
 =======
