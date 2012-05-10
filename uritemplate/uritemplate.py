@@ -1,5 +1,5 @@
-# Early, and incomplete implementation of -04.
-#
+#!/usr/bin/env python
+
 import re
 import urllib
 
