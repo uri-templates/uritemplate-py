@@ -2,14 +2,25 @@ import uritemplate
 import simplejson
 import sys
 
-f = file("testdata.json")
+filename = sys.argv[1]
+print "Running", filename
+f = file(filename)
 testdata = simplejson.load(f)
 
-for name, testsuite in testdata.iteritems():
-  print name
-  vars = testsuite['variables']
-  testcases= testsuite['testcases']
+try:
+  desired_level = int(sys.argv[2])
+except IndexError:
+  desired_level = 4
 
+for name, testsuite in testdata.iteritems():
+  vars = testsuite['variables']
+  testcases = testsuite['testcases']
+
+  level = testsuite.get('level', 4)
+  if level > desired_level:
+    continue
+
+  print name
   for testcase in testcases:
     template = testcase[0]
     expected = testcase[1]
