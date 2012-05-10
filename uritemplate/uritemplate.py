@@ -21,7 +21,7 @@ limitations under the License.
 """
 
 import re
-import urllib
+from urllib import quote
 
 RESERVED = ":/?#[]@!$&'()*+,;="
 OPERATOR = "+#./;?&|!@"
@@ -31,30 +31,30 @@ TEMPLATE = re.compile("{([^\}]+)}")
 
 def _tostring(varname, value, explode, operator, safe=""):
     if type(value) == type([]):
-        return ",".join([urllib.quote(x, safe) for x in value])
+        return ",".join([quote(x, safe) for x in value])
     if type(value) == type({}):
         keys = value.keys()
         keys.sort()
         if explode:
-            return ",".join([urllib.quote(key, safe) + "=" + \
-                             urllib.quote(value[key], safe) for key in keys])
+            return ",".join([quote(key, safe) + "=" + \
+                             quote(value[key], safe) for key in keys])
         else:
-            return ",".join([urllib.quote(key, safe) + "," + \
-                             urllib.quote(value[key], safe) for key in keys])
+            return ",".join([quote(key, safe) + "," + \
+                             quote(value[key], safe) for key in keys])
     elif value == None:
         return
     else:
-        return urllib.quote(value, safe)
+        return quote(value, safe)
 
 
 def _tostring_path(varname, value, explode, operator, safe=""):
     joiner = operator
     if type(value) == type([]):
         if explode:
-            out = [urllib.quote(x, safe) for x in value if value != None]
+            out = [quote(x, safe) for x in value if value != None]
         else:
             joiner = ","
-            out = [urllib.quote(x, safe) for x in value if value != None]
+            out = [quote(x, safe) for x in value if value != None]
         if out:
             return joiner.join(out)
         else:
@@ -63,13 +63,13 @@ def _tostring_path(varname, value, explode, operator, safe=""):
         keys = value.keys()
         keys.sort()
         if explode:
-            out = [urllib.quote(key, safe) + "=" + \
-                   urllib.quote(value[key], safe) for key in keys \
+            out = [quote(key, safe) + "=" + \
+                   quote(value[key], safe) for key in keys \
                    if value[key] != None]
         else:
             joiner = ","
-            out = [urllib.quote(key, safe) + "," + \
-                   urllib.quote(value[key], safe) \
+            out = [quote(key, safe) + "," + \
+                   quote(value[key], safe) \
                    for key in keys if value[key] != None]
         if out:
             return joiner.join(out)
@@ -78,7 +78,7 @@ def _tostring_path(varname, value, explode, operator, safe=""):
     elif value == None:
         return
     else:
-        return urllib.quote(value, safe)
+        return quote(value, safe)
 
 
 def _tostring_semi(varname, value, explode, operator, safe=""):
@@ -87,31 +87,31 @@ def _tostring_semi(varname, value, explode, operator, safe=""):
         joiner = "&"
     if type(value) == type([]):
         if explode:
-            out = [varname + "=" + urllib.quote(x, safe) \
+            out = [varname + "=" + quote(x, safe) \
                    for x in value if x != None]
             if out:
                 return joiner.join(out)
             else:
                 return
         else:
-            return varname + "=" + ",".join([urllib.quote(x, safe) \
+            return varname + "=" + ",".join([quote(x, safe) \
                                              for x in value])
     elif type(value) == type({}):
         keys = value.keys()
         keys.sort()
         if explode:
-            return joiner.join([urllib.quote(key, safe) + "=" + \
-                                urllib.quote(value[key], safe) \
+            return joiner.join([quote(key, safe) + "=" + \
+                                quote(value[key], safe) \
                                 for key in keys if key != None])
         else:
-            return varname + "=" + ",".join([urllib.quote(key, safe) + "," + \
-                             urllib.quote(value[key], safe) for key in keys \
+            return varname + "=" + ",".join([quote(key, safe) + "," + \
+                             quote(value[key], safe) for key in keys \
                              if key != None])
     else:
         if value == None:
             return
         elif value:
-            return varname + "=" + urllib.quote(value, safe)
+            return varname + "=" + quote(value, safe)
         else:
             return varname
 
@@ -124,10 +124,10 @@ def _tostring_query(varname, value, explode, operator, safe=""):
         if 0 == len(value):
             return None
         if explode:
-            return joiner.join([varname + "=" + urllib.quote(x, safe) \
+            return joiner.join([varname + "=" + quote(x, safe) \
                                 for x in value])
         else:
-            return varname + "=" + ",".join([urllib.quote(x, safe) \
+            return varname + "=" + ",".join([quote(x, safe) \
                                              for x in value])
     elif type(value) == type({}):
         if 0 == len(value):
@@ -135,18 +135,18 @@ def _tostring_query(varname, value, explode, operator, safe=""):
         keys = value.keys()
         keys.sort()
         if explode:
-            return joiner.join([urllib.quote(key, safe) + "=" + \
-                                urllib.quote(value[key], safe) \
+            return joiner.join([quote(key, safe) + "=" + \
+                                quote(value[key], safe) \
                                 for key in keys])
         else:
             return varname + "=" + \
-                   ",".join([urllib.quote(key, safe) + "," + \
-                             urllib.quote(value[key], safe) for key in keys])
+                   ",".join([quote(key, safe) + "," + \
+                             quote(value[key], safe) for key in keys])
     else:
         if value == None:
             return
         elif value:
-            return varname + "=" + urllib.quote(value, safe)
+            return varname + "=" + quote(value, safe)
         else:
             return varname  + "="
 
