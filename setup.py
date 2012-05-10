@@ -17,6 +17,7 @@ setup(
   packages = ['uritemplate'],
   provides = ['uritemplate'],
   long_description=open("README.rst").read(),
+  install_requires = ['simplejson >= 2.5.0'],
   classifiers = [
     'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
