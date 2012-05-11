@@ -23,6 +23,17 @@ Requirements
 uritemplate requires Python 2.5+ and simplejson to be installed.
 
 
+Install
+-------
+
+The easiest way to install uritemplate is with pip:
+
+    pip install uritemplate
+
+See its `Python Package Index entry`_ for more.
+
+.. _Python Package Index entry: http://pypi.python.org/pypi/uritemplate
+
 License
 =======
 
@@ -39,3 +50,4 @@ License
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+   
