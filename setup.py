@@ -13,7 +13,7 @@ setup(
   author_email = 'joe@bitworking.org',
   url = base_url,
   download_url = \
-    '%s/tarball/uritemplate-py-%s' % (base_url, uritemplate.__version__),
+    '%starball/uritemplate-py-%s' % (base_url, uritemplate.__version__),
   packages = ['uritemplate'],
   provides = ['uritemplate'],
   long_description=open("README.rst").read(),
@@ -28,3 +28,4 @@ setup(
     'Topic :: Software Development :: Libraries :: Python Modules',
   ]
 )
+
