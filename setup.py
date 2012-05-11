@@ -3,7 +3,7 @@
 from distutils.core import setup
 import uritemplate
 
-base_url = "http://github.com/uri-templates/uri-template-py/"
+base_url = "http://github.com/uri-templates/uritemplate-py/"
 
 setup(
   name = 'uritemplate',
@@ -13,7 +13,7 @@ setup(
   author_email = 'joe@bitworking.org',
   url = base_url,
   download_url = \
-    '%s/tarball/uri-template-py-%s' % (base_url, uritemplate.__version__),
+    '%s/tarball/uritemplate-py-%s' % (base_url, uritemplate.__version__),
   packages = ['uritemplate'],
   provides = ['uritemplate'],
   long_description=open("README.rst").read(),
