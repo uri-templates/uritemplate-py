@@ -26,7 +26,12 @@ for name, testsuite in testdata.iteritems():
     expected = testcase[1]
     actual = uritemplate.expand(template, vars)
     sys.stdout.write(".") 
-    if expected != actual:
-      print "Template %s expected to expand to %s, got %s instead" % (template, expected, actual)
-      assert 0
+    if type(expected) == type([]):
+      if actual not in expected:
+        sys.stderr.write("%s didn't expand as expected, got %s instead\n" % (template, actual))
+        assert 0
+    else:
+      if actual != expected:
+        sys.stderr.write("%s expected to expand to %s, got %s instead\n" % (template, expected, actual))
+        assert 0
   print
