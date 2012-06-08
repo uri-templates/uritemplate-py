@@ -28,33 +28,39 @@ OPERATOR = "+#./;?&|!@"
 MODIFIER = ":^"
 TEMPLATE = re.compile("{([^\}]+)}")
 
+def _quote(value, safe, prefix=None):
+    if prefix != None:
+        return quote(str(value)[:prefix], safe)
+    else:
+        return quote(str(value), safe)
+
 
 def _tostring(varname, value, explode, prefix, operator, safe=""):
     if type(value) == type([]):
-        return ",".join([quote(x, safe) for x in value])
+        return ",".join([_quote(x, safe) for x in value])
     if type(value) == type({}):
         keys = value.keys()
         keys.sort()
         if explode:
-            return ",".join([quote(key, safe) + "=" + \
-                             quote(value[key], safe) for key in keys])
+            return ",".join([_quote(key, safe) + "=" + \
+                             _quote(value[key], safe) for key in keys])
         else:
-            return ",".join([quote(key, safe) + "," + \
-                             quote(value[key], safe) for key in keys])
+            return ",".join([_quote(key, safe) + "," + \
+                             _quote(value[key], safe) for key in keys])
     elif value == None:
         return
     else:
-        return quote(value[:prefix], safe)
+        return _quote(value, safe, prefix)
 
 
 def _tostring_path(varname, value, explode, prefix, operator, safe=""):
     joiner = operator
     if type(value) == type([]):
         if explode:
-            out = [quote(x, safe) for x in value if value != None]
+            out = [_quote(x, safe) for x in value if value != None]
         else:
             joiner = ","
-            out = [quote(x, safe) for x in value if value != None]
+            out = [_quote(x, safe) for x in value if value != None]
         if out:
             return joiner.join(out)
         else:
@@ -63,13 +69,13 @@ def _tostring_path(varname, value, explode, prefix, operator, safe=""):
         keys = value.keys()
         keys.sort()
         if explode:
-            out = [quote(key, safe) + "=" + \
-                   quote(value[key], safe) for key in keys \
+            out = [_quote(key, safe) + "=" + \
+                   _quote(value[key], safe) for key in keys \
                    if value[key] != None]
         else:
             joiner = ","
-            out = [quote(key, safe) + "," + \
-                   quote(value[key], safe) \
+            out = [_quote(key, safe) + "," + \
+                   _quote(value[key], safe) \
                    for key in keys if value[key] != None]
         if out:
             return joiner.join(out)
@@ -78,7 +84,7 @@ def _tostring_path(varname, value, explode, prefix, operator, safe=""):
     elif value == None:
         return
     else:
-        return quote(value[:prefix], safe)
+        return _quote(value, safe, prefix)
 
 
 def _tostring_semi(varname, value, explode, prefix, operator, safe=""):
@@ -87,31 +93,31 @@ def _tostring_semi(varname, value, explode, prefix, operator, safe=""):
         joiner = "&"
     if type(value) == type([]):
         if explode:
-            out = [varname + "=" + quote(x, safe) \
+            out = [varname + "=" + _quote(x, safe) \
                    for x in value if x != None]
             if out:
                 return joiner.join(out)
             else:
                 return
         else:
-            return varname + "=" + ",".join([quote(x, safe) \
+            return varname + "=" + ",".join([_quote(x, safe) \
                                              for x in value])
     elif type(value) == type({}):
         keys = value.keys()
         keys.sort()
         if explode:
-            return joiner.join([quote(key, safe) + "=" + \
-                                quote(value[key], safe) \
+            return joiner.join([_quote(key, safe) + "=" + \
+                                _quote(value[key], safe) \
                                 for key in keys if key != None])
         else:
-            return varname + "=" + ",".join([quote(key, safe) + "," + \
-                             quote(value[key], safe) for key in keys \
+            return varname + "=" + ",".join([_quote(key, safe) + "," + \
+                             _quote(value[key], safe) for key in keys \
                              if key != None])
     else:
         if value == None:
             return
         elif value:
-            return (varname + "=" + quote(value[:prefix], safe))
+            return (varname + "=" + _quote(value, safe, prefix))
         else:
             return varname
 
@@ -124,10 +130,10 @@ def _tostring_query(varname, value, explode, prefix, operator, safe=""):
         if 0 == len(value):
             return None
         if explode:
-            return joiner.join([varname + "=" + quote(x, safe) \
+            return joiner.join([varname + "=" + _quote(x, safe) \
                                 for x in value])
         else:
-            return (varname + "=" + ",".join([quote(x, safe) \
+            return (varname + "=" + ",".join([_quote(x, safe) \
                                              for x in value]))
     elif type(value) == type({}):
         if 0 == len(value):
@@ -135,18 +141,18 @@ def _tostring_query(varname, value, explode, prefix, operator, safe=""):
         keys = value.keys()
         keys.sort()
         if explode:
-            return joiner.join([quote(key, safe) + "=" + \
-                                quote(value[key], safe) \
+            return joiner.join([_quote(key, safe) + "=" + \
+                                _quote(value[key], safe) \
                                 for key in keys])
         else:
             return varname + "=" + \
-                   ",".join([quote(key, safe) + "," + \
-                             quote(value[key], safe) for key in keys])
+                   ",".join([_quote(key, safe) + "," + \
+                             _quote(value[key], safe) for key in keys])
     else:
         if value == None:
             return
         elif value:
-            return (varname + "=" + quote(value[:prefix], safe))
+            return (varname + "=" + _quote(value, safe, prefix))
         else:
             return (varname  + "=")
 
