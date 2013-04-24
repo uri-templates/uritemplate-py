@@ -29,10 +29,9 @@ MODIFIER = ":^"
 TEMPLATE = re.compile("{([^\}]+)}")
 
 def _quote(value, safe, prefix=None):
-    if prefix != None:
+    if prefix is not None:
         return quote(str(value)[:prefix], safe)
-    else:
-        return quote(str(value), safe)
+    return quote(str(value), safe)
 
 
 def _tostring(varname, value, explode, prefix, operator, safe=""):
@@ -47,7 +46,7 @@ def _tostring(varname, value, explode, prefix, operator, safe=""):
         else:
             return ",".join([_quote(key, safe) + "," + \
                              _quote(value[key], safe) for key in keys])
-    elif value == None:
+    elif value is None:
         return
     else:
         return _quote(value, safe, prefix)
@@ -57,10 +56,10 @@ def _tostring_path(varname, value, explode, prefix, operator, safe=""):
     joiner = operator
     if type(value) == type([]):
         if explode:
-            out = [_quote(x, safe) for x in value if value != None]
+            out = [_quote(x, safe) for x in value if value is not None]
         else:
             joiner = ","
-            out = [_quote(x, safe) for x in value if value != None]
+            out = [_quote(x, safe) for x in value if value is not None]
         if out:
             return joiner.join(out)
         else:
@@ -71,17 +70,17 @@ def _tostring_path(varname, value, explode, prefix, operator, safe=""):
         if explode:
             out = [_quote(key, safe) + "=" + \
                    _quote(value[key], safe) for key in keys \
-                   if value[key] != None]
+                   if value[key] is not None]
         else:
             joiner = ","
             out = [_quote(key, safe) + "," + \
                    _quote(value[key], safe) \
-                   for key in keys if value[key] != None]
+                   for key in keys if value[key] is not None]
         if out:
             return joiner.join(out)
         else:
             return
-    elif value == None:
+    elif value is None:
         return
     else:
         return _quote(value, safe, prefix)
@@ -94,7 +93,7 @@ def _tostring_semi(varname, value, explode, prefix, operator, safe=""):
     if type(value) == type([]):
         if explode:
             out = [varname + "=" + _quote(x, safe) \
-                   for x in value if x != None]
+                   for x in value if x is not None]
             if out:
                 return joiner.join(out)
             else:
@@ -108,13 +107,13 @@ def _tostring_semi(varname, value, explode, prefix, operator, safe=""):
         if explode:
             return joiner.join([_quote(key, safe) + "=" + \
                                 _quote(value[key], safe) \
-                                for key in keys if key != None])
+                                for key in keys if key is not None])
         else:
             return varname + "=" + ",".join([_quote(key, safe) + "," + \
                              _quote(value[key], safe) for key in keys \
-                             if key != None])
+                             if key is not None])
     else:
-        if value == None:
+        if value is None:
             return
         elif value:
             return (varname + "=" + _quote(value, safe, prefix))
@@ -149,7 +148,7 @@ def _tostring_query(varname, value, explode, prefix, operator, safe=""):
                    ",".join([_quote(key, safe) + "," + \
                              _quote(value[key], safe) for key in keys])
     else:
-        if value == None:
+        if value is None:
             return
         elif value:
             return (varname + "=" + _quote(value, safe, prefix))
@@ -235,7 +234,7 @@ def expand(template, variables):
                 continue
             expanded = TOSTRING[operator](
               varname, value, explode, prefix, operator, safe=safe)
-            if expanded != None:
+            if expanded is not None:
                 retval.append(expanded)
         if len(retval) > 0:
             return start + joiner.join(retval)
