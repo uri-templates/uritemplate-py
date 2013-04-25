@@ -35,9 +35,9 @@ def _quote(value, safe, prefix=None):
 
 
 def _tostring(varname, value, explode, prefix, operator, safe=""):
-    if type(value) == type([]):
+    if isinstance(value, list):
         return ",".join([_quote(x, safe) for x in value])
-    if type(value) == type({}):
+    if isinstance(value, dict):
         keys = value.keys()
         keys.sort()
         if explode:
@@ -54,7 +54,7 @@ def _tostring(varname, value, explode, prefix, operator, safe=""):
 
 def _tostring_path(varname, value, explode, prefix, operator, safe=""):
     joiner = operator
-    if type(value) == type([]):
+    if isinstance(value, list):
         if explode:
             out = [_quote(x, safe) for x in value if value is not None]
         else:
@@ -64,7 +64,7 @@ def _tostring_path(varname, value, explode, prefix, operator, safe=""):
             return joiner.join(out)
         else:
             return
-    elif type(value) == type({}):
+    elif isinstance(value, dict):
         keys = value.keys()
         keys.sort()
         if explode:
@@ -90,7 +90,7 @@ def _tostring_semi(varname, value, explode, prefix, operator, safe=""):
     joiner = operator
     if operator == "?":
         joiner = "&"
-    if type(value) == type([]):
+    if isinstance(value, list):
         if explode:
             out = [varname + "=" + _quote(x, safe) \
                    for x in value if x is not None]
@@ -101,7 +101,7 @@ def _tostring_semi(varname, value, explode, prefix, operator, safe=""):
         else:
             return varname + "=" + ",".join([_quote(x, safe) \
                                              for x in value])
-    elif type(value) == type({}):
+    elif isinstance(value, dict):
         keys = value.keys()
         keys.sort()
         if explode:
@@ -125,7 +125,7 @@ def _tostring_query(varname, value, explode, prefix, operator, safe=""):
     joiner = operator
     if operator in ["?", "&"]:
         joiner = "&"
-    if type(value) == type([]):
+    if isinstance(value, list):
         if 0 == len(value):
             return None
         if explode:
@@ -134,7 +134,7 @@ def _tostring_query(varname, value, explode, prefix, operator, safe=""):
         else:
             return (varname + "=" + ",".join([_quote(x, safe) \
                                              for x in value]))
-    elif type(value) == type({}):
+    elif isinstance(value, dict):
         if 0 == len(value):
             return None
         keys = value.keys()
