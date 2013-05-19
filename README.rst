@@ -8,13 +8,25 @@ uritemplate
 This is a Python implementation of `RFC6570`_, URI Template, and can
 expand templates up to and including Level 4 in that specification.
 
-It exposes one method, *expand*. For example:
+It exposes a method, *expand*. For example:
 
 .. code-block:: python
 
     >>> from uritemplate import expand
     >>> expand("http://www.{domain}/", {"domain": "foo.com"})
     'http://www.foo.com/'
+
+It also exposes a method *variables* that returns all variables used in a
+uritemplate. For example:
+
+.. code-block:: python
+
+    >>> from uritemplate import variables
+    >>> variables('http:www{.domain*}{/top,next}{?q:20}')
+    >>> set(['domain', 'next', 'q', 'top'])
+
+This function can be useful to determine what keywords are available to be
+expanded.
 
 .. _RFC6570: http://tools.ietf.org/html/rfc6570
 
