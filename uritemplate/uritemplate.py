@@ -28,6 +28,24 @@ OPERATOR = "+#./;?&|!@"
 MODIFIER = ":^"
 TEMPLATE = re.compile("{([^\}]+)}")
 
+
+def variables(template):
+    '''Returns the set of keywords in a uri template'''
+    vars = set()
+    for varlist in TEMPLATE.findall(template):
+        if varlist[0] in OPERATOR:
+            varlist = varlist[1:]
+        varspecs = varlist.split(',')
+        for var in varspecs:
+            # handle prefix values
+            var = var.split(':')[0]
+            # handle composite values
+            if var.endswith('*'):
+                var = var[:-1]
+            vars.add(var)
+    return vars
+
+
 def _quote(value, safe, prefix=None):
     if prefix is not None:
         return quote(str(value)[:prefix], safe)

@@ -1,7 +1,7 @@
 
 LEVEL = 4
 
-test: spec-examples spec-examples-by-section extended
+test: spec-examples spec-examples-by-section extended variables
 
 spec-examples:
 	PYTHONPATH=..:$(PYTHONPATH) python uritemplate_test.py cases/spec-examples.json $(LEVEL)
@@ -15,3 +15,5 @@ extended:
 negative:
 	PYTHONPATH=..:$(PYTHONPATH) python uritemplate_test.py cases/negative-tests.json $(LEVEL)
 
+variables:
+	PYTHONPATH=..:$(PYTHONPATH) python variables_test.py
