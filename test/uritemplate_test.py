@@ -3,8 +3,8 @@ import simplejson
 import sys
 
 filename = sys.argv[1]
-print "Running", filename
-f = file(filename)
+print("Running", filename)
+f = open(filename)
 testdata = simplejson.load(f)
 
 try:
@@ -12,7 +12,7 @@ try:
 except IndexError:
   desired_level = 4
 
-for name, testsuite in testdata.iteritems():
+for name, testsuite in testdata.items():
   vars = testsuite['variables']
   testcases = testsuite['testcases']
 
@@ -20,7 +20,7 @@ for name, testsuite in testdata.iteritems():
   if level > desired_level:
     continue
 
-  print name
+  print(name)
   for testcase in testcases:
     template = testcase[0]
     expected = testcase[1]
@@ -34,4 +34,4 @@ for name, testsuite in testdata.iteritems():
       if actual != expected:
         sys.stderr.write("%s expected to expand to %s, got %s instead\n" % (template, expected, actual))
         assert 0
-  print
+  print()
