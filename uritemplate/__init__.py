@@ -5,7 +5,7 @@ URI Template (RFC6570) Processor
 """
 
 __copyright__ = """\
-Copyright 2011-2012 Joe Gregorio
+Copyright 2011-2013 Joe Gregorio
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ except ImportError:
 
 
 
-__version__ = "0.5.2"
+__version__ = "0.6"
 
 RESERVED = ":/?#[]@!$&'()*+,;="
 OPERATOR = "+#./;?&|!@"
