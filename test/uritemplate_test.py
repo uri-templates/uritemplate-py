@@ -1,11 +1,14 @@
 import uritemplate
-import simplejson
+try:
+  import json
+except ImportError:
+  import simplejson as json
 import sys
 
 filename = sys.argv[1]
 print("Running", filename)
 f = open(filename)
-testdata = simplejson.load(f)
+testdata = json.load(f)
 
 try:
   desired_level = int(sys.argv[2])

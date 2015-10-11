@@ -36,7 +36,7 @@ Requirements
 
 uritemplate works with Python 2.5+.
 
-.. note:: You need to install `simplejson`_ module for Python 2.5.
+.. note:: You need to install `simplejson`_ module to run the tests on Python 2.5.
 
 .. _simplejson: https://pypi.python.org/pypi/simplejson/
 
