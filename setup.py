@@ -17,6 +17,7 @@ setup(
   packages = ['uritemplate'],
   provides = ['uritemplate'],
   long_description=open("README.rst").read(),
+  license='Apache License, version 2.0',
   classifiers = [
     'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
