@@ -1,3 +1,5 @@
+This repo has been archived; see https://github.com/python-hyper/uritemplate for its replacement.
+
 uritemplate
 ===========
 
